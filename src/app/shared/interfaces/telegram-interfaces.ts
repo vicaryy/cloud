@@ -26,9 +26,10 @@ export interface SendMessage {
 }
 
 export interface SendDocument {
-
+    chat_id: string;
+    document: InputFile;
 }
 
 export interface InputFile {
-
+    file: File;
 }
