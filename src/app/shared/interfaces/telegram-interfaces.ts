@@ -33,3 +33,5 @@ export interface SendDocument {
 export interface InputFile {
     file: File;
 }
+
+Api.title

@@ -1,18 +1,1 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-
-<body>
-    <form [formGroup]="fileForm" (submit)="send()">
-    <input #plik type="file" name="file" id="file" formControlName="file" (change)="setFile($event)">
-    <button type="submit"></button>
-    </form>
-    <div class="preview"></div>
-</body>
-
-</html>
+<app-bag></app-bag>
