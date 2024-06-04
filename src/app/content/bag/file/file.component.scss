@@ -3,20 +3,23 @@
 .file {
     position: relative;
     display: flex;
-    padding: 20px 25px;
-    // background-color: gray;
-    border-radius: 15px;
+    margin: 0 2px;
+    padding: 20px 20px 20px 20px;
+    border-radius: 40px;
     color: var(--font-color);
+    cursor: pointer;
+    transition: background-color .3s;
 
     &::after {
         content: "";
         position: absolute;
         bottom: 0;
         left: 50%;
-        translate: -50% -50%;
-        height: 1.5px;
+        translate: -50% 100%;
+        height: 1px;
         width: 50%;
-        background-color: #e8e8ed;
+        background-color: #bfbfbf;
+        transition: background-color .3s;
     }
 
     i {
@@ -25,11 +28,16 @@
     }
 
     &:hover {
-        background-color: #e8e8ed;
+        background-color: #cfcff1;
+
+        &::after {
+            background-color: transparent;
+        }
+
     }
 
     .logo {
-        margin-right: 10px;
+        margin-right: 15px;
 
         i {
             font-size: 1.8rem;

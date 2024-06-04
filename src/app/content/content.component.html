@@ -1,0 +1,10 @@
+<div class="content">
+    <app-search></app-search>
+    <ng-container *ngFor="let bag of bags; index as i">
+        <app-bag *ngIf="i === 0" [directory]="bag.directory" [x]="100" [y]="250"></app-bag>
+        <app-bag *ngIf="i !== 0" [directory]="bag.directory" [x]="310 * i + 100" [y]="250"></app-bag>
+    </ng-container>
+    <!-- <app-bag directory='Main Bag' x='100' y='250'></app-bag> -->
+    <!-- <app-bag directory='/photos' x='410' y='250'></app-bag> -->
+    <!-- <app-bag directory='/photos/wedding' x='720' y='250'></app-bag> -->
+</div>

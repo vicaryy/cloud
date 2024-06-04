@@ -1,0 +1,66 @@
+@import 'vars';
+
+.header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 45px;
+    padding: 0 30px;
+    padding-top: 2px;
+    background-color: var(--header-color);
+    box-sizing: border-box;
+
+    .logo {
+        display: flex;
+        align-items: center;
+
+        img {
+            width: 35px;
+            z-index: 2;
+        }
+
+        p {
+            font-weight: 550;
+            margin-left: 7px;
+            font-size: 1.8rem;
+            color: var(--bgc);
+        }
+    }
+
+    .log-out-wrapper {
+        flex-grow: 1;
+        display: flex;
+        justify-content: right;
+
+        button {
+            padding: 5px 15px;
+            border-radius: 10px;
+            color: var(--bgc);
+            font-weight: 550;
+            font-size: 1.5rem;
+            font-family: 'Montserrat';
+            cursor: pointer;
+            transition: background-color .3s;
+
+            &:hover {
+                background-color: #b1b1b1;
+            }
+        }
+    }
+
+    .profile {
+        margin-top: 3px;
+        margin-left: 15px;
+
+        img {
+            border-radius: 50%;
+            width: 30px;
+            cursor: pointer;
+            transition: .5s;
+
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+}
