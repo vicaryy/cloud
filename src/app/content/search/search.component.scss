@@ -71,13 +71,11 @@
                     left: 97px;
                     height: 25px;
                     width: 150px;
-                    // display: flex;
-                    // flex-direction: column;
 
                     .words {
                         position: absolute;
                         top: calc(-67.5px - 22.5px);
-                        transform: translateY(0); // 22.5px
+                        transform: translateY(0);
                         animation: slide-words 12s 2s forwards;
 
                         p {

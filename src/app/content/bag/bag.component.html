@@ -1,26 +1,18 @@
-<div #bag class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)" (mousedown)="onMouseDown()">
+<div #bag class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)" (mousedown)="onFocus()">
     <div class="option-bar">
+        <div class="settings-wrapper">
+            <button class="settings"></button>
+        </div>
         <div class="bag-logo"><i class="fa-regular fa-folder-open"></i></div>
         <div class="bag-info">
-            <p class="directory"> {{ directory }} </p>
+            <p class="directory"> {{ directory }}</p>
             <p class="amount">3 folders · 13 files </p>
         </div>
-        <div class="add-wrapper">
-            <button class="add">
-                <i class="fa-solid fa-plus"></i>
-            </button>
-        </div>
+        <app-add class="add"></app-add>
     </div>
     <div class="files">
-        <app-file></app-file>
-        <app-file></app-file>
-        <app-file></app-file>
-        <app-file></app-file>
-        <app-file></app-file>
-        <app-file></app-file>
-        <app-file></app-file>
-        <app-file></app-file>
-        <app-file></app-file>
+        <app-folder name="images"></app-folder>
+        <app-folder name="movies"></app-folder>
         <app-file></app-file>
         <app-file></app-file>
         <app-file></app-file>
@@ -32,6 +24,3 @@
     </div>
 </div>
 
-
-<!-- <label for="file" class="file-upload"><i class="fa-solid fa-file-circle-plus"></i></label>
-                    <input type="file" id="file" class="add-file"> -->

@@ -14,6 +14,4 @@ import { ContentComponent } from "./content/content.component";
     imports: [RouterOutlet, BagComponent, HeaderComponent, GlowComponent, FooterComponent, ContentComponent]
 })
 export class AppComponent {
-    @HostBinding('@.disabled')
-    public animationsDisabled = true;
 }

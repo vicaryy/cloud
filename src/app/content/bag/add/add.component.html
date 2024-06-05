@@ -1,0 +1,20 @@
+<div class="add-wrapper" [class.active]="active">
+    <button class="add-btn" (click)="active = !active">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <div class="block">
+        <h3 class="title">Add</h3>
+        <div class="options">
+            <label for="file" class="file-upload"><i class="fa-regular fa-file"></i>
+                <p>new file</p>
+            </label>
+            <input type="file" id="file" class="add-file">
+            <button class="add-folder"><i class="fa-regular fa-folder"></i>
+                <p>new bag</p>
+            </button>
+        </div>
+
+        <i class="fa-solid fa-play pointer"></i>
+    </div>
+</div>

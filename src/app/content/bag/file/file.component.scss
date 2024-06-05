@@ -3,8 +3,9 @@
 .file {
     position: relative;
     display: flex;
+    align-items: center;
     margin: 0 2px;
-    padding: 20px 20px 20px 20px;
+    padding: 0px;
     border-radius: 40px;
     color: var(--font-color);
     cursor: pointer;
@@ -28,18 +29,35 @@
     }
 
     &:hover {
-        background-color: #cfcff1;
+        background-color: #d9d9ef;
 
         &::after {
             background-color: transparent;
+        }
+
+        .info {
+            i {
+                opacity: 1;
+                transition: opacity .3s;
+            }
+        }
+
+        .download {
+
+            i {
+                transform: translate3d(0px, -5px, 0px) scale(0.9);
+            }
         }
 
     }
 
     .logo {
         margin-right: 15px;
+        padding-left: 20px;
 
         i {
+            width: 15px;
+            text-align: center;
             font-size: 1.8rem;
         }
     }
@@ -49,16 +67,41 @@
     }
 
     .info {
-        margin-right: 15px;
+        margin-right: 20px;
 
         i {
-            color: var(--font-color-second);
+            opacity: 0;
+            color: var(--font-color-third);
+            transition: opacity 0s;
         }
     }
 
     .download {
-        i {
-            font-size: 1.9rem;
+        padding: 20px;
+        border-radius: 50px;
+        transition: background-color .2s;
+
+        &:hover {
+            background-color: rgba(128, 128, 128, .08);
         }
+
+        i {
+            width: 25px;
+            font-size: 1.9rem;
+            transition: transform .6s;
+        }
+    }
+}
+
+@keyframes download {
+    0% {
+        transform: translate3d(0px, 0px, 0) rotate(0deg);
+    }
+
+    50% {
+        transform: translate3d(10px, 0px, 0) rotate(-10deg);
+    }
+    100% {
+        transform: translate3d(0px, 0px, 0) rotate(0deg);
     }
 }

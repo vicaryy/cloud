@@ -1,16 +1,16 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild, ViewChildren } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Bag, File } from '../../shared/models/content.models';
-import { AnyCatcher } from 'rxjs/internal/AnyCatcher';
-import { BagService } from '../../shared/services/bag.service';
+import { AddComponent } from './add/add.component';
+import { FolderComponent } from "./folder/folder.component";
 
 @Component({
     selector: 'app-bag',
     standalone: true,
     templateUrl: './bag.component.html',
     styleUrl: './bag.component.scss',
-    imports: [FileComponent, CdkDrag, CdkDragHandle]
+    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent]
 })
 export class BagComponent implements AfterViewInit {
 
@@ -19,17 +19,11 @@ export class BagComponent implements AfterViewInit {
     @Input() files!: File[];
     @Input() x!: any;
     @Input() y!: any;
+    @Output('focus') focus = new EventEmitter<HTMLElement>();
     @ViewChild("bag") bagElement!: ElementRef;
-
-    constructor(private bagService: BagService) { }
 
     onDragEnd(event: CdkDragEnd) {
         this.setTransformOriginAfterDragEnd(event.dropPoint.x, event.dropPoint.y);
-    }
-
-    setHighestIndex() {
-        const el = this.bagElement.nativeElement as HTMLElement;
-        el.style.zIndex = `${this.bagService.highestIndex++}`
     }
 
     setTransformOriginAfterDragEnd(x: any, y: any) {
@@ -43,7 +37,7 @@ export class BagComponent implements AfterViewInit {
         el.style.transformOrigin = ``;
     }
 
-    onMouseDown() {
-        this.setHighestIndex();
+    onFocus() {
+        this.focus.emit(this.bagElement.nativeElement);
     }
 }
