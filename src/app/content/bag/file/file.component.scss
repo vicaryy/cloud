@@ -3,13 +3,7 @@
 .file {
     position: relative;
     display: flex;
-    align-items: center;
-    margin: 0 2px;
-    padding: 0px;
-    border-radius: 40px;
-    color: var(--font-color);
-    cursor: pointer;
-    transition: background-color .3s;
+    flex-direction: column;
 
     &::after {
         content: "";
@@ -23,85 +17,223 @@
         transition: background-color .3s;
     }
 
-    i {
-        color: var(--font-color-third);
-        font-size: 1.6rem;
-    }
-
     &:hover {
-        background-color: #d9d9ef;
-
         &::after {
             background-color: transparent;
         }
+    }
+
+    .main-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin: 0 2px;
+        padding: 0px;
+        border-radius: 40px;
+        color: var(--font-color);
+        cursor: pointer;
+        transition: background-color .3s, border-radius .0s .5s;
+
+
+        i {
+            color: var(--font-color-third);
+            font-size: 1.6rem;
+        }
+
+        &:hover {
+            background-color: var(--file-hover-color);
+
+
+            .info {
+                i {
+                    opacity: 1;
+                    transition: opacity .3s, transform .3s;
+                }
+            }
+
+            .download {
+
+                i {
+                    transform: translate3d(0px, -5px, 0px) scale(1.1);
+                    // transform: translate3d(0px, -5px, 0px) scale(0.9);
+                }
+            }
+
+        }
+
+        .logo {
+            margin-right: 15px;
+            padding: 20px 0 20px 20px;
+
+            i {
+                width: 15px;
+                text-align: center;
+                font-size: 1.8rem;
+            }
+        }
+
+        .name {
+            flex-grow: 1;
+            padding: 20px 0;
+            user-select: none;
+        }
 
         .info {
+            margin-right: 20px;
+            padding: 20px 0;
+
             i {
-                opacity: 1;
-                transition: opacity .3s;
+                opacity: 0;
+                color: var(--font-color-third);
+                transition: opacity 0s, transform .3s;
             }
         }
 
         .download {
+            padding: 20px;
+            border-radius: 50px;
+            transition: background-color .2s;
+
+            &:hover {
+                background-color: rgba(128, 128, 128, .08);
+            }
 
             i {
-                transform: translate3d(0px, -5px, 0px) scale(0.9);
+                width: 25px;
+                font-size: 1.9rem;
+                transition: transform .6s;
+            }
+        }
+    }
+
+    .details {
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 0;
+        padding: 0px 20px;
+        margin: 0 2px;
+        box-sizing: border-box;
+        background-color: var(--file-hover-color);
+        border-bottom-left-radius: 30px;
+        border-bottom-right-radius: 30px;
+        transition: height .5s;
+
+        .line {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            translate: -50% -50%;
+            font-size: 2.5rem;
+            color: var(--font-color-third);
+            // color: rgba(0, 113, 235, .5);
+        }
+
+        .title {
+            font-size: 1.4rem;
+            margin: 15px 0 8px 0;
+        }
+
+
+
+        .name,
+        .size,
+        .extension,
+        .created {
+            display: flex;
+            margin-bottom: 3px;
+            font-size: 1.3rem;
+            color: var(--search-font-color);
+
+            .value-title {
+                min-width: 75px;
+                max-width: 75px;
+                text-align: right;
+            }
+
+            .value {
+                margin-left: 10px;
             }
         }
 
-    }
-
-    .logo {
-        margin-right: 15px;
-        padding-left: 20px;
-
-        i {
-            width: 15px;
-            text-align: center;
-            font-size: 1.8rem;
-        }
-    }
-
-    .name {
-        flex-grow: 1;
-    }
-
-    .info {
-        margin-right: 20px;
-
-        i {
-            opacity: 0;
-            color: var(--font-color-third);
-            transition: opacity 0s;
-        }
-    }
-
-    .download {
-        padding: 20px;
-        border-radius: 50px;
-        transition: background-color .2s;
-
-        &:hover {
-            background-color: rgba(128, 128, 128, .08);
+        .name {
+            overflow: scroll;
+            max-height: 30px;
+            margin-bottom: 5px;
         }
 
-        i {
-            width: 25px;
-            font-size: 1.9rem;
-            transition: transform .6s;
+
+        .preview {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 15px 0;
+
+            img {
+                width: 60%;
+                border-radius: 20px;
+            }
+        }
+
+        &>button {
+            display: flex;
+            padding: 8px 0;
+            border-radius: 10px;
+            transition: background-color .3s;
+
+            p {
+                margin-left: 10px;
+            }
+            i {
+                width: 10px;
+                margin-top: 1px;
+                margin-left: 10px;
+            }
+
+            &:hover {
+                background-color: rgb(208, 208, 236);
+            }
+        }
+
+        .change-name {
+            i {
+                color: var(--font-color-third);
+            }
+        }
+
+        .delete {
+            color: var(--add-button-color);
         }
     }
 }
 
-@keyframes download {
-    0% {
-        transform: translate3d(0px, 0px, 0) rotate(0deg);
+
+.file.details-active {
+
+    &::after {
+        background-color: transparent;
     }
 
-    50% {
-        transform: translate3d(10px, 0px, 0) rotate(-10deg);
+    .main-wrapper {
+        border-radius: 0;
+        border-top-left-radius: 30px;
+        border-top-right-radius: 30px;
+        background-color: var(--file-hover-color);
+        transition: background-color .3s, border-radius 0s;
+
+
+        .info {
+
+            i {
+                opacity: 1;
+                transform: rotate(90deg);
+            }
+        }
     }
-    100% {
-        transform: translate3d(0px, 0px, 0) rotate(0deg);
+
+    .details {
+        height: 410px;
+        transition: height .5s;
+
     }
 }

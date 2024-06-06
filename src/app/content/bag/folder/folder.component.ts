@@ -10,4 +10,10 @@ import { Component, Input } from '@angular/core';
 export class FolderComponent {
 
     @Input('name') name!: string;
+
+    detailsActive: boolean = false;
+
+    toggleDetails() {
+        this.detailsActive = !this.detailsActive;
+    }
 }

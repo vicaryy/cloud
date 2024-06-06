@@ -12,6 +12,7 @@ html {
 button {
     background-color: transparent;
     border: none;
+    font-family: "Montserrat";
     cursor: pointer;
 }
 
@@ -21,4 +22,10 @@ body {
     background-color: #fff;
     font-size: 1.6rem;
     font-family: "Montserrat";
+    scrollbar-color: rgba(0, 113, 235, .3) transparent;
 }
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 113, 235, .3);
+}
+

@@ -4,13 +4,14 @@ import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/d
 import { Bag, File } from '../../shared/models/content.models';
 import { AddComponent } from './add/add.component';
 import { FolderComponent } from "./folder/folder.component";
+import { AlertNameComponent } from "./alert-name/alert-name.component";
 
 @Component({
     selector: 'app-bag',
     standalone: true,
     templateUrl: './bag.component.html',
     styleUrl: './bag.component.scss',
-    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent]
+    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent]
 })
 export class BagComponent implements AfterViewInit {
 

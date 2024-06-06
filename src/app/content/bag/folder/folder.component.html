@@ -1,6 +1,37 @@
-<div class="folder">
-    <div class="logo"><i class="fa-regular fa-folder-closed"></i></div>
-    <div class="name">{{ name }}</div>
-    <button class="info"><i class="fa-solid fa-caret-right"></i></button>
-    <button class="open"><i class="fa-solid fa-angle-right"></i></button>
+<div class="folder" [class.details-active]="detailsActive">
+    <div class="main-wrapper">
+        <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-folder-closed"></i></div>
+        <div class="name" (click)="toggleDetails()">{{ name }}</div>
+        <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
+        <button class="open"><i class="fa-solid fa-angle-right"></i></button>
+    </div>
+
+    <div class="details">
+        <i class="line fa-solid fa-window-minimize"></i>
+        <h3 class="title">Details:</h3>
+        <div class="name">
+            <p class="value-title">Name: </p>
+            <p class="value">images</p>
+        </div>
+        <div class="directory">
+            <p class="value-title">Directory: </p>
+            <p class="value">/main/images</p>
+        </div>
+        <div class="size">
+            <p class="value-title">Size: </p>
+            <p class="value">20MB</p>
+        </div>
+        <div class="created">
+            <p class="value-title">Created: </p>
+            <p class="value">14.06.2024</p>
+        </div>
+        <button class="change-name">
+            <i class="fa-solid fa-pencil"></i>
+            <p>Change name</p>
+        </button>
+        <button class="delete">
+            <i class="fa-solid fa-trash-can"></i>
+            <p>Delete bag</p>
+        </button>
+    </div>
 </div>

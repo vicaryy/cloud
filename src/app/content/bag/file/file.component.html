@@ -1,6 +1,40 @@
-<div class="file">
-    <div class="logo"><i class="fa-regular fa-file"></i></div>
-    <div class="name">metin2.exe</div>
-    <button class="info"><i class="fa-solid fa-caret-right"></i></button>
-    <button class="download"><i class="fa-solid fa-cloud-arrow-down"></i></button>
+<div class="file" [class.details-active]="detailsActive">
+    <div class="main-wrapper">
+        <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-file"></i></div>
+        <div class="name" (click)="toggleDetails()">metin2.exe</div>
+        <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
+        <button class="download"><i class="fa-solid fa-cloud-arrow-down"></i></button>
+    </div>
+    <div class="details">
+        <i class="line fa-solid fa-window-minimize"></i>
+        <h3 class="title">Details:</h3>
+        <div class="name">
+            <p class="value-title">Name: </p>
+            <p class="value">metin2.exe Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nemo incidunt odit tenetur perferendis eos sapiente! Sit ipsa eos voluptatum! Molestiae similique quibusdam eveniet earum numquam harum eius impedit non accusantium!</p>
+        </div>
+        <div class="size">
+            <p class="value-title">Size: </p>
+            <p class="value">20MB</p>
+        </div>
+        <div class="extension">
+            <p class="value-title">Extension: </p>
+            <p class="value">exe</p>
+        </div>
+        <div class="created">
+            <p class="value-title">Created: </p>
+            <p class="value">14.06.2024</p>
+        </div>
+        <div class="preview">
+            <img src="./assets/images/sample-preview.jpg" alt="" class="photo">
+        </div>
+
+        <button class="change-name">
+            <i class="fa-solid fa-pencil"></i>
+            <p>Change name</p>
+        </button>
+        <button class="delete">
+            <i class="fa-solid fa-trash-can"></i>
+            <p>Delete file</p>
+        </button>
+    </div>
 </div>
