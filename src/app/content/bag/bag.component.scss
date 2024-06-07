@@ -14,6 +14,17 @@
     transition: scale .3s ease-in-out, background-color .3s;
     transform-origin: 50% 50%;
 
+    &.blur {
+
+        .option-bar {
+            filter: blur(1.5px);
+        }
+
+        .files {
+            filter: blur(1.5px);
+        }
+    }
+
     .blur-block {
         position: absolute;
         left: 50%;
@@ -58,6 +69,7 @@
     font-size: 2.5rem;
     color: var(--font-color);
     background-color: var(--option-bar-color);
+
 
     .bag-logo {
         margin-right: 10px;

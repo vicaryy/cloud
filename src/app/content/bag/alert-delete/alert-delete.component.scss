@@ -1,0 +1,49 @@
+.alert-delete {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
+    background-color: white;
+    z-index: 2;
+
+    .text {
+        font-size: 1.35rem;
+        margin-bottom: 12px;
+        margin-left: 1px;
+    }
+
+
+    input {
+        margin-bottom: 6px;
+        padding: 6px 9px;
+        border-radius: 10px;
+        border: 1px solid var(--search-font-color);
+        font-weight: 500;
+        outline: none;
+        transition: background-color .2s;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+
+        button {
+            width: 40%;
+            height: 30px;
+            background-color: var(--alert-button-color);
+            border-radius: 50px;
+            font-weight: 500;
+            transition: background-color .2s;
+
+            &:hover {
+                background-color: var(--alert-button-color-hover);
+            }
+        }
+    }
+}

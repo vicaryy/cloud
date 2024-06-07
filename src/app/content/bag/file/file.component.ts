@@ -1,17 +1,37 @@
-import { Component } from '@angular/core';
-import { AlertNameComponent } from "../alert-name/alert-name.component";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { File } from '../../../shared/models/content.models';
+import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 
 @Component({
     selector: 'app-file',
     standalone: true,
     templateUrl: './file.component.html',
     styleUrl: './file.component.scss',
-    imports: [AlertNameComponent]
+    imports: []
 })
 export class FileComponent {
+    @Input('file') file!: File;
+    @Output('change') change = new EventEmitter<ElementToEdit>();
     detailsActive: boolean = false;
 
     toggleDetails() {
         this.detailsActive = !this.detailsActive;
+    }
+
+    emitChangeName() {
+        this.change.emit({
+            id: this.file.id,
+            name: this.file.name,
+            file: true,
+            changeName: true
+        });
+    }
+
+    emitDelete() {
+        this.change.emit({
+            id: this.file.id,
+            file: true,
+            delete: true
+        })
     }
 }

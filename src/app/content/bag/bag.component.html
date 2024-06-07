@@ -1,19 +1,22 @@
-<div #bag class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)" (mousedown)="onFocus()">
+<div #bagElement class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)" (mousedown)="onFocus()" [class.blur]="alert">
     <div class="option-bar">
         <div class="settings-wrapper">
             <button class="settings"></button>
         </div>
         <div class="bag-logo"><i class="fa-regular fa-folder-open"></i></div>
         <div class="bag-info">
-            <p class="directory"> {{ directory }}</p>
-            <p class="amount">3 folders · 13 files </p>
+            <p class="directory"> {{ bag.getFullDirectory() }}</p>
+            <p class="amount">{{bag.getAmountOfBags()}} bags · {{bag.getAmountOfFiles()}} files </p>
         </div>
         <app-add class="add"></app-add>
     </div>
     <div class="files">
-        <app-folder name="images"></app-folder>
-        <app-folder name="movies"></app-folder>
-        <app-file></app-file>
+        @for (b of bag.bags; track $index) {
+        <app-folder [bag]="b" (change)="displayAlert($event)"></app-folder>
+        }
+        @for (f of bag.files; track $index) {
+        <app-file [file]="f" (change)="displayAlert($event)"></app-file>
+        }
         <div class="empty-file"></div>
     </div>
 
@@ -21,6 +24,12 @@
         <div class="grab" cdkDragHandle><i class="fa-solid fa-grip-lines"></i></div>
     </div>
 
-    <app-alert-name></app-alert-name>
+    <ng-container *ngIf="changeNameAlert">
+        <app-alert-name [element]="elementToEdit" (ok)="alertOk()" (cancel)="alertCancel()"></app-alert-name>
+        <app-modal></app-modal>
+    </ng-container>
+    <ng-container *ngIf="deleteAlert">
+        <app-alert-delete [element]="elementToEdit" (ok)="alertOk()" (cancel)="alertCancel()"></app-alert-delete>
+        <app-modal></app-modal>
+    </ng-container>
 </div>
-

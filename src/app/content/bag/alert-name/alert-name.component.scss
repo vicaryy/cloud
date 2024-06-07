@@ -6,21 +6,27 @@
     display: flex;
     flex-direction: column;
     width: 70%;
-    padding: 15px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
     background-color: white;
+    z-index: 2;
 
     .text {
-        font-size: 1.4rem;
-        margin-bottom: 8px;
+        font-size: 1.35rem;
+        margin-bottom: 12px;
+        margin-left: 1px;
     }
 
 
     input {
-        margin-bottom: 10px;
-        padding: 5px 10px;
+        margin-bottom: 6px;
+        padding: 6px 9px;
+        border-radius: 10px;
+        border: 1px solid var(--search-font-color);
+        font-weight: 500;
         outline: none;
+        transition: background-color .2s;
     }
 
     .buttons {
@@ -28,10 +34,16 @@
         justify-content: space-between;
 
         button {
-            width: 30%;
+            width: 40%;
             height: 30px;
-            background-color: gray;
+            background-color: var(--alert-button-color);
             border-radius: 50px;
+            font-weight: 500;
+            transition: background-color .2s;
+
+            &:hover {
+                background-color: var(--alert-button-color-hover);
+            }
         }
     }
 }

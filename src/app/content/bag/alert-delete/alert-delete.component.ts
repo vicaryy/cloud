@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 
 @Component({
   selector: 'app-alert-delete',
@@ -8,5 +9,16 @@ import { Component } from '@angular/core';
   styleUrl: './alert-delete.component.scss'
 })
 export class AlertDeleteComponent {
+    @Input('element') element!: ElementToEdit;
+    @Output('ok') ok = new EventEmitter<ElementToEdit>();
+    @Output('cancel') cancel = new EventEmitter<void>();
 
+
+    onOk() {
+        this.ok.emit(this.element);
+    }
+
+    onCancel() {
+        this.cancel.emit();
+    }
 }

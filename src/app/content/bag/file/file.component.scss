@@ -73,9 +73,12 @@
         }
 
         .name {
+            overflow: hidden;
             flex-grow: 1;
             padding: 20px 0;
             user-select: none;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         .info {
@@ -100,7 +103,7 @@
 
             i {
                 width: 25px;
-                font-size: 1.9rem;
+                font-size: 1.7rem;
                 transition: transform .6s;
             }
         }
@@ -142,7 +145,7 @@
         .extension,
         .created {
             display: flex;
-            margin-bottom: 3px;
+            margin-bottom: 1px;
             font-size: 1.3rem;
             color: var(--search-font-color);
 
@@ -161,6 +164,12 @@
             overflow: scroll;
             max-height: 30px;
             margin-bottom: 5px;
+        }
+
+        .created {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
 
@@ -232,7 +241,7 @@
     }
 
     .details {
-        height: 410px;
+        height: 390px;
         transition: height .5s;
 
     }

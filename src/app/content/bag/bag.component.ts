@@ -5,23 +5,31 @@ import { Bag, File } from '../../shared/models/content.models';
 import { AddComponent } from './add/add.component';
 import { FolderComponent } from "./folder/folder.component";
 import { AlertNameComponent } from "./alert-name/alert-name.component";
+import { ModalComponent } from "../../shared/modal/modal.component";
+import { CommonModule } from '@angular/common';
+import { ElementToEdit } from '../../shared/interfaces/alert-interfaces';
+import { AlertDeleteComponent } from "./alert-delete/alert-delete.component";
 
 @Component({
     selector: 'app-bag',
     standalone: true,
     templateUrl: './bag.component.html',
     styleUrl: './bag.component.scss',
-    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent]
+    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, ModalComponent, CommonModule, AlertDeleteComponent]
 })
 export class BagComponent implements AfterViewInit {
 
-    @Input() directory!: string;
-    @Input() bags!: Bag[];
-    @Input() files!: File[];
+    @Input('bag') bag!: Bag;
     @Input() x!: any;
     @Input() y!: any;
     @Output('focus') focus = new EventEmitter<HTMLElement>();
-    @ViewChild("bag") bagElement!: ElementRef;
+    @Output('editElement') editElement = new EventEmitter<ElementToEdit>();
+    @ViewChild("bagElement") bagElement!: ElementRef;
+    alert: boolean = false;
+    changeNameAlert: boolean = false;
+    deleteAlert: boolean = false;
+    elementToEdit!: ElementToEdit;
+
 
     onDragEnd(event: CdkDragEnd) {
         this.setTransformOriginAfterDragEnd(event.dropPoint.x, event.dropPoint.y);
@@ -40,5 +48,29 @@ export class BagComponent implements AfterViewInit {
 
     onFocus() {
         this.focus.emit(this.bagElement.nativeElement);
+    }
+
+    displayAlert(event: ElementToEdit) {
+        this.alert = true;
+        if (event.changeName)
+            this.changeNameAlert = true;
+        if (event.delete)
+            this.deleteAlert = true;
+        this.elementToEdit = event;
+    }
+
+    alertOk() {
+        this.editElement.emit(this.elementToEdit);
+        this.disableAlerts();
+    }
+
+    alertCancel() {
+        this.disableAlerts();
+    }
+
+    disableAlerts() {
+        this.alert = false;
+        this.changeNameAlert = false;
+        this.deleteAlert = false;
     }
 }

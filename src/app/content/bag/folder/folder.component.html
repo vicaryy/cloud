@@ -1,7 +1,7 @@
 <div class="folder" [class.details-active]="detailsActive">
     <div class="main-wrapper">
         <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-folder-closed"></i></div>
-        <div class="name" (click)="toggleDetails()">{{ name }}</div>
+        <div class="name" (click)="toggleDetails()">{{ bag.name }}</div>
         <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
         <button class="open"><i class="fa-solid fa-angle-right"></i></button>
     </div>
@@ -11,25 +11,33 @@
         <h3 class="title">Details:</h3>
         <div class="name">
             <p class="value-title">Name: </p>
-            <p class="value">images</p>
+            <p class="value">{{ bag.name }}</p>
         </div>
         <div class="directory">
             <p class="value-title">Directory: </p>
-            <p class="value">/main/images</p>
+            <p class="value">{{ bag.directory }}</p>
         </div>
         <div class="size">
             <p class="value-title">Size: </p>
-            <p class="value">20MB</p>
+            <p class="value">{{bag.size}}</p>
+        </div>
+        <div class="bags">
+            <p class="value-title">Bags: </p>
+            <p class="value">{{bag.getAmountOfBags()}}</p>
+        </div>
+        <div class="files">
+            <p class="value-title">Files: </p>
+            <p class="value">{{bag.getAmountOfFiles()}}</p>
         </div>
         <div class="created">
             <p class="value-title">Created: </p>
-            <p class="value">14.06.2024</p>
+            <p class="value">{{bag.create}}</p>
         </div>
-        <button class="change-name">
+        <button class="change-name" (click)="emitChangeName()">
             <i class="fa-solid fa-pencil"></i>
             <p>Change name</p>
         </button>
-        <button class="delete">
+        <button class="delete" (click)="emitDelete()">
             <i class="fa-solid fa-trash-can"></i>
             <p>Delete bag</p>
         </button>
