@@ -1,9 +1,13 @@
 <div class="content">
     <app-search></app-search>
     <ng-container *ngFor="let b of bags; index as i">
-        <app-bag #bag *ngIf="i === 0" [bag]="b" [x]="100" [y]="250"
-            (focus)="onFocusEvent($event)" (editElement)="onEdit($event)"></app-bag>
-        <app-bag #bag *ngIf="i !== 0" [bag]="b" [x]="310 * i + 100" [y]="250"
-            (focus)="onFocusEvent($event)"></app-bag>
+        <app-bag #bag *ngIf="i === 0" [bag]="b" [x]="100" [y]="250" (focus)="onFocusEvent($event)"
+            (info)="onInfo($event)"></app-bag>
+        <app-bag #bag *ngIf="i !== 0" [bag]="b" [x]="310 * i + 100" [y]="250" (focus)="onFocusEvent($event)"
+            (info)="onInfo($event)"></app-bag>
     </ng-container>
+
+    @if (info) {
+    <app-info [info]="info"></app-info>
+    }
 </div>

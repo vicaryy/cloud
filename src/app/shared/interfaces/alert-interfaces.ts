@@ -1,6 +1,6 @@
 export interface ElementToEdit {
     id: number;
-    name?: string;
+    name: string;
     newName?: string;
     file?: boolean;
     bag?: boolean;

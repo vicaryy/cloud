@@ -11,22 +11,23 @@
     box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
     background-color: white;
     z-index: 2;
+    transform: translate3d(0px, 30px, 0px);
+    opacity: 0;
+    animation: slide .4s forwards;
 
     .text {
         font-size: 1.35rem;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         margin-left: 1px;
     }
 
+    .warning {
+        font-size: 1.3rem;
+        margin-bottom: 5px;
 
-    input {
-        margin-bottom: 6px;
-        padding: 6px 9px;
-        border-radius: 10px;
-        border: 1px solid var(--search-font-color);
-        font-weight: 500;
-        outline: none;
-        transition: background-color .2s;
+        span {
+            font-weight: 500;
+        }
     }
 
     .buttons {
@@ -45,5 +46,16 @@
                 background-color: var(--alert-button-color-hover);
             }
         }
+
+        .delete {
+            color: var(--add-button-color);
+        }
+    }
+}
+
+@keyframes slide {
+    to {
+        transform: translate3d(0px, 0px, 0px);
+        opacity: 1;
     }
 }

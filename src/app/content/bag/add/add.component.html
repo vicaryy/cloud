@@ -9,8 +9,8 @@
             <label for="file" class="file-upload"><i class="fa-regular fa-file"></i>
                 <p>new file</p>
             </label>
-            <input type="file" id="file" class="add-file">
-            <button class="add-folder"><i class="fa-regular fa-folder"></i>
+            <input #file type="file" id="file" class="add-file" (change)="emitAddFile()">
+            <button class="add-folder" (click)="emitAddBag()"><i class="fa-regular fa-folder"></i>
                 <p>new bag</p>
             </button>
         </div>

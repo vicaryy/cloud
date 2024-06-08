@@ -1,0 +1,11 @@
+<div class="info" [class.success]="info.success" [class.error]="info.error">
+    <p class="text">{{info.text}}</p>
+    <div class="logo">
+        @if (info.error) {
+            <i class="error-logo fa-solid fa-circle-exclamation"></i>
+        }
+        @if (info.success) {
+            <i class="success-logo fa-solid fa-circle-check"></i>
+        }
+    </div>
+</div>

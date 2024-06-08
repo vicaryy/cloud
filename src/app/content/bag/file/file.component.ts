@@ -30,6 +30,7 @@ export class FileComponent {
     emitDelete() {
         this.change.emit({
             id: this.file.id,
+            name: this.file.name,
             file: true,
             delete: true
         })

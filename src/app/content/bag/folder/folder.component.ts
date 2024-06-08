@@ -32,6 +32,7 @@ export class FolderComponent {
     emitDelete() {
         this.change.emit({
             id: this.bag.id,
+            name: this.bag.name,
             bag: true,
             delete: true
         })

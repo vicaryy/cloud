@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ServerResponse } from '../interfaces/http-interfaces';
+import { Bag } from '../models/content.models';
 
 @Injectable({
     providedIn: 'root'
 })
 export class BagService {
-
     highestIndex: number = 1;
 
     constructor() { }
@@ -19,6 +19,13 @@ export class BagService {
 
     unfocusElement(element: HTMLElement) {
         element.style.backgroundColor = `var(--bag-color)`;
+    }
+
+
+    addNewBag(name: string, directory: string): Observable<ServerResponse<Bag>> {
+        let bag = new Bag(Math.floor(Math.random() * 1000) + 1, name, directory, new Date(), "0MB", [], []);
+        const sub = new BehaviorSubject<ServerResponse<Bag>>({ status: 200, data: bag });
+        return sub;
     }
 
 

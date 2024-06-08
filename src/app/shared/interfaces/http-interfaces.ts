@@ -4,3 +4,8 @@ export interface ServerResponse<T> {
     data?: T;
     error?: any;
 }
+
+export interface NewBagRequest {
+    name: string,
+    directory: string
+}

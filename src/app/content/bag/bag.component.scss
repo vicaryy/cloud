@@ -25,7 +25,7 @@
         }
     }
 
-    .blur-block {
+    .grab-block {
         position: absolute;
         left: 50%;
         bottom: 0%;
@@ -53,7 +53,7 @@
     &:hover {
         scale: 1.02;
 
-        .blur-block {
+        .grab-block {
             translate: -50% 0%;
             transition: translate .2s;
         }
