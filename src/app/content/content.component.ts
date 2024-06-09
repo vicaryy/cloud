@@ -9,6 +9,7 @@ import { ElementToEdit } from '../shared/interfaces/alert-interfaces';
 import { Observable } from 'rxjs';
 import { InfoComponent } from "../shared/components/info/info.component";
 import { Info } from '../shared/models/alert.models';
+import { FileState } from '../shared/enums/content.enums';
 
 @Component({
     selector: 'app-content',
@@ -25,16 +26,21 @@ export class ContentComponent implements OnInit {
     constructor(private bagService: BagService) { }
 
     ngOnInit(): void {
-        let bagFile1 = new File(55, 'photo-ac123-445.png', ".png", "5MB", new Date('2024-06-07T12:30:00'));
-        let bagFile2 = new File(57, 'wczasy.png', ".png", "15MB", new Date('2024-06-07T12:30:00'));
-        let bagFile3 = new File(62, 'selfie.jpg', ".jpg", "2MB", new Date('2024-06-07T12:30:00'));
-        let bagFile4 = new File(99, 'zoo.jpg', ".jpg", "8MB", new Date('2024-06-07T12:30:00'));
+        let bagFile1 = new File(55, 'photo-ac123-445.png', ".png", "5MB", new Date('2024-06-07T12:30:00'), FileState.READY);
+        let bagFile2 = new File(57, 'wczasy.png', ".png", "15MB", new Date('2024-06-07T12:30:00'), FileState.READY);
+        let bagFile3 = new File(62, 'selfie.jpg', ".jpg", "2MB", new Date('2024-06-07T12:30:00'), FileState.READY);
+        let bagFile4 = new File(99, 'zoo.jpg', ".jpg", "8MB", new Date('2024-06-07T12:30:00'), FileState.READY);
 
-        let mainBagFile1 = new File(10, 'metin2.exe', ".exe", "500MB", new Date('2024-06-07T12:30:00'));
-        let mainBagFile2 = new File(11, 'photo-ac123-445.png', ".png", "5MB", new Date('2024-06-07T12:30:00'));
-        let mainBagFile3 = new File(13, 'harry potter i wiezien azkabanu.mov', ".mov", "2GB", new Date('2024-06-07T12:30:00'));
-        let bag1: Bag = new Bag(5, "images", "/", new Date('2024-06-07T12:30:00'), "10MB", [], [bagFile1, bagFile2, bagFile3, bagFile4]);
-        let mainBag: Bag = new Bag(1, 'Main Bag', "", new Date('2024-06-07T12:30:00'), "50MB", [bag1], [mainBagFile1, mainBagFile2, mainBagFile3]);
+        // let mainBagFile1 = new File(10, 'metin2.exe', ".exe", "500MB", new Date('2024-06-07T12:30:00'), FileState.ENCRYPT);
+        // let mainBagFile2 = new File(11, 'photo-ac123-445.png', ".png", "5MB", new Date('2024-06-07T12:30:00'), FileState.DONE);
+        // let mainBagFile1 = new File(13, 'harry potter i wiezien azkabanu.mov', ".mov", "2GB", new Date('2024-06-07T12:30:00'), FileState.DECRYPT);
+        // let mainBagFile2 = new File(13, 'harry potter i wiezien azkabanu.mov', ".mov", "2GB", new Date('2024-06-07T12:30:00'), FileState.ENCRYPT);
+        // let mainBagFile3 = new File(13, 'harry potter i wiezien azkabanu.mov', ".mov", "2GB", new Date('2024-06-07T12:30:00'), FileState.UPLOAD);
+        // let mainBagFile4 = new File(13, 'harry potter i wiezien azkabanu.mov', ".mov", "2GB", new Date('2024-06-07T12:30:00'), FileState.DOWNLOAD);
+        // let mainBagFile5 = new File(13, 'harry potter i wiezien azkabanu.mov', ".mov", "2GB", new Date('2024-06-07T12:30:00'), FileState.DONE);
+        // let mainBagFile6 = new File(13, 'harry potter i wiezien azkabanu.mov', ".mov", "2GB", new Date('2024-06-07T12:30:00'), FileState.READY);
+        // let bag1: Bag = new Bag(5, "images", "/", new Date('2024-06-07T12:30:00'), "10MB", [], [bagFile1, bagFile2, bagFile3, bagFile4]);
+        let mainBag: Bag = new Bag(1, 'Main Bag', "", new Date('2024-06-07T12:30:00'), "50MB", [], []);
 
         this.bags.push(mainBag);
     }

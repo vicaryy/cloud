@@ -1,3 +1,5 @@
+import { FileState } from "../enums/content.enums";
+
 export class Bag {
     constructor(
         public id: number,
@@ -24,10 +26,12 @@ export class Bag {
 }
 
 export class File {
+    static State: any;
     constructor(
         public id: number,
         public name: string,
         public extension: string,
         public size: string,
-        public create: Date) { }
+        public create: Date,
+        public state: FileState) { }
 }

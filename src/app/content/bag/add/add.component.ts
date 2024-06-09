@@ -12,22 +12,25 @@ export class AddComponent {
     active: boolean = false;
     @ViewChild('file') file!: ElementRef;
 
-    @Output('addFile') addFile = new EventEmitter<void>();
+    @Output('addFile') addFile = new EventEmitter<File>();
     @Output('addBag') addBag = new EventEmitter<void>();
 
 
     emitAddBag() {
-        this.active = false;
+        this.toggleBlock();
         this.addBag.emit();
     }
 
+    toggleBlock() {
+        this.active = !this.active;
+    }
+
     emitAddFile() {
+        this.toggleBlock();
         let fileInput = this.file.nativeElement as HTMLInputElement;
         if (!fileInput.files) {
             return;
         }
-
-        console.log(fileInput.files[0]);
-
+        this.addFile.emit(fileInput.files[0]);
     }
 }

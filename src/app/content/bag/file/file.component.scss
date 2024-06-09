@@ -50,15 +50,6 @@
                     transition: opacity .3s, transform .3s;
                 }
             }
-
-            .download {
-
-                i {
-                    transform: translate3d(0px, -5px, 0px) scale(1.1);
-                    // transform: translate3d(0px, -5px, 0px) scale(0.9);
-                }
-            }
-
         }
 
         .logo {
@@ -92,6 +83,21 @@
             }
         }
 
+
+        .state {
+            min-width: 65px;
+            max-width: 65px;
+            min-height: 60px;
+            max-height: 60px;
+        }
+
+    }
+
+
+
+
+    .main-wrapper.done,
+    .main-wrapper.ready {
         .download {
             padding: 20px;
             border-radius: 50px;
@@ -108,6 +114,182 @@
             }
         }
     }
+
+    .main-wrapper.ready {
+        &:hover {
+            .download {
+                i {
+                    transform: translate3d(0px, -5px, 0px) scale(1.1);
+                }
+            }
+        }
+    }
+
+    .main-wrapper.done {
+
+        .name {
+            font-weight: 500;
+        }
+
+        .download {
+            position: relative;
+            border-radius: 50px;
+            transition: background-color .2s;
+
+            &:hover {
+                background-color: rgba(128, 128, 128, .08);
+            }
+
+            i {
+                width: 25px;
+                font-size: 1.8rem;
+                translate: -.5px -.5px;
+                transition: transform .6s;
+            }
+
+            span {
+                position: absolute;
+                top: 81.5%;
+                left: 49.7%;
+                translate: -50% -80%;
+                font-size: .8rem;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .main-wrapper.encrypt,
+    .main-wrapper.decrypt {
+
+        // .name {
+        //     font-weight: 500;
+        // }
+
+        .lds-ring,
+        .lds-ring div {
+            box-sizing: border-box;
+        }
+
+        .lds-ring {
+            display: inline-block;
+            position: relative;
+            // padding: 29px 32.5px;
+
+            i {
+                position: absolute;
+                top: 49%;
+                left: 50%;
+                translate: -50% -50%;
+                font-size: 1.2rem;
+            }
+
+            .description {
+                position: absolute;
+                bottom: 0%;
+                left: 50%;
+                translate: -50% -55%;
+                font-size: .8rem;
+                font-weight: 600;
+            }
+        }
+
+        .lds-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            top: 53.5%;
+            left: 47%;
+            translate: -75% -90%;
+            width: 26px;
+            height: 26px;
+            margin: 8px;
+            border: 2.5px solid var(--font-color-third);
+            border-radius: 50%;
+            animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-color: var(--font-color-third) transparent transparent transparent;
+        }
+
+        .lds-ring div:nth-child(1) {
+            animation-delay: -0.45s;
+        }
+
+        .lds-ring div:nth-child(2) {
+            animation-delay: -0.3s;
+        }
+
+        .lds-ring div:nth-child(3) {
+            animation-delay: -0.15s;
+        }
+
+        @keyframes lds-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    }
+
+    .main-wrapper.upload,
+    .main-wrapper.download {
+
+        // .name {
+        //     font-weight: 500;
+        // }
+
+        .progress-wrapper {
+            position: relative;
+            // min-width: 66.3px;
+            // min-height: 61.5px;
+            border-radius: 50px;
+
+            .description {
+                position: absolute;
+                bottom: 0%;
+                left: 50%;
+                translate: -50% -55%;
+                font-size: .8rem;
+                font-weight: 600;
+            }
+
+            .progressbar {
+                --percentage: var(--value);
+                width: 25px;
+                aspect-ratio: 1;
+                border-radius: 50%;
+                position: absolute;
+                top: 49%;
+                left: 49%;
+                translate: -50% -50%;
+                overflow: hidden;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: conic-gradient(var(--font-color-third) calc(var(--percentage) * 1%), #adf 0);
+                    mask: radial-gradient(white 55%, transparent 0);
+                    mask-mode: alpha;
+                    -webkit-mask: radial-gradient(#0000 55%, #000 0);
+                    -webkit-mask-mode: alpha;
+                }
+
+                i {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    translate: -50% -55%;
+                    font-size: 1.1rem;
+                }
+            }
+        }
+    }
+
 
     .details {
         overflow: hidden;
@@ -193,6 +375,7 @@
             p {
                 margin-left: 10px;
             }
+
             i {
                 width: 10px;
                 margin-top: 1px;

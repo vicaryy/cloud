@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { Bag } from '../../shared/models/content.models';
+import { Bag, File as MyFile } from '../../shared/models/content.models';
 import { AddComponent } from './add/add.component';
 import { FolderComponent } from "./folder/folder.component";
 import { AlertNameComponent } from "./alert-name/alert-name.component";
@@ -13,6 +13,7 @@ import { BagService } from '../../shared/services/bag.service';
 import { BlurBlockComponent } from "../../shared/components/blur-block/blur-block.component";
 import { InfoComponent } from "../../shared/components/info/info.component";
 import { Info } from '../../shared/models/alert.models';
+import { FileState } from '../../shared/enums/content.enums';
 
 @Component({
     selector: 'app-bag',
@@ -22,11 +23,6 @@ import { Info } from '../../shared/models/alert.models';
     imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent]
 })
 export class BagComponent implements AfterViewInit {
-    onAddFile() {
-        throw new Error('Method not implemented.');
-    }
-
-
     @Input('bag') bag!: Bag;
     @Input() x!: any;
     @Input() y!: any;
@@ -40,6 +36,59 @@ export class BagComponent implements AfterViewInit {
     elementToEdit!: ElementToEdit;
 
     constructor(private bagService: BagService) { }
+
+    onAddFile(file: File) {
+
+        console.log(file);
+
+        let newFile: MyFile = new MyFile(Math.floor(Math.random() * 1000) + 1, file.name, ".xd", file.size.toString(), new Date(), FileState.ENCRYPT);
+        this.bag.files.push(newFile);
+
+        let s = "siema";
+        console.log("robie enkrypcje: " + s);
+
+        const crypto = window.crypto.subtle;
+        let keyPromise = crypto.generateKey({
+            name: "AES-GCM",
+            length: 128
+        }, true, ["encrypt", "decrypt"]);
+
+        keyPromise.then(e =>
+            crypto.exportKey("raw", e)
+                .then(ee => {
+                    let exportedKeyBase64 = this.arrayBufferToBase64(ee);
+                    console.log("Eksportowany klucz:", exportedKeyBase64);
+                })
+        );
+
+        // setTimeout(() => {
+        //     newFile.state = FileState.UPLOAD;
+
+        // }, 2000);
+        // setTimeout(() => {
+        //     newFile.state = FileState.READY;
+
+        // }, 4000);
+        // setTimeout(() => {
+        //     newFile.state = FileState.DOWNLOAD;
+
+        // }, 6000);
+        // setTimeout(() => {
+        //     newFile.state = FileState.DONE;
+
+        // }, 8000);
+
+    }
+
+    arrayBufferToBase64(buffer: ArrayBuffer) {
+        let binary = '';
+        let bytes = new Uint8Array(buffer);
+        let len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
 
 
     onDelete($event: ElementToEdit) {
@@ -180,5 +229,10 @@ export class BagComponent implements AfterViewInit {
 
     emitInfo(info: Info) {
         this.info.emit(info);
+    }
+
+
+    trackById(index: number, file: any): any {
+        return file.id;
     }
 }
