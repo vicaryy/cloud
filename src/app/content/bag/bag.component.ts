@@ -14,6 +14,8 @@ import { BlurBlockComponent } from "../../shared/components/blur-block/blur-bloc
 import { InfoComponent } from "../../shared/components/info/info.component";
 import { Info } from '../../shared/models/alert.models';
 import { FileState } from '../../shared/enums/content.enums';
+import { CryptoService } from '../../shared/services/crypto.service';
+import { BlobUtils } from '../../shared/utils/blob.utils';
 
 @Component({
     selector: 'app-bag',
@@ -35,61 +37,40 @@ export class BagComponent implements AfterViewInit {
     newBagAlert: boolean = false;
     elementToEdit!: ElementToEdit;
 
-    constructor(private bagService: BagService) { }
+    constructor(private bagService: BagService, private crypto: CryptoService) { }
 
-    onAddFile(file: File) {
-
-        console.log(file);
-
+    async onAddFile(file: File) {
         let newFile: MyFile = new MyFile(Math.floor(Math.random() * 1000) + 1, file.name, ".xd", file.size.toString(), new Date(), FileState.ENCRYPT);
         this.bag.files.push(newFile);
 
-        let s = "siema";
-        console.log("robie enkrypcje: " + s);
+        const slicedBlob: Blob[] = this.sliceBlob(file);
+        const encryptedBlobs: Blob[] = await this.encryptBlobs(slicedBlob);
+        newFile.state = FileState.UPLOAD;
 
-        const crypto = window.crypto.subtle;
-        let keyPromise = crypto.generateKey({
-            name: "AES-GCM",
-            length: 128
-        }, true, ["encrypt", "decrypt"]);
-
-        keyPromise.then(e =>
-            crypto.exportKey("raw", e)
-                .then(ee => {
-                    let exportedKeyBase64 = this.arrayBufferToBase64(ee);
-                    console.log("Eksportowany klucz:", exportedKeyBase64);
-                })
-        );
-
-        // setTimeout(() => {
-        //     newFile.state = FileState.UPLOAD;
-
-        // }, 2000);
-        // setTimeout(() => {
-        //     newFile.state = FileState.READY;
-
-        // }, 4000);
-        // setTimeout(() => {
-        //     newFile.state = FileState.DOWNLOAD;
-
-        // }, 6000);
-        // setTimeout(() => {
-        //     newFile.state = FileState.DONE;
-
-        // }, 8000);
-
-    }
-
-    arrayBufferToBase64(buffer: ArrayBuffer) {
-        let binary = '';
-        let bytes = new Uint8Array(buffer);
-        let len = bytes.byteLength;
-        for (let i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
+        for (const b of encryptedBlobs) {
+            const response = this.bagService.addNewFile(b);
         }
-        return window.btoa(binary);
+
     }
 
+    sliceBlob(blob: Blob): Blob[] {
+        console.log("Kroje na kawałki plik...");
+        const slicedBlob: Blob[] = BlobUtils.sliceBlob(blob);
+        console.log("Pokroiłem na kawałki, ilość: " + slicedBlob.length);
+        return slicedBlob;
+    }
+
+    async encryptBlobs(slicedBlobs: Blob[]): Promise<Blob[]> {
+        const encryptedBlobs: Blob[] = [];
+        console.log("Szyfruję kawałki...");
+        for (let i = 0; i < slicedBlobs.length; i++) {
+            const arr = await this.crypto.encrypt(await slicedBlobs[i].arrayBuffer());
+            encryptedBlobs.push(new Blob([arr]));
+            console.log("Pozostało: " + (slicedBlobs.length - i) + " kawałków");
+        }
+        console.log("Zaszyfrowałem wszystkie kawałki.");
+        return encryptedBlobs;
+    }
 
     onDelete($event: ElementToEdit) {
         this.disableAlerts();
