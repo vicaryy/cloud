@@ -16,6 +16,8 @@ import { Info } from '../../shared/models/alert.models';
 import { FileState } from '../../shared/enums/content.enums';
 import { CryptoService } from '../../shared/services/crypto.service';
 import { BlobUtils } from '../../shared/utils/blob.utils';
+import { firstValueFrom } from 'rxjs';
+import { FilePart, NewFileRequest } from '../../shared/interfaces/http-interfaces';
 
 @Component({
     selector: 'app-bag',
@@ -40,17 +42,36 @@ export class BagComponent implements AfterViewInit {
     constructor(private bagService: BagService, private crypto: CryptoService) { }
 
     async onAddFile(file: File) {
-        let newFile: MyFile = new MyFile(Math.floor(Math.random() * 1000) + 1, file.name, ".xd", file.size.toString(), new Date(), FileState.ENCRYPT);
+        let newFile: MyFile = new MyFile(Math.floor(Math.random() * 1000) + 1, file.name, BlobUtils.getExtensionFromName(file.name), file.size.toString(), new Date(), FileState.ENCRYPT);
         this.bag.files.push(newFile);
+        console.log(newFile);
 
         const slicedBlob: Blob[] = this.sliceBlob(file);
         const encryptedBlobs: Blob[] = await this.encryptBlobs(slicedBlob);
         newFile.state = FileState.UPLOAD;
 
-        for (const b of encryptedBlobs) {
-            const response = this.bagService.addNewFile(b);
-        }
+        const newFileRequest: NewFileRequest = { name: file.name, extension: BlobUtils.getExtensionFromName(file.name), size: file.size, parts: [] };
+        const fileParts: FilePart[] = await this.sendBlobs(encryptedBlobs);
+        newFileRequest.parts = fileParts;
+        // const serverResponse = await firstValueFrom(this.bagService.sendNewFileToServer(newFileRequest));
+        // if (serverResponse.status !== 200)
+        //     throw new Error("asd");
+        // newFile.id = serverResponse.data?.id!;
+        // newFile.size = serverResponse.data?.size!;
+        // newFile.create = serverResponse.data?.create!;
+        newFile.state = FileState.READY;
+    }
 
+    async sendBlobs(blobs: Blob[]): Promise<FilePart[]> {
+        const fileParts: FilePart[] = [];
+        for (let i = 0; i < blobs.length; i++) {
+            const response = await firstValueFrom(this.bagService.sendBlobToTelegram(blobs[i]));
+            if (!response.ok)
+                throw new Error("nwm");
+            const filePart: FilePart = { order: (i + 1), file_id: response.result.document.file_id };
+            fileParts.push(filePart);
+        }
+        return fileParts;
     }
 
     sliceBlob(blob: Blob): Blob[] {

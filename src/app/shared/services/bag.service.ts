@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { ServerResponse } from '../interfaces/http-interfaces';
+import { FileResponse, NewFileRequest, ServerResponse } from '../interfaces/http-interfaces';
 import { Bag } from '../models/content.models';
 import { HttpClient } from '@angular/common/http';
-import { Message } from '../interfaces/telegram-interfaces';
+import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
 
 @Injectable({
     providedIn: 'root'
@@ -33,11 +33,17 @@ export class BagService {
         return sub;
     }
 
-    addNewFile(file: Blob) {
+    sendBlobToTelegram(file: Blob): Observable<TelegramResponse<Message>> {
         const formData: FormData = new FormData();
         formData.append("document", file);
         formData.append("chat_id", this.userId);
-        return this.http.post(this.url + "/sendDocument", formData).subscribe(e => console.log(e));
+        return this.http.post<TelegramResponse<Message>>(this.url + "/sendDocument", formData);
+    }
+
+    sendNewFileToServer(newFileRequest: NewFileRequest): Observable<ServerResponse<FileResponse>> {
+        // return this.http.post<ServerResponse<FileResponse>>()
+        const sub = new BehaviorSubject({ status: 200 });
+        return sub;
     }
 
 

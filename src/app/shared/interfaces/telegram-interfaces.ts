@@ -1,6 +1,6 @@
-export interface UpdateResponse {
+export interface TelegramResponse<T> {
     ok: boolean;
-    result: Update[];
+    result: T;
 }
 
 export interface Update {
@@ -12,6 +12,7 @@ export interface Message {
     message_id: number;
     from: User;
     text: string;
+    document: Document;
 }
 
 export interface User {
@@ -32,4 +33,8 @@ export interface SendDocument {
 
 export interface InputFile {
     file: File;
+}
+
+export interface Document {
+    file_id: string;
 }

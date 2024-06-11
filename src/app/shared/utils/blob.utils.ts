@@ -18,4 +18,15 @@ export class BlobUtils {
         }
         return slicedBlob;
     }
+
+    static getExtensionFromName(blobName: string): string {
+        let extension = 'unknown';
+        for (let i = blobName.length - 3; i > blobName.length - 6 && i > 0; i--) {
+            let char = blobName.charAt(i);
+            if (blobName.charAt(i) === '.') {
+                extension = blobName.slice(i, blobName.length);
+            }
+        }
+        return extension;
+    }
 }
