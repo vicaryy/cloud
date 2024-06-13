@@ -12,7 +12,7 @@
     </div>
     <div class="files">
         <ng-container *ngFor="let b of bag.bags; trackBy: trackById">
-            <app-folder [bag]="b" (change)="displayAlert($event)"></app-folder>
+            <app-folder [bag]="b" (change)="displayAlert($event)" (open)="onOpen($event)"></app-folder>
         </ng-container>
         <ng-container *ngFor="let f of bag.files; trackBy: trackById">
             <app-file [file]="f" (change)="displayAlert($event)"></app-file>

@@ -1,5 +1,20 @@
 import { FileState } from "../enums/content.enums";
 
+export class User {
+    constructor(
+        public id: number,
+        public email: string,
+        public bags: Bag[]) { }
+
+    static fromJSON(json: User): User {
+        return new User(
+            json.id,
+            json.email,
+            json.bags.map(e => Bag.fromJSON(e))
+        );
+    }
+}
+
 export class Bag {
     constructor(
         public id: number,
@@ -9,6 +24,18 @@ export class Bag {
         public size: string,
         public bags: Bag[],
         public files: File[]) { }
+
+    static fromJSON(json: Bag): Bag {
+        return new Bag(
+            json.id,
+            json.name,
+            json.directory,
+            json.create,
+            json.size,
+            json.bags.map(e => Bag.fromJSON(e)),
+            json.files.map(e => File.fromJSON(e))
+        );
+    }
 
     getFullDirectory(): string {
         if (this.name === 'Main Bag')
@@ -34,4 +61,15 @@ export class File {
         public size: string,
         public create: Date,
         public state: FileState) { }
+
+        static fromJSON(json: File) {
+            return new File(
+                json.id,
+                json.name,
+                json.extension,
+                json.size,
+                json.create,
+                FileState.READY
+            );
+        }
 }

@@ -3,7 +3,7 @@
         <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-folder-closed"></i></div>
         <div class="name" (click)="toggleDetails()">{{ bag.name }}</div>
         <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
-        <button class="open"><i class="fa-solid fa-angle-right"></i></button>
+        <button class="open" (click)="emitOpenFolder()"><i class="fa-solid fa-angle-right"></i></button>
     </div>
 
     <div class="details">

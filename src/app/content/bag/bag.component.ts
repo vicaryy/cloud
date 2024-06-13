@@ -32,6 +32,7 @@ export class BagComponent implements AfterViewInit {
     @Input() y!: any;
     @Output('focus') focus = new EventEmitter<HTMLElement>();
     @Output('info') info = new EventEmitter<Info>();
+    @Output('openBag') openBag = new EventEmitter<Bag>();
     @ViewChild("bagElement") bagElement!: ElementRef;
     alert: boolean = false;
     changeNameAlert: boolean = false;
@@ -40,6 +41,10 @@ export class BagComponent implements AfterViewInit {
     elementToEdit!: ElementToEdit;
 
     constructor(private bagService: BagService, private crypto: CryptoService) { }
+
+    onOpen($event: Bag) {
+        this.openBag.emit($event);
+    }
 
     async onAddFile(file: File) {
         let newFile: MyFile = new MyFile(Math.floor(Math.random() * 1000) + 1, file.name, BlobUtils.getExtensionFromName(file.name), file.size.toString(), new Date(), FileState.ENCRYPT);
