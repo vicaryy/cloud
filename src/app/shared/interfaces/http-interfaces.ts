@@ -5,8 +5,8 @@ export interface ServerResponse<T> {
 }
 
 export interface NewBagRequest {
-    name: string,
-    directory: string
+    id: number,
+    name: string
 }
 
 export interface NewFileRequest {

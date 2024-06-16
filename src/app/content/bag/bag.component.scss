@@ -13,6 +13,9 @@
     box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
     transition: scale .3s ease-in-out, background-color .3s;
     transform-origin: 50% 50%;
+    transform: translate3d(0px, 0, 0);
+    opacity: 1;
+    animation: show .3s;
 
     &.blur {
 
@@ -109,5 +112,16 @@
 
     .empty-file {
         height: 50px;
+    }
+}
+
+@keyframes show {
+    from {
+        transform: translate3d(-100px, 0, 0);
+        opacity: 0;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
     }
 }

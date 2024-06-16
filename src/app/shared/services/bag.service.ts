@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { FileResponse, NewFileRequest, ServerResponse } from '../interfaces/http-interfaces';
+import { FileResponse, NewBagRequest, NewFileRequest, ServerResponse } from '../interfaces/http-interfaces';
 import { Bag } from '../models/content.models';
 import { HttpClient } from '@angular/common/http';
 import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
     providedIn: 'root'
@@ -22,15 +23,18 @@ export class BagService {
         element.style.backgroundColor = `var(--bag-color-focus)`;
     }
 
+    focusOnlyElement(element: HTMLElement) {
+        element.style.backgroundColor = `var(--bag-color-focus)`;
+    }
+
     unfocusElement(element: HTMLElement) {
         element.style.backgroundColor = `var(--bag-color)`;
     }
 
 
-    addNewBag(name: string, directory: string): Observable<ServerResponse<Bag>> {
-        let bag = new Bag(Math.floor(Math.random() * 1000) + 1, name, directory, new Date(), "0MB", [], []);
-        const sub = new BehaviorSubject<ServerResponse<Bag>>({ status: 200, data: bag });
-        return sub;
+    addNewBag(parentId: number, name: string): Observable<ServerResponse<Bag>> {
+        const request: NewBagRequest = {id: parentId, name: name};
+        return this.http.post<ServerResponse<Bag>>(environment.apiUrl + "/api/bag/create", request);
     }
 
     sendBlobToTelegram(file: Blob): Observable<TelegramResponse<Message>> {
@@ -46,11 +50,8 @@ export class BagService {
         return sub;
     }
 
-
-    // todo
     deleteBag(element: ElementToEdit): Observable<ServerResponse<string>> {
-        const sub = new BehaviorSubject({ status: 200 });
-        return sub;
+        return this.http.post<ServerResponse<string>>(environment.apiUrl + "/api/bag/delete/" + element.id, null);
     }
     changeBagName(element: ElementToEdit): Observable<ServerResponse<string>> {
         const sub = new BehaviorSubject({ status: 200 });

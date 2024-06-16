@@ -5,11 +5,8 @@ import { BagService } from '../shared/services/bag.service';
 import { Bag, File, User } from '../shared/models/content.models';
 import { CommonModule } from '@angular/common';
 import { FolderComponent } from "./bag/folder/folder.component";
-import { ElementToEdit } from '../shared/interfaces/alert-interfaces';
-import { Observable } from 'rxjs';
 import { InfoComponent } from "../shared/components/info/info.component";
 import { Info } from '../shared/models/alert.models';
-import { FileState } from '../shared/enums/content.enums';
 import { UserService } from '../shared/services/user.service';
 
 @Component({
@@ -31,12 +28,18 @@ export class ContentComponent implements OnInit {
         this.userService.getUser(7).subscribe(e => {
             this.user = User.fromJSON(e.data!);
             this.bags = this.user.bags;
+            this.bags[0].x = 100;
+            this.bags[0].y = 250;
         });
     }
 
     onFocusEvent($event: HTMLElement) {
         this.unfocusActiveBags();
         this.focusBag($event);
+    }
+
+    onFocusOnlyEvent($event: HTMLElement) {
+        this.bagService.focusOnlyElement($event);
     }
 
 
@@ -52,8 +55,7 @@ export class ContentComponent implements OnInit {
         setTimeout(() => this.info = undefined, 4000);
     }
     onOpenBag($event: Bag) {
-        console.log($event);
-
-        this.bags.push($event);
+        if (!this.bags.find(e => e.id === $event.id))
+            this.bags.push($event);
     }
 }

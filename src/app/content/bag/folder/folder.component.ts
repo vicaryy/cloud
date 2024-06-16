@@ -20,7 +20,6 @@ export class FolderComponent {
     }
 
     emitChangeName() {
-
         this.change.emit({
             id: this.bag.id,
             name: this.bag.name,
@@ -41,4 +40,5 @@ export class FolderComponent {
     emitOpenFolder() {
         this.open.emit(this.bag);
     }
+
 }

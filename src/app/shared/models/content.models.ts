@@ -23,9 +23,16 @@ export class Bag {
         public create: Date,
         public size: string,
         public bags: Bag[],
-        public files: File[]) { }
+        public files: File[],
+        public x?: number,
+        public y?: number
+    ) { }
 
     static fromJSON(json: Bag): Bag {
+        if (!json.bags)
+            json.bags = [];
+        if (!json.files)
+            json.files = [];
         return new Bag(
             json.id,
             json.name,
@@ -40,6 +47,8 @@ export class Bag {
     getFullDirectory(): string {
         if (this.name === 'Main Bag')
             return this.name;
+        if (this.directory === '/')
+            return this.directory + this.name;
         return this.directory + "/" + this.name;
     }
 
@@ -62,14 +71,14 @@ export class File {
         public create: Date,
         public state: FileState) { }
 
-        static fromJSON(json: File) {
-            return new File(
-                json.id,
-                json.name,
-                json.extension,
-                json.size,
-                json.create,
-                FileState.READY
-            );
-        }
+    static fromJSON(json: File) {
+        return new File(
+            json.id,
+            json.name,
+            json.extension,
+            json.size,
+            json.create,
+            FileState.READY
+        );
+    }
 }

@@ -28,12 +28,12 @@ import { FilePart, NewFileRequest } from '../../shared/interfaces/http-interface
 })
 export class BagComponent implements AfterViewInit {
     @Input('bag') bag!: Bag;
-    @Input() x!: any;
-    @Input() y!: any;
     @Output('focus') focus = new EventEmitter<HTMLElement>();
+    @Output('focusOnly') focusOnly = new EventEmitter<HTMLElement>();
     @Output('info') info = new EventEmitter<Info>();
     @Output('openBag') openBag = new EventEmitter<Bag>();
     @ViewChild("bagElement") bagElement!: ElementRef;
+    openedBags: number = 0;
     alert: boolean = false;
     changeNameAlert: boolean = false;
     deleteAlert: boolean = false;
@@ -42,8 +42,68 @@ export class BagComponent implements AfterViewInit {
 
     constructor(private bagService: BagService, private crypto: CryptoService) { }
 
+    deleteBag(element: ElementToEdit) {
+        this.bagService.deleteBag(element)
+            .subscribe(e => {
+                if (e.status !== 200) {
+                    this.emitInfo(Info.getErrorInfo('Error in deleting bag, try again'))
+                    return;
+                }
+                for (let i = 0; i < this.bag.bags.length; i++)
+                    if (element.id === this.bag.bags[i].id)
+                        this.bag.bags.splice(i, 1);
+                this.emitInfo(Info.getSuccessInfo(`Successfully deleted bag ${element.name}`));
+            });
+    }
+
+    createNewBag(name: string) {
+        this.bagService.addNewBag(this.bag.id, name)
+            .subscribe(e => {
+                if (e.status !== 200) {
+                    this.emitInfo(Info.getErrorInfo("Fail in creating bag, try again"));
+                    return;
+                }
+                const responseBag: Bag = Bag.fromJSON(e.data!);
+                this.bag.bags.push(responseBag);
+                this.emitInfo(Info.getSuccessInfo("Successfully created bag"));
+            });
+    }
+
     onOpen($event: Bag) {
+        this.setOpenBagCoords($event);
         this.openBag.emit($event);
+    }
+
+    setOpenBagCoords(bag: Bag) {
+        let transformX: any = this.bagElement.nativeElement.style.transform;
+        if (transformX)
+            transformX = +transformX.split("(")[1].split("px")[0];
+        else
+            transformX = 0;
+
+        let transformY: any = this.bagElement.nativeElement.style.transform;
+        if (transformY)
+            transformY = +transformY.split(", ")[1].split("px")[0];
+        else
+            transformY = 0;
+
+        bag.x = this.bag.x! + 320 + transformX;
+        if (this.openedBags === 0) {
+            bag.y = this.bag.y! + transformY;
+            this.openedBags++;
+        }
+        else if (this.openedBags === 1) {
+            bag.y = this.bag.y! - 30 + transformY;
+            this.openedBags++;
+        }
+        else if (this.openedBags === 2) {
+            bag.y = this.bag.y! + 30 + transformY;
+            this.openedBags = 0;
+        }
+    }
+
+    getRandomNumber(min: number, max: number) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     async onAddFile(file: File) {
@@ -114,20 +174,7 @@ export class BagComponent implements AfterViewInit {
             this.changeFileName($event);
     }
 
-    deleteBag(element: ElementToEdit) {
-        this.bagService.deleteBag(element)
-            .subscribe(e => {
-                if (e.status !== 200) {
-                    this.emitInfo(Info.getErrorInfo('Error in deleting bag, try again'))
-                }
 
-                for (let i = 0; i < this.bag.bags.length; i++)
-                    if (element.id === this.bag.bags[i].id)
-                        this.bag.bags.splice(i, 1);
-
-                this.emitInfo(Info.getSuccessInfo(`Successfully deleted bag ${element.name}`));
-            });
-    }
     deleteFile(element: ElementToEdit) {
         this.bagService.deleteFile(element)
             .subscribe(e => {
@@ -178,14 +225,15 @@ export class BagComponent implements AfterViewInit {
     }
 
     setTransformOriginAfterDragEnd(x: any, y: any) {
-        this.bagElement.nativeElement.style.transformOrigin = `calc(${x}px - ${this.x}px) calc(${y}px - ${this.y}px)`;
+        this.bagElement.nativeElement.style.transformOrigin = `calc(${x}px - ${this.bag.x}px) calc(${y}px - ${this.bag.y}px)`;
     }
 
     ngAfterViewInit(): void {
         const el = this.bagElement.nativeElement as HTMLElement;
-        el.style.left = `${this.x}px`;
-        el.style.top = `${this.y}px`;
+        el.style.left = `${this.bag.x}px`;
+        el.style.top = `${this.bag.y}px`;
         el.style.transformOrigin = ``;
+        this.focusOnly.emit(el);
     }
 
     onFocus() {
@@ -210,22 +258,11 @@ export class BagComponent implements AfterViewInit {
         this.disableAlerts();
     }
 
-    onNewBag($event: string) {
+    async onNewBag($event: string) {
         this.disableAlerts();
         this.createNewBag($event);
     }
 
-    createNewBag(name: string) {
-        this.bagService.addNewBag(name, this.bag.directory)
-            .subscribe(e => {
-                if (e.status !== 200) {
-                    this.emitInfo(Info.getErrorInfo("Fail in creating bag, try again"));
-                    return;
-                }
-                this.bag.bags.push(e.data!);
-                this.emitInfo(Info.getSuccessInfo("Successfully created bag"));
-            });
-    }
 
     disableAlerts() {
         this.alert = false;
