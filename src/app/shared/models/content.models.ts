@@ -1,4 +1,5 @@
 import { FileState } from "../enums/content.enums";
+import { FilePart } from "../interfaces/http-interfaces";
 
 export class User {
     constructor(
@@ -67,17 +68,22 @@ export class File {
         public id: number,
         public name: string,
         public extension: string,
-        public size: string,
+        public size: number,
         public create: Date,
+        public fileParts: FilePart[],
         public state: FileState) { }
 
     static fromJSON(json: File) {
+        if (!json.fileParts)
+            json.fileParts = [];
+
         return new File(
             json.id,
             json.name,
             json.extension,
             json.size,
             json.create,
+            json.fileParts,
             FileState.READY
         );
     }

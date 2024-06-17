@@ -1,3 +1,74 @@
+@import 'vars';
+
 .content {
     min-height: 80vh;
+
+    .delete-bar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        translate: -30% 0;
+        height: 100vh;
+        width: 150px;
+        background: linear-gradient(to right, rgba(124, 124, 255, 0.3) 0%, transparent 100%);
+        transition: .5s;
+        z-index: 2000;
+        cursor: pointer;
+        animation: slide .3s;
+
+        .text {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            top: 50%;
+            left: 0%;
+            translate: 76px -50%;
+            transition: translate .5s;
+
+            i {
+                font-size: 2.5rem;
+                color: var(--bag-color);
+                transition: color .2s, font-size .1s;
+            }
+
+            p {
+                color: var(--bag-font-color-second);
+                font-weight: 600;
+                letter-spacing: .3px;
+                opacity: 0;
+                font-size: 1.3rem;
+                transition: opacity .2s;
+            }
+        }
+
+        &:hover {
+            translate: 0% 0;
+            background: linear-gradient(to right, rgba(124, 124, 255, 0.4) 0%, transparent 100%);
+
+            .text {
+                translate: 50px -50%;
+
+                i {
+                    font-size: 2.8rem;
+                    color: var(--bag-font-color-second);
+                }
+
+                p {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
+
+@keyframes slide {
+    from {
+        translate: -100% 0;
+
+    }
+
+    to {
+        translate: -30% 0;
+    }
 }

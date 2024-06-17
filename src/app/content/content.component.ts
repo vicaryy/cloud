@@ -8,6 +8,8 @@ import { FolderComponent } from "./bag/folder/folder.component";
 import { InfoComponent } from "../shared/components/info/info.component";
 import { Info } from '../shared/models/alert.models';
 import { UserService } from '../shared/services/user.service';
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
+import { DragBagEnd } from '../shared/interfaces/content.interfaces';
 
 @Component({
     selector: 'app-content',
@@ -21,6 +23,7 @@ export class ContentComponent implements OnInit {
     bags: Bag[] = new Array();
     @ViewChildren("bag") activeBags!: QueryList<BagComponent>;
     info: Info | undefined;
+    deleteBar: boolean = false;
 
     constructor(private bagService: BagService, private userService: UserService) { }
 
@@ -33,9 +36,28 @@ export class ContentComponent implements OnInit {
         });
     }
 
+
+    onDeleteActiveChildBag($event: number) {
+        this.deleteActiveBag($event);
+    }
+
+    deleteActiveBag(id: number) {
+        this.bags = this.bags.filter(e => e.id !== id);
+    }
+
     onFocusEvent($event: HTMLElement) {
         this.unfocusActiveBags();
         this.focusBag($event);
+    }
+
+    onDragStart() {
+        this.deleteBar = true;
+    }
+
+    onDragEnd($event: DragBagEnd) {
+        if ($event.x < 140)
+            this.deleteActiveBag($event.id);
+        this.deleteBar = false;
     }
 
     onFocusOnlyEvent($event: HTMLElement) {

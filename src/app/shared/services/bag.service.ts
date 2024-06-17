@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { FileResponse, NewBagRequest, NewFileRequest, ServerResponse } from '../interfaces/http-interfaces';
-import { Bag } from '../models/content.models';
+import { NewBagRequest, NewFileRequest, ServerResponse } from '../interfaces/http-interfaces';
+import { Bag, File } from '../models/content.models';
 import { HttpClient } from '@angular/common/http';
 import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
 import { environment } from '../../../environments/environment.development';
@@ -33,7 +33,7 @@ export class BagService {
 
 
     addNewBag(parentId: number, name: string): Observable<ServerResponse<Bag>> {
-        const request: NewBagRequest = {id: parentId, name: name};
+        const request: NewBagRequest = { id: parentId, name: name };
         return this.http.post<ServerResponse<Bag>>(environment.apiUrl + "/api/bag/create", request);
     }
 
@@ -44,10 +44,8 @@ export class BagService {
         return this.http.post<TelegramResponse<Message>>(this.url + "/sendDocument", formData);
     }
 
-    sendNewFileToServer(newFileRequest: NewFileRequest): Observable<ServerResponse<FileResponse>> {
-        // return this.http.post<ServerResponse<FileResponse>>()
-        const sub = new BehaviorSubject({ status: 200 });
-        return sub;
+    sendNewFileToServer(newFileRequest: NewFileRequest): Observable<ServerResponse<File>> {
+        return this.http.post<ServerResponse<File>>(environment.apiUrl + "/api/file/create", newFileRequest);
     }
 
     deleteBag(element: ElementToEdit): Observable<ServerResponse<string>> {

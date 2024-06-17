@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FileComponent } from "./file/file.component";
-import { CdkDrag, CdkDragEnd, CdkDragHandle } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Bag, File as MyFile } from '../../shared/models/content.models';
 import { AddComponent } from './add/add.component';
 import { FolderComponent } from "./folder/folder.component";
@@ -18,6 +18,7 @@ import { CryptoService } from '../../shared/services/crypto.service';
 import { BlobUtils } from '../../shared/utils/blob.utils';
 import { firstValueFrom } from 'rxjs';
 import { FilePart, NewFileRequest } from '../../shared/interfaces/http-interfaces';
+import { DragBagEnd } from '../../shared/interfaces/content.interfaces';
 
 @Component({
     selector: 'app-bag',
@@ -32,6 +33,9 @@ export class BagComponent implements AfterViewInit {
     @Output('focusOnly') focusOnly = new EventEmitter<HTMLElement>();
     @Output('info') info = new EventEmitter<Info>();
     @Output('openBag') openBag = new EventEmitter<Bag>();
+    @Output('deleteActiveChildBag') deleteActiveChildBag = new EventEmitter<number>();
+    @Output('dragStart') dragStart = new EventEmitter<void>();
+    @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
     @ViewChild("bagElement") bagElement!: ElementRef;
     openedBags: number = 0;
     alert: boolean = false;
@@ -41,6 +45,12 @@ export class BagComponent implements AfterViewInit {
     elementToEdit!: ElementToEdit;
 
     constructor(private bagService: BagService, private crypto: CryptoService) { }
+
+
+    onDownload($event: MyFile) {
+
+    }
+
 
     deleteBag(element: ElementToEdit) {
         this.bagService.deleteBag(element)
@@ -52,6 +62,7 @@ export class BagComponent implements AfterViewInit {
                 for (let i = 0; i < this.bag.bags.length; i++)
                     if (element.id === this.bag.bags[i].id)
                         this.bag.bags.splice(i, 1);
+                this.deleteActiveChildBag.emit(element.id);
                 this.emitInfo(Info.getSuccessInfo(`Successfully deleted bag ${element.name}`));
             });
     }
@@ -107,7 +118,7 @@ export class BagComponent implements AfterViewInit {
     }
 
     async onAddFile(file: File) {
-        let newFile: MyFile = new MyFile(Math.floor(Math.random() * 1000) + 1, file.name, BlobUtils.getExtensionFromName(file.name), file.size.toString(), new Date(), FileState.ENCRYPT);
+        let newFile: MyFile = new MyFile(0, file.name, BlobUtils.getExtensionFromName(file.name), file.size, new Date(), [], FileState.ENCRYPT);
         this.bag.files.push(newFile);
         console.log(newFile);
 
@@ -115,16 +126,19 @@ export class BagComponent implements AfterViewInit {
         const encryptedBlobs: Blob[] = await this.encryptBlobs(slicedBlob);
         newFile.state = FileState.UPLOAD;
 
-        const newFileRequest: NewFileRequest = { name: file.name, extension: BlobUtils.getExtensionFromName(file.name), size: file.size, parts: [] };
+        const newFileRequest: NewFileRequest = { bagId: this.bag.id, name: file.name, extension: BlobUtils.getExtensionFromName(file.name), size: file.size, fileParts: [] };
         const fileParts: FilePart[] = await this.sendBlobs(encryptedBlobs);
-        newFileRequest.parts = fileParts;
-        // const serverResponse = await firstValueFrom(this.bagService.sendNewFileToServer(newFileRequest));
-        // if (serverResponse.status !== 200)
-        //     throw new Error("asd");
-        // newFile.id = serverResponse.data?.id!;
-        // newFile.size = serverResponse.data?.size!;
-        // newFile.create = serverResponse.data?.create!;
+        newFileRequest.fileParts = fileParts;
+        const serverResponse = await firstValueFrom(this.bagService.sendNewFileToServer(newFileRequest));
+        if (serverResponse.status !== 200) {
+            this.emitInfo(Info.getErrorInfo("Fail in creating file, try again"));
+            return;
+        }
+        newFile.id = serverResponse.data?.id!;
+        newFile.create = serverResponse.data?.create!;
+        newFile.fileParts = serverResponse.data?.fileParts!;
         newFile.state = FileState.READY;
+        this.emitInfo(Info.getSuccessInfo("Successfully added file " + serverResponse.data?.name));
     }
 
     async sendBlobs(blobs: Blob[]): Promise<FilePart[]> {
@@ -133,7 +147,7 @@ export class BagComponent implements AfterViewInit {
             const response = await firstValueFrom(this.bagService.sendBlobToTelegram(blobs[i]));
             if (!response.ok)
                 throw new Error("nwm");
-            const filePart: FilePart = { order: (i + 1), file_id: response.result.document.file_id };
+            const filePart: FilePart = { order: (i + 1), fileId: response.result.document.file_id };
             fileParts.push(filePart);
         }
         return fileParts;
@@ -219,9 +233,13 @@ export class BagComponent implements AfterViewInit {
             });
     }
 
+    onDragStart(event: CdkDragStart) {
+        this.dragStart.emit();
+    }
 
     onDragEnd(event: CdkDragEnd) {
         this.setTransformOriginAfterDragEnd(event.dropPoint.x, event.dropPoint.y);
+        this.dragEnd.emit({ x: event.dropPoint.x, y: event.dropPoint.y, id: this.bag.id });
     }
 
     setTransformOriginAfterDragEnd(x: any, y: any) {

@@ -1,4 +1,4 @@
-<div #bagElement class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)" (mousedown)="onFocus()" [class.blur]="alert">
+<div #bagElement class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)" (cdkDragStarted)="onDragStart($event)" (mousedown)="onFocus()" [class.blur]="alert">
     <div class="option-bar">
         <div class="settings-wrapper">
             <button class="settings"></button>
@@ -15,7 +15,7 @@
             <app-folder [bag]="b" (change)="displayAlert($event)" (open)="onOpen($event)"></app-folder>
         </ng-container>
         <ng-container *ngFor="let f of bag.files; trackBy: trackById">
-            <app-file [file]="f" (change)="displayAlert($event)"></app-file>
+            <app-file [file]="f" (change)="displayAlert($event)" (download)="onDownload($event)"></app-file>
         </ng-container>
         <div class="empty-file"></div>
     </div>

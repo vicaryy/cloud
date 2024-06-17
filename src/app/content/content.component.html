@@ -2,10 +2,20 @@
     <app-search></app-search>
     <ng-container *ngFor="let b of bags; index as i">
         <app-bag #bag *ngIf="i === 0" [bag]="b" (focus)="onFocusEvent($event)"
-            (info)="onInfo($event)" (openBag)="onOpenBag($event)"></app-bag>
+            (info)="onInfo($event)" (openBag)="onOpenBag($event)" (deleteActiveChildBag)="onDeleteActiveChildBag($event)"></app-bag>
         <app-bag #bag *ngIf="i !== 0" [bag]="b" (focus)="onFocusEvent($event)" (focusOnly)="onFocusOnlyEvent($event)"
-            (info)="onInfo($event)" (openBag)="onOpenBag($event)"></app-bag>
+            (info)="onInfo($event)" (openBag)="onOpenBag($event)" (deleteActiveChildBag)="onDeleteActiveChildBag($event)" (dragStart)="onDragStart()" (dragEnd)="onDragEnd($event)"></app-bag>
     </ng-container>
+
+    @if (deleteBar) {
+        <div class="delete-bar">
+            <div class="text">
+                <i class="fa-solid fa-xmark"></i>
+                <p>HIDE</p>
+            </div>
+        </div>
+    }
+
 
     @if (info) {
     <app-info [info]="info"></app-info>

@@ -19,12 +19,17 @@ export class FileComponent implements AfterViewInit {
     }
     @Input('file') file!: File;
     @Output('change') change = new EventEmitter<ElementToEdit>();
+    @Output('download') download = new EventEmitter<File>();
     detailsActive: boolean = false;
     State = FileState;
     procent: number = 0;
 
     toggleDetails() {
         this.detailsActive = !this.detailsActive;
+    }
+
+    emitDownload() {
+        this.download.emit(this.file);
     }
 
     emitChangeName() {

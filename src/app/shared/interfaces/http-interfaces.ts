@@ -10,15 +10,16 @@ export interface NewBagRequest {
 }
 
 export interface NewFileRequest {
+    bagId: number,
     name: string,
     extension: string,
     size: number,
-    parts: FilePart[]
+    fileParts: FilePart[]
 }
 
 export interface FilePart {
     order: number,
-    file_id: string
+    fileId: string
 }
 
 export interface FileResponse {

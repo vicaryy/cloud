@@ -4,7 +4,7 @@
         <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-file"></i></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
         <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
-        <button class="download state"><i class="fa-solid fa-cloud-arrow-down"></i></button>
+        <button class="download state" (click)="emitDownload()"><i class="fa-solid fa-cloud-arrow-down"></i></button>
     </div>
     }
     @if (file.state === State.DONE) {

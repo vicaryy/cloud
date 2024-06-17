@@ -8,25 +8,57 @@
     --font-color: #121a1f;
     --font-color-second: #7b858f;
     --font-color-third: #0071eb;
-    --font-color-fourth: #64748B;
+    --font-color-fourth: #9f9f9f;
 
     --line-color: rgba(136, 146, 176, .3);
     --line-color-second: #CCD6F6;
 
-    --header-color: rgba(37, 38, 40, 0.21);
+    --header-color: rgba(125, 130, 139, 0.21);
     --bag-color: rgba(255, 255, 255, .7);
     --bag-color-focus: rgba(255, 255, 255, 1);
-    --search-bar-color: rgba(37, 38, 40, 0.11);
-    --search-bar-color-focus: rgba(255, 255, 255, .2);
-    --search-font-color: #333333;
-    --search-words-font-color: rgba(71, 71, 71, .5);
+    --bag-font-color: rgb(0, 0, 0);
+    --bag-font-color-second: rgb(28, 28, 28);
+    --search-bar-color: rgba(255, 255, 255, .15);
+    --search-bar-color-focus: rgba(255, 255, 255, .1);
+    --search-font-color: #cacaca;
+    --search-words-font-color: rgba(255, 255, 255, 0.5);
     --add-button-color: rgb(238, 56, 56);
     --option-bar-color: rgba(218, 236, 252, .9);
-    --footer-color: #f2f2f7;
+    --footer-color: rgba(242, 242, 247, .1);
     --alert-button-color: #dbe1f8;
     --alert-button-color-hover: #CCD6F6;
     --input-color-hover: rgb(248, 248, 248);
 
     --file-hover-color: #e8e8f2;
     // --file-hover-color: #d9d9ef;
+    // --bgc: #fff;
+    // --bgc-second: #fbfbfd;
+    // --bgc-third: #f2f2f7;
+    // --bgc-fourth: rgba(10, 25, 47, 0.7);
+
+
+    // --font-color: #121a1f;
+    // --font-color-second: #7b858f;
+    // --font-color-third: #0071eb;
+    // --font-color-fourth: #64748B;
+
+    // --line-color: rgba(136, 146, 176, .3);
+    // --line-color-second: #CCD6F6;
+
+    // --header-color: rgba(37, 38, 40, 0.21);
+    // --bag-color: rgba(255, 255, 255, .7);
+    // --bag-color-focus: rgba(255, 255, 255, 1);
+    // --search-bar-color: rgba(37, 38, 40, 0.11);
+    // --search-bar-color-focus: rgba(255, 255, 255, .2);
+    // --search-font-color: #333333;
+    // --search-words-font-color: rgba(71, 71, 71, .5);
+    // --add-button-color: rgb(238, 56, 56);
+    // --option-bar-color: rgba(218, 236, 252, .9);
+    // --footer-color: #f2f2f7;
+    // --alert-button-color: #dbe1f8;
+    // --alert-button-color-hover: #CCD6F6;
+    // --input-color-hover: rgb(248, 248, 248);
+
+    // --file-hover-color: #e8e8f2;
+    // // --file-hover-color: #d9d9ef;
 }
