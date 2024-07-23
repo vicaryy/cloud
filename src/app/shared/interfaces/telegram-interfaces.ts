@@ -15,6 +15,12 @@ export interface Message {
     document: Document;
 }
 
+export interface FileTelegram {
+    file_id: string;
+    file_unique_id: string;
+    file_path: string;
+}
+
 export interface User {
     id: number;
     is_bot: boolean;

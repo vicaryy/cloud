@@ -1,12 +1,15 @@
 {
   "name": "cloud",
   "version": "0.0.0",
+  "main": "app.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "start:server": "http-server -p 8080 -c-1 dist/cloud/browser",
+    "test": "ng test",
+    "electron": "ng build && electron ."
   },
   "private": true,
   "dependencies": {
@@ -20,7 +23,9 @@
     "@angular/platform-browser": "^17.3.0",
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
+    "@angular/service-worker": "^17.3.0",
     "crypto-js": "^4.2.0",
+    "electron": "^31.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
@@ -32,6 +37,7 @@
     "@types/crypto-js": "^4.2.2",
     "@types/jasmine": "~5.1.0",
     "angular-cli-ghpages": "^2.0.1",
+    "http-server": "^14.1.1",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

@@ -16,9 +16,10 @@ import { Info } from '../../shared/models/alert.models';
 import { FileState } from '../../shared/enums/content.enums';
 import { CryptoService } from '../../shared/services/crypto.service';
 import { BlobUtils } from '../../shared/utils/blob.utils';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { FilePart, NewFileRequest } from '../../shared/interfaces/http-interfaces';
 import { DragBagEnd } from '../../shared/interfaces/content.interfaces';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-bag',
@@ -47,8 +48,26 @@ export class BagComponent implements AfterViewInit {
     constructor(private bagService: BagService, private crypto: CryptoService) { }
 
 
-    onDownload($event: MyFile) {
+    async onDownload($event: MyFile) {
+        $event.state = FileState.DOWNLOAD;
+        let downloadedBlobs = await this.downloadBlobs($event.fileParts);
+        $event.state = FileState.DECRYPT;
+        let decryptedBlobs = await this.decryptBlobs(downloadedBlobs);
+        $event.state = FileState.DONE;
+        console.log(new Blob(decryptedBlobs));
 
+    }
+
+    async downloadBlobs(fileParts: FilePart[]): Promise<Blob[]> {
+        let downloadedBlobs: Blob[] = [];
+
+        for (let file of fileParts) {
+            let fileUrl = await lastValueFrom(this.bagService.getFilePath(file.fileId));
+            let blob = await lastValueFrom(this.bagService.downloadBlobFromTelegram(fileUrl.result.file_path)) as HttpResponse<Blob>;
+            downloadedBlobs.push(blob.body!);
+        }
+
+        return downloadedBlobs;
     }
 
 
@@ -170,6 +189,18 @@ export class BagComponent implements AfterViewInit {
         }
         console.log("Zaszyfrowałem wszystkie kawałki.");
         return encryptedBlobs;
+    }
+
+    async decryptBlobs(slicedBlobs: Blob[]): Promise<Blob[]> {
+        const decryptedBlobs: Blob[] = [];
+        console.log("Odszyfrowuję kawałki...");
+        for (let i = 0; i < slicedBlobs.length; i++) {
+            const arr = await this.crypto.decrypt(await slicedBlobs[i].arrayBuffer());
+            decryptedBlobs.push(new Blob([arr]));
+            console.log("Pozostało: " + (slicedBlobs.length - i) + " kawałków");
+        }
+        console.log("Odszyfrowałem wszystkie kawałki.");
+        return decryptedBlobs;
     }
 
     onDelete($event: ElementToEdit) {
