@@ -17,10 +17,6 @@
             <p class="value-title">Directory: </p>
             <p class="value">{{ bag.directory === '' ? '/' : bag.directory }}</p>
         </div>
-        <div class="size">
-            <p class="value-title">Size: </p>
-            <p class="value">{{bag.size}}</p>
-        </div>
         <div class="bags">
             <p class="value-title">Bags: </p>
             <p class="value">{{bag.getAmountOfBags()}}</p>
@@ -31,7 +27,7 @@
         </div>
         <div class="created">
             <p class="value-title">Created: </p>
-            <p class="value">{{bag.create}}</p>
+            <p class="value">{{date}}</p>
         </div>
         <button class="change-name" (click)="emitChangeName()">
             <i class="fa-solid fa-pencil"></i>

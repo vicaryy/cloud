@@ -22,7 +22,6 @@ export class Bag {
         public name: string,
         public directory: string,
         public create: Date,
-        public size: string,
         public bags: Bag[],
         public files: File[],
         public x?: number,
@@ -39,7 +38,6 @@ export class Bag {
             json.name,
             json.directory,
             json.create,
-            json.size,
             json.bags.map(e => Bag.fromJSON(e)),
             json.files.map(e => File.fromJSON(e))
         );
@@ -70,6 +68,8 @@ export class File {
         public extension: string,
         public size: number,
         public create: Date,
+        public url: string,
+        public progress: number,
         public fileParts: FilePart[],
         public state: FileState) { }
 
@@ -83,6 +83,8 @@ export class File {
             json.extension,
             json.size,
             json.create,
+            '',
+            0,
             json.fileParts,
             FileState.READY
         );

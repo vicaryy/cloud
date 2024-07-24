@@ -36,7 +36,6 @@ export class ContentComponent implements OnInit {
         });
     }
 
-
     onDeleteActiveChildBag($event: number) {
         this.deleteActiveBag($event);
     }
@@ -78,6 +77,6 @@ export class ContentComponent implements OnInit {
     }
     onOpenBag($event: Bag) {
         if (!this.bags.find(e => e.id === $event.id))
-            this.bags.push($event);
+            this.bags = [...this.bags, $event];
     }
 }

@@ -16,10 +16,11 @@ import { Info } from '../../shared/models/alert.models';
 import { FileState } from '../../shared/enums/content.enums';
 import { CryptoService } from '../../shared/services/crypto.service';
 import { BlobUtils } from '../../shared/utils/blob.utils';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom, tap } from 'rxjs';
 import { FilePart, NewFileRequest } from '../../shared/interfaces/http-interfaces';
 import { DragBagEnd } from '../../shared/interfaces/content.interfaces';
-import { HttpResponse } from '@angular/common/http';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { Message, TelegramResponse } from '../../shared/interfaces/telegram-interfaces';
 
 @Component({
     selector: 'app-bag',
@@ -50,21 +51,33 @@ export class BagComponent implements AfterViewInit {
 
     async onDownload($event: MyFile) {
         $event.state = FileState.DOWNLOAD;
-        let downloadedBlobs = await this.downloadBlobs($event.fileParts);
+        let downloadedBlobs = await this.downloadBlobs($event.fileParts, $event);
         $event.state = FileState.DECRYPT;
         let decryptedBlobs = await this.decryptBlobs(downloadedBlobs);
         $event.state = FileState.DONE;
-        console.log(new Blob(decryptedBlobs));
-
+        $event.url = URL.createObjectURL(new Blob(decryptedBlobs));
     }
 
-    async downloadBlobs(fileParts: FilePart[]): Promise<Blob[]> {
+    async downloadBlobs(fileParts: FilePart[], myFile: MyFile): Promise<Blob[]> {
         let downloadedBlobs: Blob[] = [];
+        let entireSize = 0;
+        fileParts.forEach(e => entireSize += e.size);
+        let prevProgress = 0;
+        let currProggres = 0;
 
+        myFile.progress = 0;
         for (let file of fileParts) {
             let fileUrl = await lastValueFrom(this.bagService.getFilePath(file.fileId));
-            let blob = await lastValueFrom(this.bagService.downloadBlobFromTelegram(fileUrl.result.file_path)) as HttpResponse<Blob>;
-            downloadedBlobs.push(blob.body!);
+            let blob = await lastValueFrom(this.bagService.downloadBlobFromTelegram(fileUrl.result.file_path).pipe(tap(event => {
+                if (event.type === HttpEventType.DownloadProgress) {
+                    currProggres = event.loaded;
+                    myFile.progress = Math.floor(((currProggres + prevProgress) / entireSize) * 100);
+                }
+                if (event.type === HttpEventType.Response)
+                    prevProgress += currProggres;
+            })));
+            let blobResponse = blob as HttpResponse<Blob>;
+            downloadedBlobs.push(blobResponse.body!);
         }
 
         return downloadedBlobs;
@@ -137,7 +150,7 @@ export class BagComponent implements AfterViewInit {
     }
 
     async onAddFile(file: File) {
-        let newFile: MyFile = new MyFile(0, file.name, BlobUtils.getExtensionFromName(file.name), file.size, new Date(), [], FileState.ENCRYPT);
+        let newFile: MyFile = new MyFile(0, file.name, BlobUtils.getExtensionFromName(file.name), file.size, new Date(), '', 0, [], FileState.ENCRYPT);
         this.bag.files.push(newFile);
         console.log(newFile);
 
@@ -146,7 +159,7 @@ export class BagComponent implements AfterViewInit {
         newFile.state = FileState.UPLOAD;
 
         const newFileRequest: NewFileRequest = { bagId: this.bag.id, name: file.name, extension: BlobUtils.getExtensionFromName(file.name), size: file.size, fileParts: [] };
-        const fileParts: FilePart[] = await this.sendBlobs(encryptedBlobs);
+        const fileParts: FilePart[] = await this.sendBlobs(encryptedBlobs, newFile);
         newFileRequest.fileParts = fileParts;
         const serverResponse = await firstValueFrom(this.bagService.sendNewFileToServer(newFileRequest));
         if (serverResponse.status !== 200) {
@@ -160,13 +173,28 @@ export class BagComponent implements AfterViewInit {
         this.emitInfo(Info.getSuccessInfo("Successfully added file " + serverResponse.data?.name));
     }
 
-    async sendBlobs(blobs: Blob[]): Promise<FilePart[]> {
+    async sendBlobs(blobs: Blob[], file: MyFile): Promise<FilePart[]> {
+        let entireSize = 0;
+        blobs.forEach(e => entireSize += e.size);
+        let prevProgress = 0;
+        let currProggres = 0;
+
+        file.progress = 0;
         const fileParts: FilePart[] = [];
         for (let i = 0; i < blobs.length; i++) {
-            const response = await firstValueFrom(this.bagService.sendBlobToTelegram(blobs[i]));
-            if (!response.ok)
+            const response = await lastValueFrom(this.bagService.sendBlobToTelegram(blobs[i]).pipe(tap(event => {
+                if (event.type === HttpEventType.UploadProgress) {
+                    currProggres = event.loaded;
+                    file.progress = Math.floor(((currProggres + prevProgress) / entireSize) * 100);
+                }
+                if (event.type === HttpEventType.Sent)
+                    prevProgress += currProggres;
+
+            })));
+            const responseAs = response as HttpResponse<TelegramResponse<Message>>;
+            if (!responseAs.body!.ok)
                 throw new Error("nwm");
-            const filePart: FilePart = { order: (i + 1), fileId: response.result.document.file_id };
+            const filePart: FilePart = { order: (i + 1), fileId: responseAs.body!.result.document.file_id, size: blobs[i].size };
             fileParts.push(filePart);
         }
         return fileParts;

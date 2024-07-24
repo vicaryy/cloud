@@ -3,7 +3,7 @@ import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BehaviorSubject, firstValueFrom, lastValueFrom, Observable, Subject, tap } from 'rxjs';
 import { NewBagRequest, NewFileRequest, ServerResponse } from '../interfaces/http-interfaces';
 import { Bag, File } from '../models/content.models';
-import { HttpClient, HttpEvent, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 import { FileTelegram, Message, TelegramResponse } from '../interfaces/telegram-interfaces';
 import { environment } from '../../../environments/environment.development';
 
@@ -50,11 +50,11 @@ export class BagService {
         return this.http.post<ServerResponse<Bag>>(environment.apiUrl + "/api/bag/create", request);
     }
 
-    sendBlobToTelegram(file: Blob): Observable<TelegramResponse<Message>> {
+    sendBlobToTelegram(file: Blob) {
         const formData: FormData = new FormData();
         formData.append("document", file);
         formData.append("chat_id", this.userId);
-        return this.http.post<TelegramResponse<Message>>(this.url + "/sendDocument", formData);
+        return this.http.post<TelegramResponse<Message>>(this.url + "/sendDocument", formData, { reportProgress: true, observe: 'events' });
     }
 
     sendNewFileToServer(newFileRequest: NewFileRequest): Observable<ServerResponse<File>> {
@@ -69,8 +69,7 @@ export class BagService {
         return sub;
     }
     deleteFile(element: ElementToEdit): Observable<ServerResponse<string>> {
-        const sub = new BehaviorSubject({ status: 200 });
-        return sub;
+        return this.http.delete<ServerResponse<string>>(environment.apiUrl + "/api/file/delete/" + element.id);
     }
     changeFileName(element: ElementToEdit): Observable<ServerResponse<string>> {
         const sub = new BehaviorSubject({ status: 200 });

@@ -1,28 +1,30 @@
 <div class="file" [class.details-active]="detailsActive">
     @if (file.state === State.READY) {
     <div class="main-wrapper ready">
-        <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-file"></i></div>
+        <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
+        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <button class="download state" (click)="emitDownload()"><i class="fa-solid fa-cloud-arrow-down"></i></button>
     </div>
     }
     @if (file.state === State.DONE) {
-        <div class="main-wrapper done">
-            <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-file"></i></div>
-            <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-            <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
+    <div class="main-wrapper done">
+        <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
+        <div class="name" (click)="toggleDetails()">{{file.name}}</div>
+        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
+        <a [href]="file.url" [download]="file.name">
             <button class="download state">
                 <i class="fa-solid fa-floppy-disk"></i>
             </button>
-        </div>
+        </a>
+    </div>
     }
 
     @if (file.state === State.ENCRYPT) {
     <div class="main-wrapper encrypt">
-        <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-file"></i></div>
+        <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
+        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <div class="lds-ring state"><span class="description">ENCRYPTING</span><i class="fa-solid fa-key"></i>
             <div></div>
             <div></div>
@@ -33,9 +35,9 @@
     }
     @if (file.state === State.DECRYPT) {
     <div class="main-wrapper decrypt">
-        <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-file"></i></div>
+        <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
+        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <div class="lds-ring state"><span class="description">DECRYPTING</span><i class="fa-solid fa-fingerprint"></i>
             <div></div>
             <div></div>
@@ -46,12 +48,12 @@
     }
     @if (file.state === State.UPLOAD) {
     <div class="main-wrapper upload">
-        <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-file"></i></div>
+        <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
+        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <div class="progress-wrapper state">
             <span class="description">UPLOADING</span>
-            <div class="progressbar" style="--value: {{procent}}">
+            <div class="progressbar" style="--value: {{file.progress}}">
                 <i class="fa-solid fa-cloud-arrow-up"></i>
             </div>
         </div>
@@ -59,12 +61,12 @@
     }
     @if (file.state === State.DOWNLOAD) {
     <div class="main-wrapper download">
-        <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-file"></i></div>
+        <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
+        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <div class="progress-wrapper state">
             <span class="description">DOWNLOADING</span>
-            <div class="progressbar" style="--value: {{procent}}">
+            <div class="progressbar" style="--value: {{file.progress}}">
                 <i class="fa-solid fa-cloud-arrow-down"></i>
             </div>
         </div>
@@ -82,7 +84,7 @@
         </div>
         <div class="size">
             <p class="value-title">Size: </p>
-            <p class="value">{{file.size}}</p>
+            <p class="value">{{size}}</p>
         </div>
         <div class="extension">
             <p class="value-title">Extension: </p>
@@ -90,7 +92,7 @@
         </div>
         <div class="created">
             <p class="value-title">Created: </p>
-            <p class="value">{{file.create}}</p>
+            <p class="value">{{date}}</p>
         </div>
         <div class="preview">
             <img src="./assets/images/sample-preview.jpg" alt="" class="photo">

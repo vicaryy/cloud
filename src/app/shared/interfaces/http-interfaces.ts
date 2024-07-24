@@ -19,7 +19,8 @@ export interface NewFileRequest {
 
 export interface FilePart {
     order: number,
-    fileId: string
+    fileId: string,
+    size: number
 }
 
 export interface FileResponse {
