@@ -1,7 +1,7 @@
 const {app, BrowserWindow} = require('electron')
     const url = require("url");
     const path = require("path");
-    process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+    // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
     let mainWindow
 
     function createWindow () {
@@ -21,8 +21,7 @@ const {app, BrowserWindow} = require('electron')
         })
       );
       // Open the DevTools.
-      mainWindow.webContents.openDevTools()
-
+      mainWindow.webContents.openDevTools();
       mainWindow.on('closed', function () {
         mainWindow = null
       })

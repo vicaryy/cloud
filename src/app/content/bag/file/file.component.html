@@ -3,7 +3,6 @@
     <div class="main-wrapper ready">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <button class="download state" (click)="emitDownload()"><i class="fa-solid fa-cloud-arrow-down"></i></button>
     </div>
     }
@@ -11,7 +10,6 @@
     <div class="main-wrapper done">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <a [href]="file.url" [download]="file.name">
             <button class="download state">
                 <i class="fa-solid fa-floppy-disk"></i>
@@ -24,7 +22,6 @@
     <div class="main-wrapper encrypt">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <div class="lds-ring state"><span class="description">ENCRYPTING</span><i class="fa-solid fa-key"></i>
             <div></div>
             <div></div>
@@ -37,7 +34,6 @@
     <div class="main-wrapper decrypt">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <div class="lds-ring state"><span class="description">DECRYPTING</span><i class="fa-solid fa-fingerprint"></i>
             <div></div>
             <div></div>
@@ -50,7 +46,6 @@
     <div class="main-wrapper upload">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <div class="progress-wrapper state">
             <span class="description">UPLOADING</span>
             <div class="progressbar" style="--value: {{file.progress}}">
@@ -63,7 +58,6 @@
     <div class="main-wrapper download">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <!-- <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button> -->
         <div class="progress-wrapper state">
             <span class="description">DOWNLOADING</span>
             <div class="progressbar" style="--value: {{file.progress}}">
@@ -76,35 +70,37 @@
 
 
     <div class="details">
-        <i class="line fa-solid fa-window-minimize"></i>
-        <h3 class="title">Details:</h3>
-        <div class="name">
-            <p class="value-title">Name: </p>
-            <p class="value">{{file.name}}</p>
-        </div>
-        <div class="size">
-            <p class="value-title">Size: </p>
-            <p class="value">{{size}}</p>
-        </div>
-        <div class="extension">
-            <p class="value-title">Extension: </p>
-            <p class="value">{{file.extension}}</p>
-        </div>
-        <div class="created">
-            <p class="value-title">Created: </p>
-            <p class="value">{{date}}</p>
-        </div>
-        <div class="preview">
-            <img src="./assets/images/sample-preview.jpg" alt="" class="photo">
-        </div>
+        <div class="details-wrapper">
+            <i class="line fa-solid fa-window-minimize"></i>
+            <h3 class="title">Details:</h3>
+            <div class="name">
+                <p class="value-title">Name: </p>
+                <p class="value">{{file.name}}</p>
+            </div>
+            <div class="size">
+                <p class="value-title">Size: </p>
+                <p class="value">{{size}}</p>
+            </div>
+            <div class="extension">
+                <p class="value-title">Extension: </p>
+                <p class="value">{{file.extension}}</p>
+            </div>
+            <div class="created">
+                <p class="value-title">Created: </p>
+                <p class="value">{{date}}</p>
+            </div>
+            <div class="preview">
+                <img src="./assets/images/sample-preview.jpg" alt="" class="photo">
+            </div>
 
-        <button class="change-name" (click)="emitChangeName()">
-            <i class="fa-solid fa-pencil"></i>
-            <p>Change name</p>
-        </button>
-        <button class="delete" (click)="emitDelete()">
-            <i class="fa-solid fa-trash-can"></i>
-            <p>Delete file</p>
-        </button>
+            <button class="change-name" (click)="emitChangeName()">
+                <i class="fa-solid fa-pencil"></i>
+                <p>Change name</p>
+            </button>
+            <button class="delete" (click)="emitDelete()">
+                <i class="fa-solid fa-trash-can"></i>
+                <p>Delete file</p>
+            </button>
+        </div>
     </div>
 </div>

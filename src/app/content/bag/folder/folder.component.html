@@ -2,40 +2,41 @@
     <div class="main-wrapper">
         <div class="logo" (click)="toggleDetails()"><i class="fa-regular fa-folder-closed"></i></div>
         <div class="name" (click)="toggleDetails()">{{ bag.name }}</div>
-        <button class="info" (click)="toggleDetails()"><i class="fa-solid fa-caret-right"></i></button>
         <button class="open" (click)="emitOpenFolder()"><i class="fa-solid fa-angle-right"></i></button>
     </div>
 
     <div class="details">
-        <i class="line fa-solid fa-window-minimize"></i>
-        <h3 class="title">Details:</h3>
-        <div class="name">
-            <p class="value-title">Name: </p>
-            <p class="value">{{ bag.name }}</p>
+        <div class="details-wrapper">
+            <i class="line fa-solid fa-window-minimize"></i>
+            <h3 class="title">Details:</h3>
+            <div class="name">
+                <p class="value-title">Name: </p>
+                <p class="value">{{ bag.name }}</p>
+            </div>
+            <div class="directory">
+                <p class="value-title">Directory: </p>
+                <p class="value">{{ bag.directory === '' ? '/' : bag.directory }}</p>
+            </div>
+            <div class="bags">
+                <p class="value-title">Bags: </p>
+                <p class="value">{{bag.getAmountOfBags()}}</p>
+            </div>
+            <div class="files">
+                <p class="value-title">Files: </p>
+                <p class="value">{{bag.getAmountOfFiles()}}</p>
+            </div>
+            <div class="created">
+                <p class="value-title">Created: </p>
+                <p class="value">{{date}}</p>
+            </div>
+            <button class="change-name" (click)="emitChangeName()">
+                <i class="fa-solid fa-pencil"></i>
+                <p>Change name</p>
+            </button>
+            <button class="delete" (click)="emitDelete()">
+                <i class="fa-solid fa-trash-can"></i>
+                <p>Delete bag</p>
+            </button>
         </div>
-        <div class="directory">
-            <p class="value-title">Directory: </p>
-            <p class="value">{{ bag.directory === '' ? '/' : bag.directory }}</p>
-        </div>
-        <div class="bags">
-            <p class="value-title">Bags: </p>
-            <p class="value">{{bag.getAmountOfBags()}}</p>
-        </div>
-        <div class="files">
-            <p class="value-title">Files: </p>
-            <p class="value">{{bag.getAmountOfFiles()}}</p>
-        </div>
-        <div class="created">
-            <p class="value-title">Created: </p>
-            <p class="value">{{date}}</p>
-        </div>
-        <button class="change-name" (click)="emitChangeName()">
-            <i class="fa-solid fa-pencil"></i>
-            <p>Change name</p>
-        </button>
-        <button class="delete" (click)="emitDelete()">
-            <i class="fa-solid fa-trash-can"></i>
-            <p>Delete bag</p>
-        </button>
     </div>
 </div>

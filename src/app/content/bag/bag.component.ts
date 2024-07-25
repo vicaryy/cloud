@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Bag, File as MyFile } from '../../shared/models/content.models';
@@ -14,13 +14,8 @@ import { BlurBlockComponent } from "../../shared/components/blur-block/blur-bloc
 import { InfoComponent } from "../../shared/components/info/info.component";
 import { Info } from '../../shared/models/alert.models';
 import { FileState } from '../../shared/enums/content.enums';
-import { CryptoService } from '../../shared/services/crypto.service';
 import { BlobUtils } from '../../shared/utils/blob.utils';
-import { firstValueFrom, lastValueFrom, tap } from 'rxjs';
-import { FilePart, NewFileRequest } from '../../shared/interfaces/http-interfaces';
 import { DragBagEnd } from '../../shared/interfaces/content.interfaces';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { Message, TelegramResponse } from '../../shared/interfaces/telegram-interfaces';
 
 @Component({
     selector: 'app-bag',
@@ -46,43 +41,64 @@ export class BagComponent implements AfterViewInit {
     newBagAlert: boolean = false;
     elementToEdit!: ElementToEdit;
 
-    constructor(private bagService: BagService, private crypto: CryptoService) { }
+    constructor(private bagService: BagService) { }
 
+
+    @ViewChild('bagElement') resizableBox!: ElementRef;
+    private resizing = false;
+    private startX = 0;
+    private startY = 0;
+    private startWidth = 0;
+    private startHeight = 0;
+
+
+    @HostListener('mousedown', ['$event'])
+    onMouseDown(event: MouseEvent) {
+        if ((event.target as HTMLElement).classList.contains('handle')) {
+            this.resizing = true;
+            this.startX = event.clientX;
+            this.startY = event.clientY;
+            this.startWidth = this.resizableBox.nativeElement.offsetWidth;
+            this.startHeight = this.resizableBox.nativeElement.offsetHeight;
+            event.preventDefault();
+        }
+    }
+
+    @HostListener('document:mousemove', ['$event'])
+    onMouseMove(event: MouseEvent) {
+        if (this.resizing) {
+            const deltaX = event.clientX - this.startX;
+            const deltaY = event.clientY - this.startY;
+            this.resizableBox.nativeElement.style.width = `${this.startWidth + deltaX}px`;
+            this.resizableBox.nativeElement.style.height = `${this.startHeight + deltaY}px`;
+            event.preventDefault();
+        }
+    }
+
+    @HostListener('document:mouseup')
+    onMouseUp() {
+        this.resizing = false;
+    }
 
     async onDownload($event: MyFile) {
-        $event.state = FileState.DOWNLOAD;
-        let downloadedBlobs = await this.downloadBlobs($event.fileParts, $event);
-        $event.state = FileState.DECRYPT;
-        let decryptedBlobs = await this.decryptBlobs(downloadedBlobs);
-        $event.state = FileState.DONE;
-        $event.url = URL.createObjectURL(new Blob(decryptedBlobs));
+        this.bagService.downloadFile($event);
     }
 
-    async downloadBlobs(fileParts: FilePart[], myFile: MyFile): Promise<Blob[]> {
-        let downloadedBlobs: Blob[] = [];
-        let entireSize = 0;
-        fileParts.forEach(e => entireSize += e.size);
-        let prevProgress = 0;
-        let currProggres = 0;
-
-        myFile.progress = 0;
-        for (let file of fileParts) {
-            let fileUrl = await lastValueFrom(this.bagService.getFilePath(file.fileId));
-            let blob = await lastValueFrom(this.bagService.downloadBlobFromTelegram(fileUrl.result.file_path).pipe(tap(event => {
-                if (event.type === HttpEventType.DownloadProgress) {
-                    currProggres = event.loaded;
-                    myFile.progress = Math.floor(((currProggres + prevProgress) / entireSize) * 100);
-                }
-                if (event.type === HttpEventType.Response)
-                    prevProgress += currProggres;
-            })));
-            let blobResponse = blob as HttpResponse<Blob>;
-            downloadedBlobs.push(blobResponse.body!);
+    async onAddFile(file: File) {
+        let newFile: MyFile = new MyFile(0, file.name, BlobUtils.getExtensionFromName(file.name), file.size, new Date(), '', 0, [], FileState.ENCRYPT);
+        this.bag.files.push(newFile);
+        try {
+            this.bagService.addFile(this.bag.id, newFile, file);
+        } catch (err) {
+            this.emitInfo(Info.getErrorInfo(err as string));
         }
-
-        return downloadedBlobs;
+        this.emitInfo(Info.getSuccessInfo("Successfully added file " + file.name));
     }
 
+    onOpen($event: Bag) {
+        this.setOpenBagCoords($event);
+        this.openBag.emit($event);
+    }
 
     deleteBag(element: ElementToEdit) {
         this.bagService.deleteBag(element)
@@ -100,7 +116,7 @@ export class BagComponent implements AfterViewInit {
     }
 
     createNewBag(name: string) {
-        this.bagService.addNewBag(this.bag.id, name)
+        this.bagService.createBag(this.bag.id, name)
             .subscribe(e => {
                 if (e.status !== 200) {
                     this.emitInfo(Info.getErrorInfo("Fail in creating bag, try again"));
@@ -112,10 +128,7 @@ export class BagComponent implements AfterViewInit {
             });
     }
 
-    onOpen($event: Bag) {
-        this.setOpenBagCoords($event);
-        this.openBag.emit($event);
-    }
+
 
     setOpenBagCoords(bag: Bag) {
         let transformX: any = this.bagElement.nativeElement.style.transform;
@@ -147,88 +160,6 @@ export class BagComponent implements AfterViewInit {
 
     getRandomNumber(min: number, max: number) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    async onAddFile(file: File) {
-        let newFile: MyFile = new MyFile(0, file.name, BlobUtils.getExtensionFromName(file.name), file.size, new Date(), '', 0, [], FileState.ENCRYPT);
-        this.bag.files.push(newFile);
-        console.log(newFile);
-
-        const slicedBlob: Blob[] = this.sliceBlob(file);
-        const encryptedBlobs: Blob[] = await this.encryptBlobs(slicedBlob);
-        newFile.state = FileState.UPLOAD;
-
-        const newFileRequest: NewFileRequest = { bagId: this.bag.id, name: file.name, extension: BlobUtils.getExtensionFromName(file.name), size: file.size, fileParts: [] };
-        const fileParts: FilePart[] = await this.sendBlobs(encryptedBlobs, newFile);
-        newFileRequest.fileParts = fileParts;
-        const serverResponse = await firstValueFrom(this.bagService.sendNewFileToServer(newFileRequest));
-        if (serverResponse.status !== 200) {
-            this.emitInfo(Info.getErrorInfo("Fail in creating file, try again"));
-            return;
-        }
-        newFile.id = serverResponse.data?.id!;
-        newFile.create = serverResponse.data?.create!;
-        newFile.fileParts = serverResponse.data?.fileParts!;
-        newFile.state = FileState.READY;
-        this.emitInfo(Info.getSuccessInfo("Successfully added file " + serverResponse.data?.name));
-    }
-
-    async sendBlobs(blobs: Blob[], file: MyFile): Promise<FilePart[]> {
-        let entireSize = 0;
-        blobs.forEach(e => entireSize += e.size);
-        let prevProgress = 0;
-        let currProggres = 0;
-
-        file.progress = 0;
-        const fileParts: FilePart[] = [];
-        for (let i = 0; i < blobs.length; i++) {
-            const response = await lastValueFrom(this.bagService.sendBlobToTelegram(blobs[i]).pipe(tap(event => {
-                if (event.type === HttpEventType.UploadProgress) {
-                    currProggres = event.loaded;
-                    file.progress = Math.floor(((currProggres + prevProgress) / entireSize) * 100);
-                }
-                if (event.type === HttpEventType.Sent)
-                    prevProgress += currProggres;
-
-            })));
-            const responseAs = response as HttpResponse<TelegramResponse<Message>>;
-            if (!responseAs.body!.ok)
-                throw new Error("nwm");
-            const filePart: FilePart = { order: (i + 1), fileId: responseAs.body!.result.document.file_id, size: blobs[i].size };
-            fileParts.push(filePart);
-        }
-        return fileParts;
-    }
-
-    sliceBlob(blob: Blob): Blob[] {
-        console.log("Kroje na kawałki plik...");
-        const slicedBlob: Blob[] = BlobUtils.sliceBlob(blob);
-        console.log("Pokroiłem na kawałki, ilość: " + slicedBlob.length);
-        return slicedBlob;
-    }
-
-    async encryptBlobs(slicedBlobs: Blob[]): Promise<Blob[]> {
-        const encryptedBlobs: Blob[] = [];
-        console.log("Szyfruję kawałki...");
-        for (let i = 0; i < slicedBlobs.length; i++) {
-            const arr = await this.crypto.encrypt(await slicedBlobs[i].arrayBuffer());
-            encryptedBlobs.push(new Blob([arr]));
-            console.log("Pozostało: " + (slicedBlobs.length - i) + " kawałków");
-        }
-        console.log("Zaszyfrowałem wszystkie kawałki.");
-        return encryptedBlobs;
-    }
-
-    async decryptBlobs(slicedBlobs: Blob[]): Promise<Blob[]> {
-        const decryptedBlobs: Blob[] = [];
-        console.log("Odszyfrowuję kawałki...");
-        for (let i = 0; i < slicedBlobs.length; i++) {
-            const arr = await this.crypto.decrypt(await slicedBlobs[i].arrayBuffer());
-            decryptedBlobs.push(new Blob([arr]));
-            console.log("Pozostało: " + (slicedBlobs.length - i) + " kawałków");
-        }
-        console.log("Odszyfrowałem wszystkie kawałki.");
-        return decryptedBlobs;
     }
 
     onDelete($event: ElementToEdit) {
@@ -305,13 +236,6 @@ export class BagComponent implements AfterViewInit {
         this.bagElement.nativeElement.style.transformOrigin = `calc(${x}px - ${this.bag.x}px) calc(${y}px - ${this.bag.y}px)`;
     }
 
-    ngAfterViewInit(): void {
-        const el = this.bagElement.nativeElement as HTMLElement;
-        el.style.left = `${this.bag.x}px`;
-        el.style.top = `${this.bag.y}px`;
-        el.style.transformOrigin = ``;
-        this.focusOnly.emit(el);
-    }
 
     onFocus() {
         this.focus.emit(this.bagElement.nativeElement);
@@ -355,5 +279,13 @@ export class BagComponent implements AfterViewInit {
 
     trackById(index: number, file: any): any {
         return file.id;
+    }
+
+    ngAfterViewInit(): void {
+        const el = this.bagElement.nativeElement as HTMLElement;
+        el.style.left = `${this.bag.x}px`;
+        el.style.top = `${this.bag.y}px`;
+        el.style.transformOrigin = ``;
+        this.focus.emit(this.bagElement.nativeElement);
     }
 }

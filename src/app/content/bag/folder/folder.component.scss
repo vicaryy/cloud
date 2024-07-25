@@ -110,102 +110,96 @@
 
     .details {
         overflow: hidden;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        height: 0;
-        padding: 0px 20px;
-        margin: 0 2px;
-        box-sizing: border-box;
+        display: grid;
+        grid-template-rows: 0fr;
         background-color: var(--file-hover-color);
         border-bottom-left-radius: 30px;
         border-bottom-right-radius: 30px;
-        transition: height .5s;
+        transition: .5s;
 
-        .line {
-            position: absolute;
-            bottom: 0px;
-            left: 50%;
-            translate: -50% -50%;
-            font-size: 2.5rem;
-            color: var(--font-color-third);
-            // color: rgba(0, 113, 235, .5);
-        }
-
-        .title {
-            font-size: 1.4rem;
-            margin: 15px 0 8px 0;
-        }
-
-
-
-        .name,
-        .size,
-        .directory,
-        .created,
-        .bags,
-        .files {
-            display: flex;
-            margin-bottom: 1px;
-            font-size: 1.3rem;
-            color: var(--bag-font-color-second);
-
-            .value-title {
-                min-width: 75px;
-                max-width: 75px;
-                text-align: right;
-            }
-
-            .value {
-                margin-left: 10px;
-            }
-        }
-
-        .name,
-        .directory {
-            overflow: scroll;
-            max-height: 30px;
-            margin-bottom: 5px;
-        }
-
-        .created {
+        .details-wrapper {
             overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-
-        &>button {
+            position: relative;
+            grid-row: 1 / span 2;
             display: flex;
-            padding: 8px 0;
-            border-radius: 10px;
-            transition: background-color .3s;
+            flex-direction: column;
+            padding: 0px 20px;
+            margin: 0 2px;
+            box-sizing: border-box;
+            transition: .5s 0s;
 
-            p {
-                margin-left: 10px;
-            }
-
-            i {
-                width: 10px;
-                margin-top: 1px;
-                margin-left: 10px;
-            }
-
-            &:hover {
-                background-color: rgb(208, 208, 236);
-            }
-        }
-
-        .change-name {
-            margin-top: 10px;
-
-            i {
+            .line {
+                position: absolute;
+                bottom: 0px;
+                left: 50%;
+                translate: -50% -50%;
+                font-size: 2.5rem;
                 color: var(--font-color-third);
+                // color: rgba(0, 113, 235, .5);
             }
-        }
 
-        .delete {
-            color: var(--add-button-color);
+            .title {
+                font-size: 1.4rem;
+                margin: 15px 0 8px 0;
+            }
+
+
+
+            .name,
+            .size,
+            .directory,
+            .created,
+            .bags,
+            .files {
+                display: flex;
+                margin-bottom: 1px;
+                font-size: 1.3rem;
+                color: var(--bag-font-color-second);
+
+                .value-title {
+                    min-width: 75px;
+                    max-width: 75px;
+                    text-align: right;
+                }
+
+                .value {
+                    margin-left: 10px;
+                }
+            }
+
+            &>button {
+                display: flex;
+                padding: 8px 0;
+                border-radius: 10px;
+                transition: background-color .3s;
+
+                p {
+                    margin-left: 10px;
+                }
+
+                i {
+                    width: 10px;
+                    margin-top: 1px;
+                    margin-left: 10px;
+                }
+
+                &:hover {
+                    background-color: rgb(208, 208, 236);
+                }
+            }
+
+            .change-name {
+                margin-top: 10px;
+
+                i {
+                    color: var(--font-color-third);
+                }
+            }
+
+            .delete {
+                margin-bottom: 25px;
+                color: var(--add-button-color);
+            }
         }
     }
 }
@@ -235,7 +229,10 @@
     }
 
     .details {
-        height: 260px;
-        transition: height .5s;
+        grid-template-rows: 1fr;
+
+        .details-wrapper {
+            transition: .5s 0s;
+        }
     }
 }
