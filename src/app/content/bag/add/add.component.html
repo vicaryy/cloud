@@ -6,15 +6,12 @@
     <div class="block">
         <h3 class="title">Add</h3>
         <div class="options">
-            <label for="file" class="file-upload"><i class="fa-regular fa-file"></i>
+            <button class="file-upload" (click)="emitAddFile()"><i class="fa-regular fa-folder"></i>
                 <p>new file</p>
-            </label>
-            <input #file type="file" id="file" class="add-file" (change)="emitAddFile()">
+            </button>
             <button class="add-folder" (click)="emitAddBag()"><i class="fa-regular fa-folder"></i>
                 <p>new bag</p>
             </button>
         </div>
-
-        <i class="fa-solid fa-play pointer"></i>
     </div>
 </div>

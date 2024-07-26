@@ -34,6 +34,7 @@ export class BagComponent implements AfterViewInit {
     @Output('dragStart') dragStart = new EventEmitter<void>();
     @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
     @ViewChild("bagElement") bagElement!: ElementRef;
+    @ViewChild('file') file!: ElementRef;
     openedBags: number = 0;
     alert: boolean = false;
     changeNameAlert: boolean = false;
@@ -84,9 +85,21 @@ export class BagComponent implements AfterViewInit {
         this.bagService.downloadFile($event);
     }
 
-    async onAddFile(file: File) {
+    onAddFile() {
+        let fileInput = this.file.nativeElement as HTMLInputElement;
+        fileInput.click();
+    }
+
+    addFile() {
+        let fileInput = this.file.nativeElement as HTMLInputElement;
+        if (!fileInput.files)
+            return;
+        const file: File = fileInput.files[0];
         let newFile: MyFile = new MyFile(0, file.name, BlobUtils.getExtensionFromName(file.name), file.size, new Date(), '', 0, [], FileState.ENCRYPT);
         this.bag.files.push(newFile);
+        console.log(this.bag);
+        setTimeout(() => console.log(this.bag), 1000);
+
         try {
             this.bagService.addFile(this.bag.id, newFile, file);
         } catch (err) {
@@ -122,7 +135,7 @@ export class BagComponent implements AfterViewInit {
                     this.emitInfo(Info.getErrorInfo("Fail in creating bag, try again"));
                     return;
                 }
-                const responseBag: Bag = Bag.fromJSON(e.data!);
+                const responseBag: Bag = Bag.fromJSON(e.body!);
                 this.bag.bags.push(responseBag);
                 this.emitInfo(Info.getSuccessInfo("Successfully created bag"));
             });
@@ -182,9 +195,9 @@ export class BagComponent implements AfterViewInit {
     deleteFile(element: ElementToEdit) {
         this.bagService.deleteFile(element)
             .subscribe(e => {
-                if (e.status !== 200) {
+                if (e.status !== 200)
                     this.emitInfo(Info.getErrorInfo('Error in deleting file, try again'))
-                }
+
 
                 for (let i = 0; i < this.bag.files.length; i++)
                     if (element.id === this.bag.files[i].id)
@@ -195,11 +208,15 @@ export class BagComponent implements AfterViewInit {
     }
 
     changeBagName(element: ElementToEdit) {
+        if (this.isBagNameExists(element.newName!)) {
+            this.emitInfo(Info.getErrorInfo(`Bag with name '${element.newName}' already exist`))
+            return;
+        }
+
         this.bagService.changeBagName(element)
             .subscribe(e => {
-                if (e.status !== 200) {
+                if (e.status !== 200)
                     this.emitInfo(Info.getErrorInfo('Error in changing bag name, try again'))
-                }
 
                 for (let i = 0; i < this.bag.bags.length; i++)
                     if (element.id === this.bag.bags[i].id)
@@ -208,17 +225,37 @@ export class BagComponent implements AfterViewInit {
                 this.emitInfo(Info.getSuccessInfo(`Successfully changed bag name ${element.name}`));
             });
     }
+
+    isBagNameExists(name: string): boolean {
+        for (let bag of this.bag.bags)
+            if (bag.name === name)
+                return true;
+        return false;
+    }
+
+    isFileNameExists(name: string): boolean {
+        for (let file of this.bag.files)
+            if (file.name === name)
+                return true;
+        return false;
+    }
+
     changeFileName(element: ElementToEdit) {
+        if (this.isFileNameExists(element.newName!)) {
+            this.emitInfo(Info.getErrorInfo(`File with name '${element.newName}' already exist`));
+            return;
+        }
+
+        let fileToEdit = this.bag.files.find(e => e.id === element.id);
+        if (fileToEdit?.extension !== 'unknown' && !element.newName?.endsWith(fileToEdit!.extension!))
+            element.newName = element.newName + fileToEdit!.extension!;
+
         this.bagService.changeFileName(element)
             .subscribe(e => {
-                if (e.status !== 200) {
-                    this.emitInfo(Info.getErrorInfo('Error in changing file name, try again'))
-                }
+                if (e.status !== 200)
+                    this.emitInfo(Info.getErrorInfo('Error in changing file name, try again'));
 
-                for (let i = 0; i < this.bag.files.length; i++)
-                    if (element.id === this.bag.files[i].id)
-                        this.bag.files[i].name = element.newName!;
-
+                fileToEdit!.name = element.newName!;
                 this.emitInfo(Info.getSuccessInfo(`Successfully changed file name ${element.name}`));
             });
     }
@@ -259,7 +296,7 @@ export class BagComponent implements AfterViewInit {
         this.disableAlerts();
     }
 
-    async onNewBag($event: string) {
+    onNewBag($event: string) {
         this.disableAlerts();
         this.createNewBag($event);
     }

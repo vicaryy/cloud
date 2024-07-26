@@ -24,6 +24,10 @@ export class AlertNameComponent {
     }
 
     onOk() {
+        if (this.element.name === this.input.nativeElement.value) {
+            this.onCancel();
+            return;
+        }
         this.element.newName = this.input.nativeElement.value;
         this.ok.emit(this.element);
     }

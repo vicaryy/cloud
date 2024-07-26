@@ -53,9 +53,9 @@ export class BagService {
             console.log(serverResponse);
             throw new Error("Fail in sending file, try again.");
         }
-        newFile.id = serverResponse.data!.id!;
-        newFile.create = serverResponse.data?.create!;
-        newFile.fileParts = serverResponse.data?.fileParts!;
+        newFile.id = serverResponse.body!.id!;
+        newFile.create = serverResponse.body?.create!;
+        newFile.fileParts = serverResponse.body?.fileParts!;
         newFile.state = FileState.READY;
     }
 

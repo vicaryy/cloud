@@ -8,7 +8,6 @@ import { FolderComponent } from "./bag/folder/folder.component";
 import { InfoComponent } from "../shared/components/info/info.component";
 import { Info } from '../shared/models/alert.models';
 import { UserService } from '../shared/services/user.service';
-import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { DragBagEnd } from '../shared/interfaces/content.interfaces';
 
 @Component({
@@ -28,11 +27,17 @@ export class ContentComponent implements OnInit {
     constructor(private bagService: BagService, private userService: UserService) { }
 
     ngOnInit(): void {
-        this.userService.getUser(7).subscribe(e => {
-            this.user = User.fromJSON(e.data!);
-            this.bags = this.user.bags;
-            this.bags[0].x = 100;
-            this.bags[0].y = 250;
+        this.userService.getUser(7).subscribe({
+            next: user => {
+                this.user = User.fromJSON(user);
+                this.bags = this.user.bags;
+                this.bags[0].x = 100;
+                this.bags[0].y = 250;
+            },
+            error: error => {
+                console.log("Error: ", error);
+                error.
+            }
         });
     }
 
@@ -78,5 +83,9 @@ export class ContentComponent implements OnInit {
     onOpenBag($event: Bag) {
         if (!this.bags.find(e => e.id === $event.id))
             this.bags = [...this.bags, $event];
+    }
+
+    trackById(index: number, bag: any): any {
+        return bag.id;
     }
 }

@@ -13,7 +13,8 @@
             <p class="directory"> {{ bag.getFullDirectory() }}</p>
             <p class="amount">{{bag.getAmountOfBags()}} bags · {{bag.getAmountOfFiles()}} files </p>
         </div>
-        <app-add class="add" (addFile)="onAddFile($event)" (addBag)="displayNewBagAlert()"></app-add>
+        <app-add class="add" (addFile)="onAddFile()" (addBag)="displayNewBagAlert()"></app-add>
+        <input #file type="file" id="file" class="add-file" (change)="addFile()">
     </div>
     <div class="files">
         <ng-container *ngFor="let b of bag.bags; trackBy: trackById">
