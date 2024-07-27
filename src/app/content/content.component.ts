@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, QueryList, ViewChildren, numberAttribute
 import { BagComponent } from "./bag/bag.component";
 import { SearchComponent } from './search/search.component';
 import { BagService } from '../shared/services/bag.service';
-import { Bag, File, User } from '../shared/models/content.models';
+import { Bag, MyFile, User } from '../shared/models/content.models';
 import { CommonModule } from '@angular/common';
 import { FolderComponent } from "./bag/folder/folder.component";
 import { InfoComponent } from "../shared/components/info/info.component";
@@ -34,10 +34,8 @@ export class ContentComponent implements OnInit {
                 this.bags[0].x = 100;
                 this.bags[0].y = 250;
             },
-            error: error => {
-                console.log("Error: ", error);
-                error.
-            }
+            error: error => console.log("Error: ", error)
+
         });
     }
 
@@ -76,10 +74,12 @@ export class ContentComponent implements OnInit {
     focusBag(element: HTMLElement) {
         this.bagService.focusElement(element);
     }
+
     onInfo(event: Info) {
         this.info = event;
         setTimeout(() => this.info = undefined, 4000);
     }
+
     onOpenBag($event: Bag) {
         if (!this.bags.find(e => e.id === $event.id))
             this.bags = [...this.bags, $event];

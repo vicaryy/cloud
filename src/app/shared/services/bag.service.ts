@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BackendApiService } from './backend-api.service';
 import { TelegramApiService } from './telegram-api.service';
-import { Bag, File as MyFile } from '../../shared/models/content.models';
-import { FileState } from '../enums/content.enums';
+import { Bag, MyFile as MyFile } from '../../shared/models/content.models';
+import { State } from '../enums/content.enums';
 import { firstValueFrom, lastValueFrom, of, tap } from 'rxjs';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { FilePart, NewFileRequest } from '../interfaces/http-interfaces';
@@ -24,10 +24,6 @@ export class BagService {
         return this.backend.deleteBag(element);
     }
 
-    deleteFile(element: ElementToEdit) {
-        return this.backend.deleteFile(element);
-    }
-
     createBag(parentId: number, name: string) {
         return this.backend.createBag(parentId, name);
     }
@@ -35,14 +31,11 @@ export class BagService {
     changeBagName(element: ElementToEdit) {
         return this.backend.changeBagName(element);
     }
-    changeFileName(element: ElementToEdit) {
-        return this.backend.changeFileName(element);
-    }
 
-    async addFile(parentId: number,newFile: MyFile, file: File) {
+    async addFile(parentId: number, newFile: MyFile, file: File) {
         const slicedBlob: Blob[] = this.sliceBlob(file);
         const encryptedBlobs: Blob[] = await this.encryptBlobs(slicedBlob);
-        newFile.state = FileState.UPLOAD;
+        newFile.state = State.UPLOAD;
 
         const newFileRequest: NewFileRequest = { bagId: parentId, name: file.name, extension: BlobUtils.getExtensionFromName(file.name), size: file.size, fileParts: [] };
         const fileParts: FilePart[] = await this.sendBlobs(encryptedBlobs, newFile);
@@ -56,15 +49,15 @@ export class BagService {
         newFile.id = serverResponse.body!.id!;
         newFile.create = serverResponse.body?.create!;
         newFile.fileParts = serverResponse.body?.fileParts!;
-        newFile.state = FileState.READY;
+        newFile.state = State.READY;
     }
 
     async downloadFile(file: MyFile) {
-        file.state = FileState.DOWNLOAD;
+        file.state = State.DOWNLOAD;
         let downloadedBlobs = await this.downloadBlobs(file.fileParts, file);
-        file.state = FileState.DECRYPT;
+        file.state = State.DECRYPT;
         let decryptedBlobs = await this.decryptBlobs(downloadedBlobs);
-        file.state = FileState.DONE;
+        file.state = State.DONE;
         file.url = URL.createObjectURL(new Blob(decryptedBlobs));
     }
 

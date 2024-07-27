@@ -1,4 +1,5 @@
-import { FileState } from "../enums/content.enums";
+import { State } from "../enums/content.enums";
+import { FileState } from "../interfaces/content.interfaces";
 import { FilePart } from "../interfaces/http-interfaces";
 
 export class User {
@@ -23,7 +24,7 @@ export class Bag {
         public directory: string,
         public create: Date,
         public bags: Bag[],
-        public files: File[],
+        public files: MyFile[],
         public x?: number,
         public y?: number
     ) { }
@@ -39,7 +40,7 @@ export class Bag {
             json.directory,
             json.create,
             json.bags.map(e => Bag.fromJSON(e)),
-            json.files.map(e => File.fromJSON(e))
+            json.files.map(e => MyFile.fromJSON(e))
         );
     }
 
@@ -60,7 +61,7 @@ export class Bag {
     }
 }
 
-export class File {
+export class MyFile {
     static State: any;
     constructor(
         public id: number,
@@ -71,13 +72,16 @@ export class File {
         public url: string,
         public progress: number,
         public fileParts: FilePart[],
-        public state: FileState) { }
+        public parentBag: Bag,
+        public blob: Blob | null,
+        public state: FileState
+    ) { }
 
-    static fromJSON(json: File) {
+    static fromJSON(json: MyFile) {
         if (!json.fileParts)
             json.fileParts = [];
 
-        return new File(
+        return new MyFile(
             json.id,
             json.name,
             json.extension,
@@ -86,7 +90,11 @@ export class File {
             '',
             0,
             json.fileParts,
-            FileState.READY
+            json.parentBag,
+            null,
+            {
+                state: State.READY
+            }
         );
     }
 }

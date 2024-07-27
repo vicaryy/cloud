@@ -2,7 +2,7 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { NewBagRequest, NewFileRequest, ServerResponse } from '../interfaces/http-interfaces';
-import { Bag, File, User } from '../models/content.models';
+import { Bag, MyFile, User } from '../models/content.models';
 import { environment } from '../../../environments/environment.development';
 import { ElementToEdit } from '../interfaces/alert-interfaces';
 
@@ -13,24 +13,24 @@ export class BackendApiService {
 
     constructor(private http: HttpClient) { }
 
-    createBag(parentId: number, name: string): Observable<HttpResponse<Bag>> {
+    createBag(parentId: number, name: string): Observable<Bag> {
         const request: NewBagRequest = { id: parentId, name: name };
-        return this.http.post<HttpResponse<Bag>>(environment.apiUrl + "/api/bag/create", request);
+        return this.http.post<Bag>(environment.apiUrl + "/api/bag/create", request);
     }
-    addNewFile(newFileRequest: NewFileRequest): Observable<HttpResponse<File>> {
-        return this.http.post<HttpResponse<File>>(environment.apiUrl + "/api/file/create", newFileRequest);
+    addNewFile(newFileRequest: NewFileRequest): Observable<MyFile> {
+        return this.http.post<MyFile>(environment.apiUrl + "/api/file/create", newFileRequest);
     }
-    deleteBag(element: ElementToEdit): Observable<HttpResponse<string>> {
-        return this.http.delete<HttpResponse<string>>(environment.apiUrl + "/api/bag/delete/" + element.id);
+    deleteBag(element: ElementToEdit): Observable<string> {
+        return this.http.delete<string>(environment.apiUrl + "/api/bag/delete/" + element.id);
     }
-    changeBagName(element: ElementToEdit): Observable<HttpResponse<string>> {
-        return this.http.patch<HttpResponse<string>>(`${environment.apiUrl}/api/bag/edit/${element.id}`, {"name": element.newName});
+    changeBagName(element: ElementToEdit): Observable<string> {
+        return this.http.patch<string>(`${environment.apiUrl}/api/bag/edit/${element.id}`, {"name": element.newName});
     }
-    deleteFile(element: ElementToEdit): Observable<HttpResponse<string>> {
-        return this.http.delete<HttpResponse<string>>(environment.apiUrl + "/api/file/delete/" + element.id);
+    deleteFile(element: ElementToEdit): Observable<string> {
+        return this.http.delete<string>(environment.apiUrl + "/api/file/delete/" + element.id);
     }
-    changeFileName(element: ElementToEdit): Observable<HttpResponse<string>> {
-        return this.http.patch<HttpResponse<string>>(`${environment.apiUrl}/api/file/edit/${element.id}`, {"name": element.newName});
+    changeFileName(element: ElementToEdit): Observable<string> {
+        return this.http.patch<string>(`${environment.apiUrl}/api/file/edit/${element.id}`, {"name": element.newName});
     }
     getUser(userId: number): Observable<User> {
         return this.http.get<User>(environment.apiUrl + "/api/user/" + userId);

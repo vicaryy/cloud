@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { File } from '../../../shared/models/content.models';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MyFile } from '../../../shared/models/content.models';
 import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 import { CommonModule } from '@angular/common';
-import { FileState } from '../../../shared/enums/content.enums';
+import { State } from '../../../shared/enums/content.enums';
+import { FileService } from '../../../shared/services/file.service';
 
 @Component({
     selector: 'app-file',
@@ -12,14 +13,17 @@ import { FileState } from '../../../shared/enums/content.enums';
     imports: [CommonModule]
 })
 export class FileComponent implements OnInit {
-    @Input('file') file!: File;
+    @Input('file') file!: MyFile;
     @Output('change') change = new EventEmitter<ElementToEdit>();
-    @Output('download') download = new EventEmitter<File>();
+    @Output('download') download = new EventEmitter<MyFile>();
     detailsActive: boolean = false;
-    State = FileState;
+    State = State;
     size: string = '';
     date: string = '';
     logoUrl: string = "./assets/images/extensions/";
+
+
+    constructor(private fileService: FileService) { }
 
     ngOnInit(): void {
         this.initSize();
@@ -87,7 +91,7 @@ export class FileComponent implements OnInit {
     }
 
     emitDownload() {
-        this.download.emit(this.file);
+        this.fileService.downloadFile(this.file);
     }
 
     emitChangeName() {

@@ -1,3 +1,3 @@
-export enum FileState {
-    DONE, ENCRYPT, UPLOAD, DECRYPT, DOWNLOAD, READY
+export enum State {
+    DONE, ENCRYPT, UPLOAD, DECRYPT, DOWNLOAD, READY, ERROR
 }

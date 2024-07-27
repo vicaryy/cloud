@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
-import { Bag, File as MyFile } from '../../shared/models/content.models';
+import { Bag, MyFile as MyFile } from '../../shared/models/content.models';
 import { AddComponent } from './add/add.component';
 import { FolderComponent } from "./folder/folder.component";
 import { AlertNameComponent } from "./alert-name/alert-name.component";
@@ -13,9 +13,10 @@ import { BagService } from '../../shared/services/bag.service';
 import { BlurBlockComponent } from "../../shared/components/blur-block/blur-block.component";
 import { InfoComponent } from "../../shared/components/info/info.component";
 import { Info } from '../../shared/models/alert.models';
-import { FileState } from '../../shared/enums/content.enums';
+import { State } from '../../shared/enums/content.enums';
 import { BlobUtils } from '../../shared/utils/blob.utils';
 import { DragBagEnd } from '../../shared/interfaces/content.interfaces';
+import { FileService } from '../../shared/services/file.service';
 
 @Component({
     selector: 'app-bag',
@@ -42,7 +43,7 @@ export class BagComponent implements AfterViewInit {
     newBagAlert: boolean = false;
     elementToEdit!: ElementToEdit;
 
-    constructor(private bagService: BagService) { }
+    constructor(private bagService: BagService, private fileService: FileService) { }
 
 
     @ViewChild('bagElement') resizableBox!: ElementRef;
@@ -95,17 +96,16 @@ export class BagComponent implements AfterViewInit {
         if (!fileInput.files)
             return;
         const file: File = fileInput.files[0];
-        let newFile: MyFile = new MyFile(0, file.name, BlobUtils.getExtensionFromName(file.name), file.size, new Date(), '', 0, [], FileState.ENCRYPT);
-        this.bag.files.push(newFile);
-        console.log(this.bag);
-        setTimeout(() => console.log(this.bag), 1000);
+        this.fileService.addFile(this.file.nativeElement, this.bag);
+        // let newFile: MyFile = new MyFile(0, file.name, BlobUtils.getExtensionFromName(file.name), file.size, new Date(), '', 0, [], FileState.ENCRYPT);
+        // this.bag.files.push(newFile);
 
-        try {
-            this.bagService.addFile(this.bag.id, newFile, file);
-        } catch (err) {
-            this.emitInfo(Info.getErrorInfo(err as string));
-        }
-        this.emitInfo(Info.getSuccessInfo("Successfully added file " + file.name));
+        // try {
+        //     this.bagService.addFile(this.bag.id, newFile, file);
+        // } catch (err) {
+        //     this.emitInfo(Info.getErrorInfo(err as string));
+        // }
+        // this.emitInfo(Info.getSuccessInfo("Successfully added file " + file.name));
     }
 
     onOpen($event: Bag) {
@@ -114,31 +114,25 @@ export class BagComponent implements AfterViewInit {
     }
 
     deleteBag(element: ElementToEdit) {
-        this.bagService.deleteBag(element)
-            .subscribe(e => {
-                if (e.status !== 200) {
-                    this.emitInfo(Info.getErrorInfo('Error in deleting bag, try again'))
-                    return;
-                }
+        this.bagService.deleteBag(element).subscribe({
+            next: () => {
                 for (let i = 0; i < this.bag.bags.length; i++)
                     if (element.id === this.bag.bags[i].id)
                         this.bag.bags.splice(i, 1);
-                this.deleteActiveChildBag.emit(element.id);
-                this.emitInfo(Info.getSuccessInfo(`Successfully deleted bag ${element.name}`));
-            });
+                this.emitInfo(Info.getSuccessInfo(`Successfully deleted bag ${element.name}`))
+            },
+            error: () => this.emitInfo(Info.getErrorInfo('Error in deleting bag, try again'))
+        });
     }
 
     createNewBag(name: string) {
-        this.bagService.createBag(this.bag.id, name)
-            .subscribe(e => {
-                if (e.status !== 200) {
-                    this.emitInfo(Info.getErrorInfo("Fail in creating bag, try again"));
-                    return;
-                }
-                const responseBag: Bag = Bag.fromJSON(e.body!);
-                this.bag.bags.push(responseBag);
+        this.bagService.createBag(this.bag.id, name).subscribe({
+            next: e => {
+                this.bag.bags.push(Bag.fromJSON(e));
                 this.emitInfo(Info.getSuccessInfo("Successfully created bag"));
-            });
+            },
+            error: () => this.emitInfo(Info.getErrorInfo("Fail in creating bag, try again"))
+        });
     }
 
 
@@ -193,18 +187,15 @@ export class BagComponent implements AfterViewInit {
 
 
     deleteFile(element: ElementToEdit) {
-        this.bagService.deleteFile(element)
-            .subscribe(e => {
-                if (e.status !== 200)
-                    this.emitInfo(Info.getErrorInfo('Error in deleting file, try again'))
-
-
+        this.fileService.deleteFile(element).subscribe({
+            next: () => {
                 for (let i = 0; i < this.bag.files.length; i++)
                     if (element.id === this.bag.files[i].id)
                         this.bag.files.splice(i, 1);
-
                 this.emitInfo(Info.getSuccessInfo(`Successfully deleted file ${element.name}`));
-            });
+            },
+            error: () => this.emitInfo(Info.getErrorInfo('Error in deleting file, try again'))
+        });
     }
 
     changeBagName(element: ElementToEdit) {
@@ -213,17 +204,15 @@ export class BagComponent implements AfterViewInit {
             return;
         }
 
-        this.bagService.changeBagName(element)
-            .subscribe(e => {
-                if (e.status !== 200)
-                    this.emitInfo(Info.getErrorInfo('Error in changing bag name, try again'))
-
+        this.bagService.changeBagName(element).subscribe({
+            next: () => {
                 for (let i = 0; i < this.bag.bags.length; i++)
                     if (element.id === this.bag.bags[i].id)
                         this.bag.bags[i].name = element.newName!;
-
                 this.emitInfo(Info.getSuccessInfo(`Successfully changed bag name ${element.name}`));
-            });
+            },
+            error: () => this.emitInfo(Info.getErrorInfo('Error in changing bag name, try again'))
+        });
     }
 
     isBagNameExists(name: string): boolean {
@@ -250,14 +239,13 @@ export class BagComponent implements AfterViewInit {
         if (fileToEdit?.extension !== 'unknown' && !element.newName?.endsWith(fileToEdit!.extension!))
             element.newName = element.newName + fileToEdit!.extension!;
 
-        this.bagService.changeFileName(element)
-            .subscribe(e => {
-                if (e.status !== 200)
-                    this.emitInfo(Info.getErrorInfo('Error in changing file name, try again'));
-
+        this.fileService.changeFileName(element).subscribe({
+            next: () => {
                 fileToEdit!.name = element.newName!;
                 this.emitInfo(Info.getSuccessInfo(`Successfully changed file name ${element.name}`));
-            });
+            },
+            error: () => this.emitInfo(Info.getErrorInfo('Error in changing file name, try again'))
+        });
     }
 
     onDragStart(event: CdkDragStart) {
