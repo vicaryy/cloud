@@ -9,6 +9,7 @@ import { InfoComponent } from "../shared/components/info/info.component";
 import { Info } from '../shared/models/alert.models';
 import { UserService } from '../shared/services/user.service';
 import { DragBagEnd } from '../shared/interfaces/content.interfaces';
+import { InfoService } from '../shared/services/info.service';
 
 @Component({
     selector: 'app-content',
@@ -24,19 +25,28 @@ export class ContentComponent implements OnInit {
     info: Info | undefined;
     deleteBar: boolean = false;
 
-    constructor(private bagService: BagService, private userService: UserService) { }
+    constructor(private bagService: BagService, private userService: UserService, private infoService: InfoService) { }
 
     ngOnInit(): void {
         this.userService.getUser(7).subscribe({
             next: user => {
+                console.log(user);
+
                 this.user = User.fromJSON(user);
                 this.bags = this.user.bags;
                 this.bags[0].x = 100;
                 this.bags[0].y = 250;
             },
-            error: error => console.log("Error: ", error)
+            error: () => this.infoService.displayError("Fail in fetching user")
 
         });
+
+        this.infoService.sub$.subscribe(next => this.displayInfo(next));
+    }
+
+    displayInfo(info: Info) {
+        this.info = info;
+        setTimeout(() => this.info = undefined, 4000);
     }
 
     onDeleteActiveChildBag($event: number) {
@@ -73,11 +83,6 @@ export class ContentComponent implements OnInit {
 
     focusBag(element: HTMLElement) {
         this.bagService.focusElement(element);
-    }
-
-    onInfo(event: Info) {
-        this.info = event;
-        setTimeout(() => this.info = undefined, 4000);
     }
 
     onOpenBag($event: Bag) {

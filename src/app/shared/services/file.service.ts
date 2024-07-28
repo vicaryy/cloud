@@ -7,16 +7,17 @@ import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BackendApiService } from './backend-api.service';
 import { CryptoService } from './crypto.service';
 import { from, lastValueFrom, of, switchMap, tap } from 'rxjs';
-import { FilePart } from '../interfaces/http-interfaces';
-import { HttpEventType } from '@angular/common/http';
+import { FilePart, NewFileRequest } from '../interfaces/http-interfaces';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
+import { InfoService } from './info.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FileService {
 
-    constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService) { }
+    constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService) { }
 
     deleteFile(element: ElementToEdit) {
         return this.backend.deleteFile(element);
@@ -26,80 +27,175 @@ export class FileService {
         return this.backend.changeFileName(element);
     }
 
-    downloadFile(file: MyFile) {
+    async downloadFile(file: MyFile) {
+        try {
+            await this.downloadBlobs(file);
+        } catch (error) {
+            file.state = State.ERROR;
+            console.log("Error in downloading file", error);
 
+            this.info.displayError("Fail in downloading file, try again");
+        }
     }
 
-    addFile(fileInput: HTMLInputElement, parentBag: Bag) {
+    private async downloadBlobs(file: MyFile) {
+        file.state = State.DOWNLOAD;
+        if (!file.downloadState.entireSize)
+            file.fileParts.forEach(e => file.downloadState.entireSize! += e.size);
+        if (!file.downloadState.prevProgress)
+            file.downloadState.prevProgress = 0;
+        let currProggres = 0;
+
+        while (file.fileParts.length > 0) {
+            const f = file.fileParts[0];
+            let fileUrl = await lastValueFrom(this.telegram.getFilePath(f.fileId));
+            let blob = await lastValueFrom(this.telegram.downloadBlob(fileUrl.result.file_path).pipe(tap(event => {
+                if (event.type === HttpEventType.DownloadProgress) {
+                    currProggres = event.loaded;
+                    file.progress = Math.floor(((currProggres + file.downloadState.prevProgress!) / file.downloadState.entireSize!) * 100);
+                }
+                if (event.type === HttpEventType.Response)
+                    file.downloadState.prevProgress! += currProggres;
+            })));
+            let blobResponse = blob as HttpResponse<Blob>;
+            file.downloadState.downloadedBlobs!.push(blobResponse.body!);
+            file.fileParts.shift();
+        }
+        file.downloadState.downloaded = true;
+        await this.decryptBlobs(file);
+    }
+
+    private async decryptBlobs(file: MyFile) {
+        file.state = State.DECRYPT;
+        console.log("Odszyfrowuję kawałki...");
+
+        while (file.downloadState.downloadedBlobs!.length > 0) {
+                const doBlob = file.downloadState.downloadedBlobs![0];
+                const arr = await this.crypto.decrypt(await doBlob.arrayBuffer());
+                if (!file.downloadState.decryptedBlobs)
+                    file.downloadState.decryptedBlobs = [];
+                file.downloadState.decryptedBlobs.push(new Blob([arr]));
+                file.downloadState.downloadedBlobs!.shift();
+                console.log("Pozostało: " + (file.downloadState.decryptedBlobs) + " kawałków");
+        }
+        console.log("Odszyfrowałem wszystkie kawałki.");
+        file.downloadState.decrypted = true;
+        await this.createDownloadUrl(file);
+    }
+
+    private async createDownloadUrl(file: MyFile) {
+        file.url = URL.createObjectURL(new Blob(file.downloadState.decryptedBlobs));
+        file.state = State.DONE;
+        file.downloadState = {};
+        file.progress = 0;
+    }
+
+   async addFile(fileInput: HTMLInputElement, parentBag: Bag) {
         if (!fileInput.files)
             return;
         const file: File = fileInput.files[0];
 
         const newFile: MyFile = this.createNewFile(file, parentBag);
         parentBag.files.push(newFile);
-        this.uploadFile(newFile);
+        try {
+            await this.uploadFile(newFile);
+        } catch (error) {
+            newFile.state = State.ERROR;
+            console.log("Error in adding file", error);
+            this.info.displayError("Fail in uploading file, try again");
+        }
     }
 
-    private uploadFile(file: MyFile) {
-        file.state.state = State.ENCRYPT;
-        const slicedBlobs = this.sliceBlob(file.blob!);
-        const encryptedBlobs = this.encryptBlobs(slicedBlobs);
-        file.state.upload = true;
-        file.state.encryptedBlobs = encryptedBlobs;
-
-        from(this.encryptBlobs(slicedBlobs)).pipe(
-            tap(encryptedBlobs => file.state.encryptedBlobs = encryptedBlobs),
-            switchMap(encryptedBlobs => this.sendBlobs(file))
-        )
+    private async uploadFile(file: MyFile) {
+        await this.sliceBlob(file);
     }
 
-    private sliceBlob(blob: Blob): Blob[] {
+    private async sliceBlob(file: MyFile) {
         console.log("Kroje na kawałki plik...");
-        const slicedBlob: Blob[] = BlobUtils.sliceBlob(blob);
+        const slicedBlob = BlobUtils.sliceBlob(file.blob!);
+        file.uploadState.slicedBlobs = slicedBlob;
         console.log("Pokroiłem na kawałki, ilość: " + slicedBlob.length);
-        return slicedBlob;
+        file.uploadState.sliced = true;
+        await this.encryptBlobs(file);
     }
 
-    private async encryptBlobs(slicedBlobs: Blob[]): Promise<Blob[]> {
-        const encryptedBlobs: Blob[] = [];
+    private async encryptBlobs(file: MyFile) {
+        file.state = State.ENCRYPT;
         console.log("Szyfruję kawałki...");
-        for (let i = 0; i < slicedBlobs.length; i++) {
-            const arr = await this.crypto.encrypt(await slicedBlobs[i].arrayBuffer());
-            encryptedBlobs.push(new Blob([arr]));
-            console.log("Pozostało: " + (slicedBlobs.length - i) + " kawałków");
+
+        while (file.uploadState.slicedBlobs!.length > 0) {
+            const slBlob = file.uploadState.slicedBlobs![0];
+
+            const arr = await this.crypto.encrypt(await slBlob.arrayBuffer());
+
+            if (!file.uploadState.encryptedBlobs)
+                file.uploadState.encryptedBlobs = [];
+            file.uploadState.encryptedBlobs.push(new Blob([arr]));
+            file.uploadState.slicedBlobs!.shift();
+            console.log("Pozostało: " + (file.uploadState.slicedBlobs!.length) + " kawałków");
         }
         console.log("Zaszyfrowałem wszystkie kawałki.");
-        return encryptedBlobs;
+        file.uploadState.encrypted = true;
+        await this.sendBlobs(file);
     }
 
-    private async sendBlobs(file: MyFile): Promise<FilePart[]> {
-        let entireSize = 0;
-        file.state.encryptedBlobs!.forEach(e => entireSize += e.size);
-        let prevProgress = 0;
+
+    private async sendBlobs(file: MyFile) {
+        file.state = State.UPLOAD;
+        if (!file.uploadState.entireSize) {
+            file.uploadState.entireSize = 0;
+            file.uploadState.encryptedBlobs!.forEach(e => file.uploadState.entireSize! += e.size);
+        }
+        if (!file.uploadState.prevProgress)
+            file.uploadState.prevProgress = 0;
         let currProggres = 0;
 
-        file.progress = 0;
-        const fileParts: FilePart[] = [];
-        for (let i = 0; i < file.state.encryptedBlobs!.length; i++) {
-            const response = await lastValueFrom(this.telegram.sendBlob(file.state.encryptedBlobs![i]).pipe(tap(event => {
+        while (file.uploadState.encryptedBlobs!.length > 0) {
+            const enBlob = file.uploadState.encryptedBlobs![0];
+
+            const response = await lastValueFrom(this.telegram.sendBlob(enBlob).pipe(tap(event => {
                 if (event.type === HttpEventType.UploadProgress) {
                     currProggres = event.loaded;
-                    file.progress = Math.floor(((currProggres + prevProgress) / entireSize) * 100);
+                    file.progress = Math.floor(((currProggres + file.uploadState.prevProgress!) / file.uploadState.entireSize!) * 100);
+
                 }
                 if (event.type === HttpEventType.Sent)
-                    prevProgress += currProggres;
+                    file.uploadState.prevProgress! += currProggres;
 
             })));
-            const responseAs = response as unknown as TelegramResponse<Message>;
-            if (!responseAs.ok) {
-                console.log("Fail in sending file to telegram: ");
+            const responseAs = response as HttpResponse<TelegramResponse<Message>>;
+            if (!responseAs.ok && !responseAs.body!.ok) {
+                console.log("Fail in sending blob: ");
                 console.log(responseAs);
-                throw new Error("Fail in sending file, try again.");
+                throw new Error("Fail in uploading file, try again");
             }
-            const filePart: FilePart = { order: (i + 1), fileId: responseAs.result.document.file_id, size: file.state.encryptedBlobs![i].size };
-            fileParts.push(filePart);
+            const filePart: FilePart = { order: file.fileParts.length + 1, fileId: responseAs.body!.result.document.file_id, size: enBlob.size };
+            file.fileParts.push(filePart);
+            file.uploadState.encryptedBlobs?.shift()
         }
-        return fileParts;
+        file.uploadState.sended = true;
+        await this.sendToBackend(file);
+    }
+
+    private async sendToBackend(file: MyFile) {
+        const newFileRequest: NewFileRequest = { bagId: file.parentBag.id, name: file.name, extension: file.extension, size: file.size, fileParts: file.fileParts };
+        this.backend.addNewFile(newFileRequest).subscribe({
+            next: response => {
+                file.id = response.id!;
+                file.create = response.create!;
+                file.fileParts = response.fileParts!;
+                file.progress = 0;
+                file.blob = null;
+                file.state = State.READY;
+                file.uploadState = {}
+                this.info.displaySuccess(`Successfully uploaded file '${file.name}'`);
+            },
+            error: () => {
+                file.state = State.ERROR;
+                this.info.displayError("Fail in uploading file, try again")
+            }
+        });
+
     }
 
 
@@ -115,9 +211,9 @@ export class FileService {
             [],
             parentBag,
             file,
-            {
-                state: State.READY
-            }
+            State.UPLOAD,
+            {},
+            {}
         )
     }
 }

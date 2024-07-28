@@ -1,5 +1,4 @@
 import { State } from "../enums/content.enums"
-import { FilePart } from "./http-interfaces"
 
 export interface DragBagEnd {
     x: number,
@@ -7,11 +6,21 @@ export interface DragBagEnd {
     id: number
 }
 
-export interface FileState {
-    state?: State,
-    fileParts?: FilePart[],
-    download?: boolean,
-    upload?: boolean,
+export interface UploadState {
+    sliced?: boolean,
+    encrypted?: boolean,
+    sended?: boolean,
+    slicedBlobs?: Blob[],
+    encryptedBlobs?: Blob[],
+    prevProgress?: number,
+    entireSize?: number,
+}
+
+export interface DownloadState {
+    downloaded?: boolean,
+    decrypted?: boolean,
+    downloadedBlobs?: Blob[],
     decryptedBlobs?: Blob[],
-    encryptedBlobs?: Blob[]
+    prevProgress?: number,
+    entireSize?: number,
 }

@@ -21,7 +21,7 @@
             <app-folder [bag]="b" (change)="displayAlert($event)" (open)="onOpen($event)"></app-folder>
         </ng-container>
         <ng-container *ngFor="let f of bag.files; trackBy: trackById">
-            <app-file [file]="f" (change)="displayAlert($event)" (download)="onDownload($event)"></app-file>
+            <app-file [file]="f" (change)="displayAlert($event)" (download)="onDownloadFile($event)"></app-file>
         </ng-container>
         <div class="empty-file"></div>
         <div class="empty-file"></div>

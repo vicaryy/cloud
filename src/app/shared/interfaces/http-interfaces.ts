@@ -1,6 +1,6 @@
 export interface ServerResponse<T> {
     status: number;
-    data?: T;
+    result?: T;
 }
 
 export interface NewBagRequest {

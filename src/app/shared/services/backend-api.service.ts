@@ -20,17 +20,17 @@ export class BackendApiService {
     addNewFile(newFileRequest: NewFileRequest): Observable<MyFile> {
         return this.http.post<MyFile>(environment.apiUrl + "/api/file/create", newFileRequest);
     }
-    deleteBag(element: ElementToEdit): Observable<string> {
-        return this.http.delete<string>(environment.apiUrl + "/api/bag/delete/" + element.id);
+    deleteBag(element: ElementToEdit): Observable<void> {
+        return this.http.delete<void>(environment.apiUrl + "/api/bag/delete/" + element.id);
     }
-    changeBagName(element: ElementToEdit): Observable<string> {
-        return this.http.patch<string>(`${environment.apiUrl}/api/bag/edit/${element.id}`, {"name": element.newName});
+    changeBagName(element: ElementToEdit): Observable<void> {
+        return this.http.patch<void>(`${environment.apiUrl}/api/bag/edit/${element.id}`, {"name": element.newName});
     }
-    deleteFile(element: ElementToEdit): Observable<string> {
-        return this.http.delete<string>(environment.apiUrl + "/api/file/delete/" + element.id);
+    deleteFile(element: ElementToEdit): Observable<void> {
+        return this.http.delete<void>(environment.apiUrl + "/api/file/delete/" + element.id);
     }
-    changeFileName(element: ElementToEdit): Observable<string> {
-        return this.http.patch<string>(`${environment.apiUrl}/api/file/edit/${element.id}`, {"name": element.newName});
+    changeFileName(element: ElementToEdit): Observable<void> {
+        return this.http.patch<void>(`${environment.apiUrl}/api/file/edit/${element.id}`, {"name": element.newName});
     }
     getUser(userId: number): Observable<User> {
         return this.http.get<User>(environment.apiUrl + "/api/user/" + userId);
