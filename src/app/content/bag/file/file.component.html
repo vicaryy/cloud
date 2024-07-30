@@ -9,8 +9,11 @@
     @if (file.state === State.DONE) {
     <div class="main-wrapper done">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
-        <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <a [href]="file.url" [download]="file.name">
+        <div class="name" (click)="toggleDetails()">
+            <p>{{file.name}}</p>
+            <p>Ready to save</p>
+        </div>
+        <a [href]="file.url" [download]="file.name" class="progress-wrapper state">
             <button class="download state">
                 <i class="fa-solid fa-floppy-disk"></i>
             </button>
@@ -21,48 +24,71 @@
     @if (file.state === State.ENCRYPT) {
     <div class="main-wrapper encrypt">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
-        <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <div class="lds-ring state"><span class="description">ENCRYPTING</span><i class="fa-solid fa-key"></i>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+        <div class="name" (click)="toggleDetails()">
+            <p>{{file.name}}</p>
+            <p>Encrypting...</p>
+        </div>
+        <div class="state state-encrypt">
+            <i class="fa-solid fa-key"></i>
+            <mat-progress-spinner mode="indeterminate" [value]="50" diameter="30"
+                color="primary"></mat-progress-spinner>
         </div>
     </div>
     }
     @if (file.state === State.DECRYPT) {
     <div class="main-wrapper decrypt">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
-        <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <div class="lds-ring state"><span class="description">DECRYPTING</span><i class="fa-solid fa-fingerprint"></i>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+        <div class="name" (click)="toggleDetails()">
+            <p>{{file.name}}</p>
+            <p>Decrypting...</p>
+        </div>
+        <div class="state state-decrypt">
+            <i class="fa-solid fa-fingerprint"></i>
+            <mat-progress-spinner mode="indeterminate" [value]="50" diameter="30"
+                color="primary"></mat-progress-spinner>
         </div>
     </div>
     }
     @if (file.state === State.UPLOAD) {
     <div class="main-wrapper upload">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
-        <div class="name" (click)="toggleDetails()">{{file.name}}</div>
-        <div class="progress-wrapper state">
-            <span class="description">UPLOADING</span>
-            <div class="progressbar" style="--value: {{file.progress}}">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-            </div>
+        <div class="name" (click)="toggleDetails()">
+            <p>{{file.name}}</p>
+            <p>Uploading...</p>
+        </div>
+        <div class="state state-upload">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <mat-progress-spinner mode="determinate" [value]="file.progress" diameter="30"
+                color="primary"></mat-progress-spinner>
         </div>
     </div>
     }
     @if (file.state === State.DOWNLOAD) {
     <div class="main-wrapper download">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
-        <div class="name" (click)="toggleDetails()">{{file.name}}</div>
+        <div class="name" (click)="toggleDetails()">
+            <p>{{file.name}}</p>
+            <p>Downloading...</p>
+        </div>
+        <div class="state state-download">
+            <i class="fa-solid fa-cloud-arrow-down"></i>
+            <mat-progress-spinner mode="determinate" [value]="file.progress" diameter="30"
+                color="primary"></mat-progress-spinner>
+        </div>
+    </div>
+    }
+
+    @if (file.state === State.ERROR) {
+    <div class="main-wrapper error">
+        <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
+        <div class="name" (click)="toggleDetails()">
+            <p>{{file.name}}</p>
+            <p>Failed, try again</p>
+        </div>
         <div class="progress-wrapper state">
-            <span class="description">DOWNLOADING</span>
-            <div class="progressbar" style="--value: {{file.progress}}">
-                <i class="fa-solid fa-cloud-arrow-down"></i>
-            </div>
+            <button class="retry state" (click)="tryAgain()">
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
         </div>
     </div>
     }

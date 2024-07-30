@@ -90,7 +90,7 @@ export class MyFile {
             json.size,
             json.create,
             '',
-            0,
+            100,
             json.fileParts,
             json.parentBag,
             null,

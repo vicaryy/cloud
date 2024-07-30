@@ -4,13 +4,14 @@ import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 import { CommonModule } from '@angular/common';
 import { State } from '../../../shared/enums/content.enums';
 import { FileService } from '../../../shared/services/file.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
     selector: 'app-file',
     standalone: true,
     templateUrl: './file.component.html',
     styleUrl: './file.component.scss',
-    imports: [CommonModule]
+    imports: [CommonModule, MatProgressSpinnerModule]
 })
 export class FileComponent implements OnInit {
     @Input('file') file!: MyFile;
@@ -29,6 +30,9 @@ export class FileComponent implements OnInit {
         this.initSize();
         this.initDate();
         this.initLogoUrl();
+
+        // this.file.state = State.ENCRYPT
+        // setInterval(() => this.file.state = Math.floor(Math.random() * 7), 1000)
     }
 
     initLogoUrl() {
@@ -92,6 +96,10 @@ export class FileComponent implements OnInit {
 
     emitDownload() {
         this.fileService.downloadFile(this.file);
+    }
+
+    tryAgain() {
+        this.fileService.tryAgain(this.file);
     }
 
     emitChangeName() {
