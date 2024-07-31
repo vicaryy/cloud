@@ -118,6 +118,7 @@ export class FileService {
         const newFile: MyFile = this.createNewFile(file, parentBag);
         parentBag.files.push(newFile);
         this.uploadFile(newFile);
+        
     }
 
     private async uploadFile(file: MyFile) {
@@ -177,9 +178,12 @@ export class FileService {
             file.uploadState.prevProgress = 0;
         let currProggres = 0;
 
+        let i = 0;
         while (file.uploadState.encryptedBlobs!.length > 0) {
             const enBlob = file.uploadState.encryptedBlobs![0];
 
+            if (i++ > 2)
+                throw new Error("jakis blad");
             const response = await lastValueFrom(this.telegram.sendBlob(enBlob).pipe(tap(event => {
                 if (event.type === HttpEventType.UploadProgress) {
                     currProggres = event.loaded;

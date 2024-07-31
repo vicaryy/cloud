@@ -76,7 +76,7 @@ export class MyFile {
         public blob: Blob | null,
         public state: State,
         public downloadState: DownloadState,
-        public uploadState: UploadState
+        public uploadState: UploadState,
     ) { }
 
     static fromJSON(json: MyFile) {

@@ -115,8 +115,19 @@
                 <p class="value-title">Created: </p>
                 <p class="value">{{date}}</p>
             </div>
-            <div class="preview">
-                <img src="./assets/images/sample-preview.jpg" alt="" class="photo">
+            <div class="preview-wrapper">
+                <!-- <div class="preview">
+                    <p>Click to see preview</p>
+                    <p><i class="fa-solid fa-eye"></i></p>
+                    <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                </div> -->
+
+                <div class="preview preview-loading">
+                    <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                    <mat-spinner mode="indeterminate" [value]="50" diameter="30"
+                    ></mat-spinner>
+                </div>
+                <!-- <img src="./assets/images/sample-preview.jpg" alt="" class="photo"> -->
             </div>
 
             <button class="change-name" (click)="emitChangeName()">
