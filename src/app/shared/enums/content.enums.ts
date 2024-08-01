@@ -1,3 +1,6 @@
 export enum State {
-    DONE, ENCRYPT, UPLOAD, DECRYPT, DOWNLOAD, READY, ERROR
+    READY, ENCRYPT, UPLOAD, DOWNLOAD, DECRYPT, ERROR, DONE
+
+    // READY - ready to be downloaded
+    // DONE - downloaded and ready to save on device
 }

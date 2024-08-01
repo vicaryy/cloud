@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     imports: [CommonModule, MatProgressSpinnerModule]
 })
 export class FileComponent implements OnInit {
+
     @Input('file') file!: MyFile;
     @Output('change') change = new EventEmitter<ElementToEdit>();
     @Output('download') download = new EventEmitter<MyFile>();
@@ -30,6 +31,9 @@ export class FileComponent implements OnInit {
         this.initSize();
         this.initDate();
         this.initLogoUrl();
+
+        this.file.preview = {};
+        this.file.preview.state = State.DONE;
 
         // this.file.state = State.ENCRYPT
         // setInterval(() => this.file.state = Math.floor(Math.random() * 7), 1000)
@@ -118,5 +122,9 @@ export class FileComponent implements OnInit {
             file: true,
             delete: true
         })
+    }
+
+    emitDownloadPreview() {
+        this.fileService.downloadPreview(this.file.preview!);
     }
 }

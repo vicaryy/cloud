@@ -1,5 +1,5 @@
 import { State } from "../enums/content.enums";
-import { DownloadState, UploadState } from "../interfaces/content.interfaces";
+import { DownloadState, PreviewFile, UploadState } from "../interfaces/content.interfaces";
 import { FilePart } from "../interfaces/http-interfaces";
 
 export class User {
@@ -77,6 +77,7 @@ export class MyFile {
         public state: State,
         public downloadState: DownloadState,
         public uploadState: UploadState,
+        public preview: PreviewFile | null
     ) { }
 
     static fromJSON(json: MyFile) {
@@ -96,7 +97,8 @@ export class MyFile {
             null,
             State.READY,
             {},
-            {}
+            {},
+            json.preview
         );
     }
 }

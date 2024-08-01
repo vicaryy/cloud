@@ -22,5 +22,13 @@ export interface DownloadState {
     downloadedBlobs?: Blob[],
     decryptedBlobs?: Blob[],
     prevProgress?: number,
-    entireSize?: number,
+    entireSize?: number
+}
+
+export interface PreviewFile {
+    fileId?: string,
+    size?: number,
+    extension?: string,
+    state?: State,
+    url?: string
 }

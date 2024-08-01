@@ -11,13 +11,19 @@ import { FilePart, NewFileRequest } from '../interfaces/http-interfaces';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
 import { InfoService } from './info.service';
+import { PreviewFile } from '../interfaces/content.interfaces';
+import { FileReducerService } from './file-reducer.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FileService {
 
-    constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService) { }
+    constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService, private fileReducer: FileReducerService) { }
+
+    downloadPreview(file: PreviewFile) {
+        file.state = State.DOWNLOAD;
+    }
 
     deleteFile(element: ElementToEdit) {
         return this.backend.deleteFile(element);
@@ -118,24 +124,37 @@ export class FileService {
         const newFile: MyFile = this.createNewFile(file, parentBag);
         parentBag.files.push(newFile);
         this.uploadFile(newFile);
-        
+
+    }
+
+    private isPreviewable(ext: string) {
+        ext = ext.split(".")[1];
+        return ext === 'jpg' || ext === 'jpeg' || ext === 'png';
     }
 
     private async uploadFile(file: MyFile) {
-        try {
-            if (file.uploadState.sended)
-                await this.sendToBackend(file);
-            else if (file.uploadState.encrypted)
-                await this.sendBlobs(file);
-            else if (file.uploadState.sliced)
-                await this.encryptBlobs(file);
-            else
-                await this.sliceBlob(file);
-        } catch (error) {
-            file.state = State.ERROR;
-            console.log(`Error in uploading file '${file.name}'`, error);
-            this.info.displayError(`Error in uploading file '${file.name}'`);
-        }
+        this.uploadPreview(file);
+        // try {
+        //     if (this.isPreviewable(file.extension))
+        //         await this.uploadPreview(file);
+
+        //     if (file.uploadState.sended)
+        //         await this.sendToBackend(file);
+        //     else if (file.uploadState.encrypted)
+        //         await this.sendBlobs(file);
+        //     else if (file.uploadState.sliced)
+        //         await this.encryptBlobs(file);
+        //     else
+        //         await this.sliceBlob(file);
+        // } catch (error) {
+        //     file.state = State.ERROR;
+        //     console.log(`Error in uploading file '${file.name}'`, error);
+        //     this.info.displayError(`Error in uploading file '${file.name}'`);
+        // }
+    }
+
+    private async uploadPreview(file: MyFile) {
+        this.fileReducer.compressImage(file);
     }
 
     private async sliceBlob(file: MyFile) {
@@ -244,7 +263,8 @@ export class FileService {
             file,
             State.UPLOAD,
             {},
-            {}
+            {},
+            null
         )
     }
 

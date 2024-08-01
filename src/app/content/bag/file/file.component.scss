@@ -301,7 +301,7 @@
         .preview-wrapper {
             display: flex;
             justify-content: center;
-            margin: 10px 0 15px 0;
+            margin: 10px 0 0 0;
 
             .preview {
                 overflow: hidden;
@@ -312,7 +312,7 @@
                 align-items: center;
                 width: 60%;
                 max-width: 400px;
-                height: 100px;
+                height: 150px;
                 padding: 20px;
                 border-radius: 20px;
                 box-sizing: border-box;
@@ -340,6 +340,7 @@
                     height: 100%;
                     object-fit: cover;
                     transform: translate(-50%, -50%);
+                    background-color: var(--bag-color-second);
                     filter: blur(7px) brightness(60%) opacity(.7);
                 }
             }
@@ -347,6 +348,13 @@
             .preview-loading {
                 .mat-mdc-progress-spinner {
                     --mdc-circular-progress-active-indicator-color: rgb(217, 217, 217);
+                }
+            }
+
+            .preview-done {
+                img {
+                    filter: none;
+                    object-fit: contain;
                 }
             }
 
@@ -375,6 +383,9 @@
         }
 
         .change-name {
+
+            margin-top: 10px;
+
             i {
                 color: var(--font-color-third);
             }

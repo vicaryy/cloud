@@ -115,20 +115,40 @@
                 <p class="value-title">Created: </p>
                 <p class="value">{{date}}</p>
             </div>
+
+            @if (file.preview) {
             <div class="preview-wrapper">
-                <!-- <div class="preview">
+
+                @if (file.preview.state === State.READY) {
+                <button class="preview preview-ready" (click)="emitDownloadPreview()">
                     <p>Click to see preview</p>
                     <p><i class="fa-solid fa-eye"></i></p>
                     <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
-                </div> -->
-
+                </button>
+                }
+                @if (file.preview.state === State.DOWNLOAD) {
                 <div class="preview preview-loading">
                     <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
-                    <mat-spinner mode="indeterminate" [value]="50" diameter="30"
-                    ></mat-spinner>
+                    <mat-spinner mode="indeterminate" [value]="50" diameter="30"></mat-spinner>
                 </div>
-                <!-- <img src="./assets/images/sample-preview.jpg" alt="" class="photo"> -->
+                }
+                @if (file.preview.state === State.DONE) {
+                <div class="preview preview-done">
+                    <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                </div>
+                }
+                @if (file.preview.state === State.ERROR) {
+                <div class="preview preview-error">
+                    <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                    <mat-spinner mode="indeterminate" [value]="50" diameter="30"></mat-spinner>
+                </div>
+                }
             </div>
+            }
+
+            @if (!file.preview) {
+
+            }
 
             <button class="change-name" (click)="emitChangeName()">
                 <i class="fa-solid fa-pencil"></i>
