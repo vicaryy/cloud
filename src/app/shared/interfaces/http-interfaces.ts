@@ -1,3 +1,5 @@
+import { PreviewFile } from "./content.interfaces";
+
 export interface ServerResponse<T> {
     status: number;
     result?: T;
@@ -13,7 +15,8 @@ export interface NewFileRequest {
     name: string,
     extension: string,
     size: number,
-    fileParts: FilePart[]
+    fileParts: FilePart[],
+    previewFile?: PreviewFile | null | undefined
 }
 
 export interface FilePart {

@@ -28,4 +28,27 @@ export class BlobUtils {
         }
         return extension;
     }
+
+    static blobToDataURL(blob: Blob): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    static dataURLToBlob(dataURL: string): Blob {
+        const [header, data] = dataURL.split(',');
+        const mime = header.match(/:(.*?);/)![1];
+        const byteString = atob(data);
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+
+        for (let i = 0; i < byteString.length; i++)
+            uint8Array[i] = byteString.charCodeAt(i);
+
+        return new Blob([uint8Array], { type: mime });
+    }
+
 }

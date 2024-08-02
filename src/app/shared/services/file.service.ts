@@ -134,27 +134,36 @@ export class FileService {
 
     private async uploadFile(file: MyFile) {
         this.uploadPreview(file);
-        // try {
-        //     if (this.isPreviewable(file.extension))
-        //         await this.uploadPreview(file);
+        try {
+            if (!file.preview && this.isPreviewable(file.extension))
+                await this.uploadPreview(file);
 
-        //     if (file.uploadState.sended)
-        //         await this.sendToBackend(file);
-        //     else if (file.uploadState.encrypted)
-        //         await this.sendBlobs(file);
-        //     else if (file.uploadState.sliced)
-        //         await this.encryptBlobs(file);
-        //     else
-        //         await this.sliceBlob(file);
-        // } catch (error) {
-        //     file.state = State.ERROR;
-        //     console.log(`Error in uploading file '${file.name}'`, error);
-        //     this.info.displayError(`Error in uploading file '${file.name}'`);
-        // }
+            if (file.uploadState.sended)
+                await this.sendToBackend(file);
+            else if (file.uploadState.encrypted)
+                await this.sendBlobs(file);
+            else if (file.uploadState.sliced)
+                await this.encryptBlobs(file);
+            else
+                await this.sliceBlob(file);
+        } catch (error) {
+            file.state = State.ERROR;
+            console.log(`Error in uploading file '${file.name}'`, error);
+            this.info.displayError(`Error in uploading file '${file.name}'`);
+        }
     }
 
     private async uploadPreview(file: MyFile) {
-        this.fileReducer.compressImage(file);
+        const previewBlob = await this.fileReducer.compressImage(file.blob!);
+        const encryptedBlob = new Blob([await this.crypto.encrypt(await previewBlob.arrayBuffer())]);
+        const response = await lastValueFrom(this.telegram.sendBlob(encryptedBlob)) as HttpResponse<TelegramResponse<Message>>;
+        console.log('Preview file sent to telegram successfully');
+
+        file.preview = {
+            extension: file.extension,
+            fileId: response.body?.result.document.file_id,
+            size: encryptedBlob.size,
+        }
     }
 
     private async sliceBlob(file: MyFile) {
@@ -182,7 +191,6 @@ export class FileService {
         file.uploadState.encrypted = true;
         await this.sendBlobs(file);
     }
-
 
     private async sendBlobs(file: MyFile) {
         file.state = State.UPLOAD;
@@ -227,7 +235,7 @@ export class FileService {
     }
 
     private async sendToBackend(file: MyFile) {
-        const newFileRequest: NewFileRequest = { bagId: file.parentBag.id, name: file.name, extension: file.extension, size: file.size, fileParts: file.fileParts };
+        const newFileRequest: NewFileRequest = { bagId: file.parentBag.id, name: file.name, extension: file.extension, size: file.size, fileParts: file.fileParts, previewFile: file.preview };
         this.backend.addNewFile(newFileRequest).subscribe({
             next: response => {
                 file.id = response.id!;
@@ -238,6 +246,7 @@ export class FileService {
                 file.state = State.READY;
                 file.uploadState = {};
                 file.downloadState = {};
+                file.preview = response.preview;
                 this.info.displaySuccess(`Successfully uploaded file '${file.name}'`);
             },
             error: () => {
