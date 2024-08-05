@@ -5,6 +5,9 @@ import { CommonModule } from '@angular/common';
 import { State } from '../../../shared/enums/content.enums';
 import { FileService } from '../../../shared/services/file.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import { BagComponent } from '../bag.component';
+import { ImageDialogComponent } from '../../../shared/components/image-dialog/image-dialog.component';
 
 @Component({
     selector: 'app-file',
@@ -25,18 +28,24 @@ export class FileComponent implements OnInit {
     logoUrl: string = "./assets/images/extensions/";
 
 
-    constructor(private fileService: FileService) { }
+    constructor(private fileService: FileService, private dialog: MatDialog) { }
 
     ngOnInit(): void {
         this.initSize();
         this.initDate();
         this.initLogoUrl();
+        this.initPreview();
 
-        this.file.preview = {};
-        this.file.preview.state = State.DONE;
+        // this.file.preview = {};
+        // this.file.preview.state = State.DONE;
 
         // this.file.state = State.ENCRYPT
         // setInterval(() => this.file.state = Math.floor(Math.random() * 7), 1000)
+    }
+
+    initPreview() {
+        if (this.file.preview)
+            this.file.preview.state = State.READY;
     }
 
     initLogoUrl() {
@@ -126,5 +135,11 @@ export class FileComponent implements OnInit {
 
     emitDownloadPreview() {
         this.fileService.downloadPreview(this.file.preview!);
+    }
+
+    displayPreviewPhoto() {
+        this.dialog.open(ImageDialogComponent, {
+            data: {name: this.file.preview?.url}
+    })
     }
 }

@@ -129,19 +129,19 @@
                 @if (file.preview.state === State.DOWNLOAD) {
                 <div class="preview preview-loading">
                     <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
-                    <mat-spinner mode="indeterminate" [value]="50" diameter="30"></mat-spinner>
+                    <mat-spinner mode="indeterminate" diameter="30"></mat-spinner>
                 </div>
                 }
                 @if (file.preview.state === State.DONE) {
                 <div class="preview preview-done">
-                    <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                    <img [src]="file.preview.url" alt="preview-photo" (click)="displayPreviewPhoto()">
                 </div>
                 }
                 @if (file.preview.state === State.ERROR) {
-                <div class="preview preview-error">
-                    <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
-                    <mat-spinner mode="indeterminate" [value]="50" diameter="30"></mat-spinner>
-                </div>
+                    <button class="preview preview-ready" (click)="emitDownloadPreview()">
+                        <p>Something goes wrong, try again</p>
+                        <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                    </button>
                 }
             </div>
             }

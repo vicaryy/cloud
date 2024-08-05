@@ -82,7 +82,6 @@
     position: relative;
     display: flex;
     align-items: center;
-    height: 35px;
     padding: 15px 20px;
     font-size: 2.5rem;
     color: var(--font-color);
@@ -100,7 +99,7 @@
     }
 
     .bag-info {
-
+        position: relative;
         display: flex;
         flex-direction: column;
 

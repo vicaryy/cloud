@@ -1,0 +1,65 @@
+<div class="more-options">
+    <div class="btn-wrapper">
+        <button class="sort-btn" [class.active]="sort" mat-button color="primary" (click)="onSortBtn()">
+            <i class="fa-solid fa-arrow-up-wide-short"></i>
+        </button>
+
+        <div class="sort-block" [class.active]="sort">
+            <div class="title">Sort by</div>
+            <div class="options">
+                <button class="sort-newest" [class.active]="sortBy === 'newest'" (click)="onSort('newest')"><i
+                        class="fa-solid fa-calendar-days"></i>
+                    <p>newest</p>
+                </button>
+                <button class="sort-oldest" [class.active]="sortBy === 'oldest'" (click)="onSort('oldest')"><i
+                        class="fa-solid fa-calendar-days"></i>
+                    <p>oldest</p>
+                </button>
+                <button class="sort-name" [class.active]="sortBy === 'name'" (click)="onSort('name')"><i
+                        class="fa-solid fa-arrow-up-a-z"></i>
+                    <p>name</p>
+                </button>
+                <button class="sort-size" [class.active]="sortBy === 'size'" (click)="onSort('size')"><i
+                        class="fa-solid fa-scale-unbalanced-flip"></i>
+                    <p>size</p>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="btn-wrapper">
+        <button class="filter-btn" [class.active]="filter" mat-button color="primary" (click)="onFilterBtn()">
+            <i class="fa-solid fa-filter"></i>
+        </button>
+
+        <div class="sort-block" [class.active]="filter">
+            <div class="title">Filter by</div>
+            <div class="options">
+                <button class="filter-all" [class.active]="filterBy === 'all'" (click)="onFilter('all')"><i
+                        class="fa-solid fa-globe"></i>
+                    <p>all</p>
+                </button>
+                <button class="filter-images" [class.active]="filterBy === 'images'" (click)="onFilter('images')"><i
+                        class="fa-solid fa-image"></i>
+                    <p>images</p>
+                </button>
+                <button class="filter-videos" [class.active]="filterBy === 'videos'" (click)="onFilter('videos')"><i
+                        class="fa-solid fa-video"></i>
+                    <p>videos</p>
+                </button>
+                <button class="filter-music" [class.active]="filterBy === 'music'" (click)="onFilter('music')"><i
+                        class="fa-solid fa-music"></i>
+                    <p>music</p>
+                </button>
+                <button class="filter-documents" [class.active]="filterBy === 'documents'"
+                    (click)="onFilter('documents')"><i class="fa-solid fa-book"></i>
+                    <p>documents</p>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="btn-wrapper">
+        <button class="x-btn" mat-button color="warn" (click)="onRemove()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+</div>

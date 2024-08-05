@@ -5,18 +5,17 @@
     <img src="./assets/images/resize.png" class="handle">
 
     <div class="option-bar" cdkDragHandle>
-        <div class="settings-wrapper">
-            <button class="settings"></button>
-        </div>
         <div class="bag-logo"><i class="fa-regular fa-folder-open"></i></div>
         <div class="bag-info">
             <p class="directory"> {{ bag.getFullDirectory() }}</p>
             <p class="amount">{{bag.getAmountOfBags()}} bags · {{bag.getAmountOfFiles()}} files </p>
         </div>
+
         <app-add class="add" (addFile)="onAddFile()" (addBag)="displayNewBagAlert()"></app-add>
         <input #file type="file" id="file" class="add-file" (change)="addFile()">
     </div>
     <div class="files">
+        <app-more-options (remove)=""></app-more-options>
         <ng-container *ngFor="let b of bag.bags; trackBy: trackById">
             <app-folder [bag]="b" (change)="displayAlert($event)" (open)="onOpen($event)"></app-folder>
         </ng-container>

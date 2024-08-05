@@ -21,8 +21,22 @@ export class FileService {
 
     constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService, private fileReducer: FileReducerService) { }
 
-    downloadPreview(file: PreviewFile) {
+    async downloadPreview(file: PreviewFile) {
+        try {
+            await this.downloadPreviewBlob(file);
+        } catch (error) {
+            file.state = State.ERROR;
+            this.info.displayError("Fail in displaying preview, try again");
+        }
+    }
+
+    private async downloadPreviewBlob(file: PreviewFile) {
         file.state = State.DOWNLOAD;
+        const filePath = await lastValueFrom(this.telegram.getFilePath(file.fileId!));
+        const blob = await lastValueFrom(this.telegram.downloadBlob(filePath.result.file_path)) as HttpResponse<Blob>;
+        const decryptedBlob = new Blob([await this.crypto.decrypt(await blob.body!.arrayBuffer())])
+        file.url = URL.createObjectURL(decryptedBlob);
+        file.state = State.DONE;
     }
 
     deleteFile(element: ElementToEdit) {
@@ -133,7 +147,6 @@ export class FileService {
     }
 
     private async uploadFile(file: MyFile) {
-        this.uploadPreview(file);
         try {
             if (!file.preview && this.isPreviewable(file.extension))
                 await this.uploadPreview(file);
@@ -154,10 +167,11 @@ export class FileService {
     }
 
     private async uploadPreview(file: MyFile) {
+        console.log("zaczynam robić preview");
+
         const previewBlob = await this.fileReducer.compressImage(file.blob!);
         const encryptedBlob = new Blob([await this.crypto.encrypt(await previewBlob.arrayBuffer())]);
         const response = await lastValueFrom(this.telegram.sendBlob(encryptedBlob)) as HttpResponse<TelegramResponse<Message>>;
-        console.log('Preview file sent to telegram successfully');
 
         file.preview = {
             extension: file.extension,
@@ -205,12 +219,9 @@ export class FileService {
             file.uploadState.prevProgress = 0;
         let currProggres = 0;
 
-        let i = 0;
         while (file.uploadState.encryptedBlobs!.length > 0) {
             const enBlob = file.uploadState.encryptedBlobs![0];
 
-            if (i++ > 2)
-                throw new Error("jakis blad");
             const response = await lastValueFrom(this.telegram.sendBlob(enBlob).pipe(tap(event => {
                 if (event.type === HttpEventType.UploadProgress) {
                     currProggres = event.loaded;
@@ -270,7 +281,7 @@ export class FileService {
             [],
             parentBag,
             file,
-            State.UPLOAD,
+            State.ENCRYPT,
             {},
             {},
             null

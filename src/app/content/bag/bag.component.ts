@@ -15,13 +15,15 @@ import { InfoComponent } from "../../shared/components/info/info.component";
 import { DragBagEnd } from '../../shared/interfaces/content.interfaces';
 import { FileService } from '../../shared/services/file.service';
 import { InfoService } from '../../shared/services/info.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MoreOptionsComponent } from "./more-options/more-options.component";
 
 @Component({
     selector: 'app-bag',
     standalone: true,
     templateUrl: './bag.component.html',
     styleUrl: './bag.component.scss',
-    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent]
+    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent]
 })
 export class BagComponent implements AfterViewInit {
     @Input('bag') bag!: Bag;
@@ -256,7 +258,6 @@ export class BagComponent implements AfterViewInit {
     setTransformOriginAfterDragEnd(x: any, y: any) {
         this.bagElement.nativeElement.style.transformOrigin = `calc(${x}px - ${this.bag.x}px) calc(${y}px - ${this.bag.y}px)`;
     }
-
 
     onFocus() {
         this.focus.emit(this.bagElement.nativeElement);
