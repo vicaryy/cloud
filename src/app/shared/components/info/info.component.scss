@@ -1,50 +1,77 @@
 @import 'vars';
 
 .info {
+    overflow: hidden;
     position: fixed;
     top: 80%;
-    left: 0;
-    translate: -100% -50%;
+    left: 50%;
+    translate: -50% 0%;
+    opacity: 0;
     display: flex;
-    padding: 20px 35px 20px 30px;
+    flex-direction: column;
     max-width: 700px;
-    border-top-right-radius: 40px;
-    border-bottom-right-radius: 40px;
+    border-radius: 15px;
     font-weight: 500;
-    color: white;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
     z-index: 10000;
     animation: slide 3s;
 
-    i {
-        font-size: 2rem;
-        margin-left: 10px;
+    .bar {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 18px;
+        box-sizing: border-box;
+        color: var(--info-font-color);
+        font-size: 1.5rem;
+
+        i {
+            translate: 0 1px;
+        }
     }
 
-    &.success {
-        background-color: rgba(0, 128, 0, .5);
-    }
 
-    &.error {
-        background-color: rgba(255, 0, 0, .7);
-    }
+    .content {
+        padding: 20px 55px;
+        background-color: var(--info-color);
+        color: var(--info-font-color-second);
 
+        i {
+            font-size: 2rem;
+            margin-left: 10px;
+        }
+    }
+}
+
+.info.success {
+    .bar {
+        background-color: var(--info-color-success);
+    }
+}
+
+.info.error {
+    .bar {
+        background-color: var(--info-color-error);
+    }
 }
 
 @keyframes slide {
     0% {
-        translate: -100% -50%;
+        opacity: 0;
+        translate: -50% 0%;
     }
 
     10% {
-        translate: 0 -50%;
+        opacity: 1;
+        translate: -50% -20%;
     }
 
     90% {
-        translate: 0 -50%;
+        opacity: 1;
+        translate: -50% -20%;
     }
 
     100% {
-        translate: -100% -50%;
+        opacity: 0;
+        translate: -50% 0%;
     }
 }

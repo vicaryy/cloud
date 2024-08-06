@@ -5,7 +5,7 @@
             (deleteActiveChildBag)="onDeleteActiveChildBag($event)"></app-bag>
         <app-bag #bag *ngIf="i !== 0" [bag]="b" (focus)="onFocusEvent($event)" (focusOnly)="onFocusOnlyEvent($event)"
             (openBag)="onOpenBag($event)" (deleteActiveChildBag)="onDeleteActiveChildBag($event)"
-            (dragStart)="onDragStart()" (dragEnd)="onDragEnd($event)"></app-bag>
+            (dragStart)="onDragStart()" (dragEnd)="onDragEnd($event)" (removeActiveBag)="deleteActiveBag($event)"></app-bag>
     </ng-container>
 
     @if (deleteBar) {
@@ -16,7 +16,6 @@
         </div>
     </div>
     }
-
 
     @if (info) {
     <app-info [info]="info"></app-info>

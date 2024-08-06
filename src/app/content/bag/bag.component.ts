@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Bag, MyFile as MyFile } from '../../shared/models/content.models';
@@ -17,6 +17,7 @@ import { FileService } from '../../shared/services/file.service';
 import { InfoService } from '../../shared/services/info.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MoreOptionsComponent } from "./more-options/more-options.component";
+import { SortBy, FilterBy } from '../../shared/enums/content.enums';
 
 @Component({
     selector: 'app-bag',
@@ -25,7 +26,9 @@ import { MoreOptionsComponent } from "./more-options/more-options.component";
     styleUrl: './bag.component.scss',
     imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent]
 })
-export class BagComponent implements AfterViewInit {
+export class BagComponent implements AfterViewInit, OnInit {
+
+
     @Input('bag') bag!: Bag;
     @Output('focus') focus = new EventEmitter<HTMLElement>();
     @Output('focusOnly') focusOnly = new EventEmitter<HTMLElement>();
@@ -33,17 +36,42 @@ export class BagComponent implements AfterViewInit {
     @Output('deleteActiveChildBag') deleteActiveChildBag = new EventEmitter<number>();
     @Output('dragStart') dragStart = new EventEmitter<void>();
     @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
+    @Output('removeActiveBag') removeActiveBag = new EventEmitter<number>();
     @ViewChild("bagElement") bagElement!: ElementRef;
     @ViewChild('file') file!: ElementRef;
+    SortBy = SortBy;
+    FilterBy = FilterBy;
     openedBags: number = 0;
     alert: boolean = false;
     changeNameAlert: boolean = false;
     deleteAlert: boolean = false;
     newBagAlert: boolean = false;
     elementToEdit!: ElementToEdit;
+    sort = 'newest';
+    filter = 'all';
 
     constructor(private bagService: BagService, private fileService: FileService, private info: InfoService) { }
+    ngOnInit(): void {
+        this.sortByOldest();
+    }
 
+    onSort() {
+        throw new Error('Method not implemented.');
+    }
+
+    sortByNewest() {
+        this.bag.files = this.bag.files.sort((a, b) => {
+            return b.id - a.id;
+        });
+    }
+    sortByOldest() {
+        this.bag.files = this.bag.files.sort((a, b) => {
+            return a.id - b.id;
+        });
+    }
+    sortBySize() {
+
+    }
 
     @ViewChild('bagElement') resizableBox!: ElementRef;
     private resizing = false;
@@ -261,6 +289,10 @@ export class BagComponent implements AfterViewInit {
 
     onFocus() {
         this.focus.emit(this.bagElement.nativeElement);
+    }
+
+    onRemoveActiveBag() {
+        this.removeActiveBag.emit(this.bag.id);
     }
 
     displayNewBagAlert() {

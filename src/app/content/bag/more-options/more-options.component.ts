@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
+import { FilterBy, SortBy } from '../../../shared/enums/content.enums';
 
 @Component({
     selector: 'app-more-options',
@@ -10,11 +11,15 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 })
 export class MoreOptionsComponent {
 
-    @Output('remove') remove!: EventEmitter<void>;
+    FilterBy = FilterBy;
+    SortBy = SortBy;
+    @Output('remove') remove = new EventEmitter<void>;
+    @Output('sort') sortEmit = new EventEmitter<SortBy>;
+    @Output('filter') filterEmit = new EventEmitter<FilterBy>;
     sort: boolean = false;
     filter: boolean = false;
-    sortBy = 'newest';
-    filterBy = 'all';
+    sortBy = SortBy.DATE_DOWN;
+    filterBy = FilterBy.ALL;
 
     onRemove() {
         this.remove.emit();
@@ -30,17 +35,32 @@ export class MoreOptionsComponent {
     }
 
     onSort(type: string) {
-        if (type === this.sortBy)
-            return;
-        this.sortBy = type;
-        this.closeBlocks();
+        if (type === 'date') {
+            if (this.sortBy === SortBy.DATE_DOWN)
+                this.sortBy = SortBy.DATE_UP;
+            else
+                this.sortBy = SortBy.DATE_DOWN;
+        }
+        else if (type === 'name') {
+            if (this.sortBy === SortBy.NAME_DOWN)
+                this.sortBy = SortBy.NAME_UP;
+            else
+                this.sortBy = SortBy.NAME_DOWN;
+        }
+        else if (type === 'size') {
+            if (this.sortBy === SortBy.SIZE_DOWN)
+                this.sortBy = SortBy.SIZE_UP
+            else
+                this.sortBy = SortBy.SIZE_DOWN;
+        }
+        this.sortEmit.emit(this.sortBy);
     }
 
     onFilter(type: string) {
-        if (type === this.filterBy)
-            return;
-        this.filterBy = type;
-        this.closeBlocks();
+        // if (type === this.filterBy)
+        //     return;
+        // this.filterBy = type;
+        // this.closeBlocks();
     }
 
     closeBlocks() {

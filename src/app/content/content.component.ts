@@ -45,8 +45,10 @@ export class ContentComponent implements OnInit {
     }
 
     displayInfo(info: Info) {
+        if (this.info)
+            return;
         this.info = info;
-        setTimeout(() => this.info = undefined, 4000);
+        setTimeout(() => this.info = undefined, 3200);
     }
 
     onDeleteActiveChildBag($event: number) {
