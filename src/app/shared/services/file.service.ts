@@ -6,7 +6,7 @@ import { State } from '../enums/content.enums';
 import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BackendApiService } from './backend-api.service';
 import { CryptoService } from './crypto.service';
-import { from, lastValueFrom, of, switchMap, tap } from 'rxjs';
+import { from, lastValueFrom, of, Subject, switchMap, tap } from 'rxjs';
 import { FilePart, NewFileRequest } from '../interfaces/http-interfaces';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
@@ -18,6 +18,8 @@ import { FileReducerService } from './file-reducer.service';
     providedIn: 'root'
 })
 export class FileService {
+
+    uploadingFiles$ = new Subject<MyFile[]>();
 
     constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService, private fileReducer: FileReducerService) { }
 
@@ -47,12 +49,12 @@ export class FileService {
         return this.backend.changeFileName(element);
     }
 
-    tryAgain(file: MyFile) {
+    async tryAgain(file: MyFile) {
         if (Object.keys(file.uploadState).length !== 0)
-            this.uploadFile(file);
+            await this.uploadFile(file);
 
         else if (Object.keys(file.downloadState).length !== 0)
-            this.downloadFile(file);
+            await this.downloadFile(file);
     }
 
     async downloadFile(file: MyFile) {
@@ -138,7 +140,6 @@ export class FileService {
         const newFile: MyFile = this.createNewFile(file, parentBag);
         parentBag.files.push(newFile);
         this.uploadFile(newFile);
-
     }
 
     private isPreviewable(ext: string) {

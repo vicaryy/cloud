@@ -16,11 +16,19 @@
     </div>
     <div class="files">
         <app-more-options (sort)="onSort($event)" (remove)="onRemoveActiveBag()"></app-more-options>
+
+        <ng-container *ngFor="let f of bag.files; trackBy: trackById">
+            @if (f.state === State.ERROR || f.state === State.ENCRYPT || f.state === State.UPLOAD) {
+            <app-file [file]="f" (change)="displayAlert($event)" (tryAgain)="onTryAgain($event)"></app-file>
+            }
+        </ng-container>
         <ng-container *ngFor="let b of bag.bags; trackBy: trackById">
             <app-folder [bag]="b" (change)="displayAlert($event)" (open)="onOpen($event)"></app-folder>
         </ng-container>
         <ng-container *ngFor="let f of bag.files; trackBy: trackById">
-            <app-file [file]="f" (change)="displayAlert($event)" (download)="onDownloadFile($event)"></app-file>
+            @if (f.state !== State.ERROR && f.state !== State.ENCRYPT && f.state !== State.UPLOAD) {
+            <app-file [file]="f" (change)="displayAlert($event)" (download)="onDownloadFile($event)" (tryAgain)="onTryAgain($event)"></app-file>
+            }
         </ng-container>
         <div class="empty-file"></div>
         <div class="empty-file"></div>

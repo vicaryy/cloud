@@ -21,6 +21,7 @@ export class FileComponent implements OnInit {
     @Input('file') file!: MyFile;
     @Output('change') change = new EventEmitter<ElementToEdit>();
     @Output('download') download = new EventEmitter<MyFile>();
+    @Output('tryAgain') tryAgain = new EventEmitter<MyFile>();
     detailsActive: boolean = false;
     State = State;
     size: string = '';
@@ -35,12 +36,6 @@ export class FileComponent implements OnInit {
         this.initDate();
         this.initLogoUrl();
         this.initPreview();
-
-        // this.file.preview = {};
-        // this.file.preview.state = State.DONE;
-
-        // this.file.state = State.ENCRYPT
-        // setInterval(() => this.file.state = Math.floor(Math.random() * 7), 1000)
     }
 
     initPreview() {
@@ -111,8 +106,8 @@ export class FileComponent implements OnInit {
         this.fileService.downloadFile(this.file);
     }
 
-    tryAgain() {
-        this.fileService.tryAgain(this.file);
+    emitTryAgain() {
+        this.tryAgain.emit(this.file);
     }
 
     emitChangeName() {

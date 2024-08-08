@@ -79,10 +79,19 @@
             }
 
             .title {
+                display: flex;
+                justify-content: space-between;
                 margin-left: 13px;
                 font-size: 1.4rem;
                 font-weight: 600;
                 text-align: left;
+
+                .sort-type {
+                    display: flex;
+                    align-items: flex-end;
+                    font-size: 1rem;
+                    color: var(--font-color-third);
+                }
             }
 
             .options {

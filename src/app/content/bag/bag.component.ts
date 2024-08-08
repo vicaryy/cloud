@@ -17,7 +17,7 @@ import { FileService } from '../../shared/services/file.service';
 import { InfoService } from '../../shared/services/info.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MoreOptionsComponent } from "./more-options/more-options.component";
-import { SortBy, FilterBy } from '../../shared/enums/content.enums';
+import { SortBy, FilterBy, State } from '../../shared/enums/content.enums';
 
 @Component({
     selector: 'app-bag',
@@ -27,8 +27,6 @@ import { SortBy, FilterBy } from '../../shared/enums/content.enums';
     imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent]
 })
 export class BagComponent implements AfterViewInit, OnInit {
-
-
     @Input('bag') bag!: Bag;
     @Output('focus') focus = new EventEmitter<HTMLElement>();
     @Output('focusOnly') focusOnly = new EventEmitter<HTMLElement>();
@@ -39,39 +37,35 @@ export class BagComponent implements AfterViewInit, OnInit {
     @Output('removeActiveBag') removeActiveBag = new EventEmitter<number>();
     @ViewChild("bagElement") bagElement!: ElementRef;
     @ViewChild('file') file!: ElementRef;
+    State = State;
     SortBy = SortBy;
     FilterBy = FilterBy;
+    currentSort: SortBy = SortBy.DATE_UP;
+    currentFilter!: FilterBy;
     openedBags: number = 0;
     alert: boolean = false;
     changeNameAlert: boolean = false;
     deleteAlert: boolean = false;
     newBagAlert: boolean = false;
     elementToEdit!: ElementToEdit;
-    sort = 'newest';
-    filter = 'all';
 
     constructor(private bagService: BagService, private fileService: FileService, private info: InfoService) { }
+
     ngOnInit(): void {
-        this.sortByOldest();
+        this.sortByNewest();
     }
 
-    onSort() {
-        throw new Error('Method not implemented.');
+    ngAfterViewInit(): void {
+        const el = this.bagElement.nativeElement as HTMLElement;
+        el.style.left = `${this.bag.x}px`;
+        el.style.top = `${this.bag.y}px`;
+        el.style.transformOrigin = ``;
+        this.focus.emit(this.bagElement.nativeElement);
     }
 
-    sortByNewest() {
-        this.bag.files = this.bag.files.sort((a, b) => {
-            return b.id - a.id;
-        });
-    }
-    sortByOldest() {
-        this.bag.files = this.bag.files.sort((a, b) => {
-            return a.id - b.id;
-        });
-    }
-    sortBySize() {
 
-    }
+
+
 
     @ViewChild('bagElement') resizableBox!: ElementRef;
     private resizing = false;
@@ -109,8 +103,6 @@ export class BagComponent implements AfterViewInit, OnInit {
         this.resizing = false;
     }
 
-
-
     onAddFile() {
         let fileInput = this.file.nativeElement as HTMLInputElement;
         fileInput.click();
@@ -121,7 +113,13 @@ export class BagComponent implements AfterViewInit, OnInit {
         if (!fileInput.files)
             return;
         const file: File = fileInput.files[0];
-        this.fileService.addFile(this.file.nativeElement, this.bag);
+        await this.fileService.addFile(this.file.nativeElement, this.bag);
+        this.onSort(this.currentSort);
+    }
+
+    async onTryAgain($event: MyFile) {
+        await this.fileService.tryAgain($event);
+        this.onSort(this.currentSort);
     }
 
     onDownloadFile($event: MyFile) {
@@ -160,8 +158,6 @@ export class BagComponent implements AfterViewInit, OnInit {
             }
         });
     }
-
-
 
     setOpenBagCoords(bag: Bag) {
         let transformX: any = this.bagElement.nativeElement.style.transform;
@@ -330,11 +326,41 @@ export class BagComponent implements AfterViewInit, OnInit {
         return file.id;
     }
 
-    ngAfterViewInit(): void {
-        const el = this.bagElement.nativeElement as HTMLElement;
-        el.style.left = `${this.bag.x}px`;
-        el.style.top = `${this.bag.y}px`;
-        el.style.transformOrigin = ``;
-        this.focus.emit(this.bagElement.nativeElement);
+    onSort($event: SortBy) {
+        console.log("Sortuje...");
+
+        this.currentSort = $event;
+        if ($event === SortBy.DATE_DOWN)
+            this.sortByOldest();
+        else if ($event === SortBy.DATE_UP)
+            this.sortByNewest();
+        else if ($event === SortBy.SIZE_UP)
+            this.sortByHeaviest();
+        else if ($event === SortBy.SIZE_DOWN)
+            this.sortByLightest();
+        else if ($event === SortBy.NAME_DOWN)
+            this.sortByNameAz();
+        else if ($event === SortBy.NAME_UP)
+            this.sortByNameZa();
+    }
+
+    sortByNewest() {
+        this.bag.files = this.bag.files.sort((a, b) => new Date(b.create.toString()).getTime() - new Date(a.create.toString()).getTime());
+    }
+    sortByOldest() {
+        this.bag.files = this.bag.files.sort((a, b) => new Date(a.create.toString()).getTime() - new Date(b.create.toString()).getTime());
+    }
+    sortByHeaviest() {
+        this.bag.files = this.bag.files.sort((a, b) => b.size - a.size);
+    }
+    sortByLightest() {
+        this.bag.files = this.bag.files.sort((a, b) => a.size - b.size);
+    }
+    sortByNameAz() {
+        this.bag.files = this.bag.files.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+    }
+
+    sortByNameZa() {
+        this.bag.files = this.bag.files.sort((a, b) => b.name.toLowerCase().localeCompare(a.name.toLowerCase()));
     }
 }

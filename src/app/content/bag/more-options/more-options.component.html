@@ -5,7 +5,29 @@
         </button>
 
         <div class="sort-block" [class.active]="sort">
-            <div class="title">Sort by</div>
+            <div class="title">
+                <span>Sort by</span>
+                <span class="sort-type">
+                    @if (sortBy === SortBy.DATE_UP) {
+                        newest
+                    }
+                    @if (sortBy === SortBy.DATE_DOWN) {
+                        oldest
+                    }
+                    @if (sortBy === SortBy.NAME_UP) {
+                        z-a
+                    }
+                    @if (sortBy === SortBy.NAME_DOWN) {
+                        a-z
+                    }
+                    @if (sortBy === SortBy.SIZE_UP) {
+                        heaviest
+                    }
+                    @if (sortBy === SortBy.SIZE_DOWN) {
+                        lightest
+                    }
+                </span>
+            </div>
             <div class="options">
                 <button class="sort-newest" [class.active]="sortBy === SortBy.DATE_DOWN || sortBy === SortBy.DATE_UP"
                     (click)="onSort('date')"><i class="fa-solid fa-calendar-days"></i>

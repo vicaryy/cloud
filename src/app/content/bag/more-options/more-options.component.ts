@@ -18,7 +18,7 @@ export class MoreOptionsComponent {
     @Output('filter') filterEmit = new EventEmitter<FilterBy>;
     sort: boolean = false;
     filter: boolean = false;
-    sortBy = SortBy.DATE_DOWN;
+    sortBy = SortBy.DATE_UP;
     filterBy = FilterBy.ALL;
 
     onRemove() {
@@ -36,10 +36,10 @@ export class MoreOptionsComponent {
 
     onSort(type: string) {
         if (type === 'date') {
-            if (this.sortBy === SortBy.DATE_DOWN)
-                this.sortBy = SortBy.DATE_UP;
-            else
+            if (this.sortBy === SortBy.DATE_UP)
                 this.sortBy = SortBy.DATE_DOWN;
+            else
+                this.sortBy = SortBy.DATE_UP;
         }
         else if (type === 'name') {
             if (this.sortBy === SortBy.NAME_DOWN)
