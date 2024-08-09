@@ -1,4 +1,4 @@
-import { State } from "../enums/content.enums";
+import { FileType, State } from "../enums/content.enums";
 import { DownloadState, PreviewFile, UploadState } from "../interfaces/content.interfaces";
 import { FilePart } from "../interfaces/http-interfaces";
 
@@ -68,6 +68,7 @@ export class MyFile {
         public name: string,
         public extension: string,
         public size: number,
+        public type: FileType,
         public create: Date,
         public url: string,
         public progress: number,
@@ -89,6 +90,7 @@ export class MyFile {
             json.name,
             json.extension,
             json.size,
+            json.type as FileType,
             json.create,
             '',
             100,

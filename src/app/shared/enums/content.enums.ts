@@ -12,3 +12,7 @@ export enum SortBy {
 export enum FilterBy {
     ALL, IMAGES, VIDEOS, MUSIC, DOCUMENTS
 }
+
+export enum FileType {
+    IMAGE = "IMAGE", VIDEO = "VIDEO", MUSIC = "MUSIC", DOCUMENT = "DOCUMENT", UNKNOWN = "UNKNOWN"
+}

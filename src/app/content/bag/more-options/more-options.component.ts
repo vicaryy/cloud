@@ -56,11 +56,9 @@ export class MoreOptionsComponent {
         this.sortEmit.emit(this.sortBy);
     }
 
-    onFilter(type: string) {
-        // if (type === this.filterBy)
-        //     return;
-        // this.filterBy = type;
-        // this.closeBlocks();
+    onFilter(type: FilterBy) {
+        this.filterBy = type;
+        this.filterEmit.emit(type);
     }
 
     closeBlocks() {

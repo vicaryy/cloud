@@ -17,7 +17,7 @@ import { FileService } from '../../shared/services/file.service';
 import { InfoService } from '../../shared/services/info.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MoreOptionsComponent } from "./more-options/more-options.component";
-import { SortBy, FilterBy, State } from '../../shared/enums/content.enums';
+import { SortBy, FilterBy, State, FileType } from '../../shared/enums/content.enums';
 
 @Component({
     selector: 'app-bag',
@@ -41,7 +41,7 @@ export class BagComponent implements AfterViewInit, OnInit {
     SortBy = SortBy;
     FilterBy = FilterBy;
     currentSort: SortBy = SortBy.DATE_UP;
-    currentFilter!: FilterBy;
+    currentFilter: FilterBy = FilterBy.ALL;
     openedBags: number = 0;
     alert: boolean = false;
     changeNameAlert: boolean = false;
@@ -64,6 +64,9 @@ export class BagComponent implements AfterViewInit, OnInit {
     }
 
 
+    onFilter($event: FilterBy) {
+        this.currentFilter = $event;
+    }
 
 
 
@@ -314,6 +317,36 @@ export class BagComponent implements AfterViewInit, OnInit {
         this.createNewBag($event);
     }
 
+    isUploadFileNeedsToBeDisplay(file: MyFile): boolean {
+        return file.state === State.ERROR || file.state === State.ENCRYPT || file.state === State.UPLOAD;
+    }
+
+    isFoldersNeedsToBeDisplay() {
+        return this.currentFilter === FilterBy.ALL;
+    }
+
+    isFileNeedsToBeDisplay(file: MyFile): boolean {
+        console.log("Bylem tu");
+
+        return file.state !== State.ERROR
+            && file.state !== State.ENCRYPT
+            && file.state !== State.UPLOAD
+            && this.isFilePassesFilter(file);
+    }
+
+    isFilePassesFilter(file: MyFile): boolean {
+        if (this.currentFilter === FilterBy.ALL)
+            return true;
+        if (this.currentFilter === FilterBy.IMAGES && file.type === FileType.IMAGE)
+            return true;
+        if (this.currentFilter === FilterBy.VIDEOS && file.type === FileType.VIDEO)
+            return true;
+        if (this.currentFilter === FilterBy.MUSIC && file.type === FileType.MUSIC)
+            return true;
+        if (this.currentFilter === FilterBy.DOCUMENTS && file.type === FileType.DOCUMENT)
+            return true;
+        return false;
+    }
 
     disableAlerts() {
         this.alert = false;

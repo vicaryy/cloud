@@ -62,24 +62,24 @@
         <div class="sort-block" [class.active]="filter">
             <div class="title">Filter by</div>
             <div class="options">
-                <button class="filter-all" [class.active]="filterBy === FilterBy.ALL" (click)="onFilter('all')"><i
+                <button class="filter-all" [class.active]="filterBy === FilterBy.ALL" (click)="onFilter(FilterBy.ALL)"><i
                         class="fa-solid fa-globe"></i>
                     <p>all</p>
                 </button>
                 <button class="filter-images" [class.active]="filterBy === FilterBy.IMAGES"
-                    (click)="onFilter('images')"><i class="fa-solid fa-image"></i>
+                    (click)="onFilter(FilterBy.IMAGES)"><i class="fa-solid fa-image"></i>
                     <p>images</p>
                 </button>
                 <button class="filter-videos" [class.active]="filterBy === FilterBy.VIDEOS"
-                    (click)="onFilter('videos')"><i class="fa-solid fa-video"></i>
+                    (click)="onFilter(FilterBy.VIDEOS)"><i class="fa-solid fa-video"></i>
                     <p>videos</p>
                 </button>
-                <button class="filter-music" [class.active]="filterBy === FilterBy.MUSIC" (click)="onFilter('music')"><i
+                <button class="filter-music" [class.active]="filterBy === FilterBy.MUSIC" (click)="onFilter(FilterBy.MUSIC)"><i
                         class="fa-solid fa-music"></i>
                     <p>music</p>
                 </button>
                 <button class="filter-documents" [class.active]="filterBy === FilterBy.DOCUMENTS"
-                    (click)="onFilter('documents')"><i class="fa-solid fa-book"></i>
+                    (click)="onFilter(FilterBy.DOCUMENTS)"><i class="fa-solid fa-book"></i>
                     <p>documents</p>
                 </button>
             </div>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TelegramApiService } from './telegram-api.service';
 import { Bag, MyFile } from '../models/content.models';
 import { BlobUtils } from '../utils/blob.utils';
-import { State } from '../enums/content.enums';
+import { FileType, State } from '../enums/content.enums';
 import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BackendApiService } from './backend-api.service';
 import { CryptoService } from './crypto.service';
@@ -19,7 +19,7 @@ import { FileReducerService } from './file-reducer.service';
 })
 export class FileService {
 
-    uploadingFiles$ = new Subject<MyFile[]>();
+    FileType = FileType;
 
     constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService, private fileReducer: FileReducerService) { }
 
@@ -269,6 +269,39 @@ export class FileService {
 
     }
 
+    // getFileTypeByExtension(ext: string): FileType {
+    //     let e = ext.includes('.') ? ext.split('.')[1].toLowerCase() : ext.toLowerCase();
+
+    //     if (e === 'jpeg' || e === 'jpg' || e === 'png' || e === 'gif' ||
+    //         e === 'bmp' || e === 'tiff' || e === 'tif' || e === 'webp' ||
+    //         e === 'heif' || e === 'heic' || e === 'cr2' || e === 'crw' ||
+    //         e === 'nef' || e === 'nrw' || e === 'arw' || e === 'srf' ||
+    //         e === 'sr2' || e === 'raf' || e === 'orf' || e === 'rw2' ||
+    //         e === 'pef' || e === 'dng' || e === 'psd' || e === 'svg' ||
+    //         e === 'ico' || e === 'avif')
+    //         return FileType.IMAGE;
+
+    //     if (e === 'mp4' || e === 'avi' || e === 'mov' || e === 'mkv' ||
+    //         e === 'wmv' || e === 'flv' || e === 'webm' || e === 'mpg' ||
+    //         e === 'mpeg' || e === '3gp' || e === 'ogv' || e === 'mts' ||
+    //         e === 'm2ts' || e === 'ts')
+    //         return FileType.VIDEO;
+
+    //     if (e === 'mp3' || e === 'wav' || e === 'aac' || e === 'flac' ||
+    //         e === 'ogg' || e === 'm4a' || e === 'wma' || e === 'alac' ||
+    //         e === 'aiff' || e === 'opus' || e === 'mid' || e === 'midi')
+    //         return FileType.MUSIC;
+
+    //     if (e === 'pdf' || e === 'doc' || e === 'docx' || e === 'xls' ||
+    //         e === 'xlsx' || e === 'ppt' || e === 'pptx' || e === 'txt' ||
+    //         e === 'rtf' || e === 'odt' || e === 'ods' || e === 'odp' ||
+    //         e === 'html' || e === 'htm' || e === 'md' || e === 'epub' ||
+    //         e === 'csv' || e === 'tex')
+    //         return FileType.DOCUMENT;
+
+    //     return FileType.UNKNOWN;
+    // }
+
 
     private createNewFile(file: File, parentBag: Bag) {
         return new MyFile(
@@ -276,6 +309,7 @@ export class FileService {
             file.name,
             BlobUtils.getExtensionFromName(file.name),
             file.size,
+            FileType.UNKNOWN,
             new Date(),
             '',
             100,
