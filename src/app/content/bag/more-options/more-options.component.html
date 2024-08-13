@@ -4,7 +4,7 @@
             <i class="fa-solid fa-arrow-up-wide-short"></i>
         </button>
 
-        <div class="sort-block" [class.active]="sort">
+        <div class="sort-block" [class.active]="sort" [style]="'z-index: ' + getZIndex()">
             <div class="title">
                 <span>Sort by</span>
                 <span class="sort-type">

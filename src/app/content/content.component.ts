@@ -10,6 +10,7 @@ import { Info } from '../shared/models/alert.models';
 import { UserService } from '../shared/services/user.service';
 import { DragBagEnd } from '../shared/interfaces/content.interfaces';
 import { InfoService } from '../shared/services/info.service';
+import { BackdropService } from '../shared/services/backdrop.service';
 
 @Component({
     selector: 'app-content',
@@ -19,13 +20,15 @@ import { InfoService } from '../shared/services/info.service';
     imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent]
 })
 export class ContentComponent implements OnInit {
+
     user!: User;
     bags: Bag[] = new Array();
     @ViewChildren("bag") activeBags!: QueryList<BagComponent>;
     info: Info | undefined;
     deleteBar: boolean = false;
+    backdrop: boolean = false;
 
-    constructor(private bagService: BagService, private userService: UserService, private infoService: InfoService) { }
+    constructor(private bagService: BagService, private userService: UserService, private infoService: InfoService, private backdropService: BackdropService) { }
 
     ngOnInit(): void {
         this.userService.getUser(7).subscribe({
@@ -42,6 +45,8 @@ export class ContentComponent implements OnInit {
         });
 
         this.infoService.sub$.subscribe(next => this.displayInfo(next));
+        this.backdropService.turnOn$.subscribe(next => this.backdrop = true);
+        this.backdropService.clicked$.subscribe(next => this.backdrop = false);
     }
 
     displayInfo(info: Info) {
@@ -53,6 +58,10 @@ export class ContentComponent implements OnInit {
 
     onDeleteActiveChildBag($event: number) {
         this.deleteActiveBag($event);
+    }
+
+    onClickedBackdrop() {
+        this.backdropService.clicked();
     }
 
     deleteActiveBag(id: number) {

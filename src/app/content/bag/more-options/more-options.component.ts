@@ -1,6 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { FilterBy, SortBy } from '../../../shared/enums/content.enums';
+import { BackdropService } from '../../../shared/services/backdrop.service';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-more-options',
@@ -9,7 +11,7 @@ import { FilterBy, SortBy } from '../../../shared/enums/content.enums';
     templateUrl: './more-options.component.html',
     styleUrl: './more-options.component.scss'
 })
-export class MoreOptionsComponent {
+export class MoreOptionsComponent implements OnInit {
 
     FilterBy = FilterBy;
     SortBy = SortBy;
@@ -20,6 +22,13 @@ export class MoreOptionsComponent {
     filter: boolean = false;
     sortBy = SortBy.DATE_UP;
     filterBy = FilterBy.ALL;
+    backdropClicked$!: Subscription;
+
+    constructor(private backdrop: BackdropService) { }
+
+    ngOnInit(): void {
+        // this.backdrop.clicked$.subscribe();
+    }
 
     onRemove() {
         this.remove.emit();
@@ -28,10 +37,19 @@ export class MoreOptionsComponent {
     onSortBtn() {
         this.sort = !this.sort;
         this.filter = false;
+        this.backdrop.turnOn();
+        this.backdropClicked$ = this.backdrop.clicked$.subscribe(() => {
+            this.sort = false;
+            this.backdropClicked$.unsubscribe();
+        });
     }
     onFilterBtn() {
         this.filter = !this.filter;
         this.sort = false;
+        this.backdropClicked$ = this.backdrop.clicked$.subscribe(() => {
+            this.filter = false;
+            this.backdropClicked$.unsubscribe();
+        });
     }
 
     onSort(type: string) {
@@ -64,5 +82,9 @@ export class MoreOptionsComponent {
     closeBlocks() {
         this.sort = false;
         this.filter = false;
+    }
+
+    getZIndex() {
+        return this.backdrop.getHigherZIndex();
     }
 }

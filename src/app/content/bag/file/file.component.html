@@ -123,12 +123,12 @@
                 <button class="preview preview-ready" (click)="emitDownloadPreview()">
                     <p>Click to see preview</p>
                     <p><i class="fa-solid fa-eye"></i></p>
-                    <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                    <img src="./assets/images/preview-photo.jpg" alt="preview-photo">
                 </button>
                 }
                 @if (file.preview.state === State.DOWNLOAD) {
                 <div class="preview preview-loading">
-                    <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                    <img src="./assets/images/preview-photo.jpg" alt="preview-photo">
                     <mat-spinner mode="indeterminate" diameter="30"></mat-spinner>
                 </div>
                 }
@@ -140,7 +140,7 @@
                 @if (file.preview.state === State.ERROR) {
                     <button class="preview preview-ready" (click)="emitDownloadPreview()">
                         <p>Something goes wrong, try again</p>
-                        <img src="https://i.ibb.co/jgtTc1S/preview-photo.jpg" alt="preview-photo">
+                        <img src="./assets/images/preview-photo.jpg" alt="preview-photo">
                     </button>
                 }
             </div>
