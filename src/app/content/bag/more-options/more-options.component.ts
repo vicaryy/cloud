@@ -3,15 +3,16 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 import { FilterBy, SortBy } from '../../../shared/enums/content.enums';
 import { BackdropService } from '../../../shared/services/backdrop.service';
 import { Observable, Subject, Subscription } from 'rxjs';
+import { BackdropComponent } from "../../../shared/components/backdrop/backdrop.component";
 
 @Component({
     selector: 'app-more-options',
     standalone: true,
-    imports: [MatButton],
+    imports: [MatButton, BackdropComponent],
     templateUrl: './more-options.component.html',
     styleUrl: './more-options.component.scss'
 })
-export class MoreOptionsComponent implements OnInit {
+export class MoreOptionsComponent {
 
     FilterBy = FilterBy;
     SortBy = SortBy;
@@ -26,10 +27,6 @@ export class MoreOptionsComponent implements OnInit {
 
     constructor(private backdrop: BackdropService) { }
 
-    ngOnInit(): void {
-        // this.backdrop.clicked$.subscribe();
-    }
-
     onRemove() {
         this.remove.emit();
     }
@@ -37,19 +34,10 @@ export class MoreOptionsComponent implements OnInit {
     onSortBtn() {
         this.sort = !this.sort;
         this.filter = false;
-        this.backdrop.turnOn();
-        this.backdropClicked$ = this.backdrop.clicked$.subscribe(() => {
-            this.sort = false;
-            this.backdropClicked$.unsubscribe();
-        });
     }
     onFilterBtn() {
         this.filter = !this.filter;
         this.sort = false;
-        this.backdropClicked$ = this.backdrop.clicked$.subscribe(() => {
-            this.filter = false;
-            this.backdropClicked$.unsubscribe();
-        });
     }
 
     onSort(type: string) {

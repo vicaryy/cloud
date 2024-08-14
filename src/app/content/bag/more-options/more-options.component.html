@@ -53,13 +53,14 @@
                 </button>
             </div>
         </div>
+
     </div>
     <div class="btn-wrapper">
         <button class="filter-btn" [class.active]="filter" mat-button color="primary" (click)="onFilterBtn()">
             <i class="fa-solid fa-filter"></i>
         </button>
 
-        <div class="sort-block" [class.active]="filter">
+        <div class="sort-block" [class.active]="filter" [style]="'z-index: ' + getZIndex()">
             <div class="title">Filter by</div>
             <div class="options">
                 <button class="filter-all" [class.active]="filterBy === FilterBy.ALL" (click)="onFilter(FilterBy.ALL)"><i
@@ -85,6 +86,9 @@
             </div>
         </div>
     </div>
+    @if (sort || filter) {
+        <app-backdrop (clicked)="closeBlocks()"></app-backdrop>
+    }
     <div class="btn-wrapper">
         <button class="x-btn" mat-button color="warn" (click)="onRemove()">
             <i class="fa-solid fa-xmark"></i>

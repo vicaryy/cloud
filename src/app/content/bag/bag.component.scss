@@ -12,13 +12,14 @@
     // border: 1px solid rgb(65, 65, 65);
     background-color: var(--bag-color);
     border-radius: 15px;
+    border-bottom-right-radius: 0;
     box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
     transition: scale .3s ease-in-out, background-color .3s;
     transform-origin: 50% 50%;
     transform: translate3d(0px, 0, 0);
     opacity: 1;
     animation: show .3s;
-    // resize: both;
+    resize: both;
 
 
     .handle {

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Bag, MyFile as MyFile } from '../../shared/models/content.models';
@@ -49,7 +49,7 @@ export class BagComponent implements AfterViewInit, OnInit {
     newBagAlert: boolean = false;
     elementToEdit!: ElementToEdit;
 
-    constructor(private bagService: BagService, private fileService: FileService, private info: InfoService) { }
+    constructor(private bagService: BagService, private fileService: FileService, private info: InfoService, private renderer: Renderer2) { }
 
     ngOnInit(): void {
         this.sortByNewest();
@@ -76,35 +76,6 @@ export class BagComponent implements AfterViewInit, OnInit {
     private startY = 0;
     private startWidth = 0;
     private startHeight = 0;
-
-
-    @HostListener('mousedown', ['$event'])
-    onMouseDown(event: MouseEvent) {
-        if ((event.target as HTMLElement).classList.contains('handle')) {
-            this.resizing = true;
-            this.startX = event.clientX;
-            this.startY = event.clientY;
-            this.startWidth = this.resizableBox.nativeElement.offsetWidth;
-            this.startHeight = this.resizableBox.nativeElement.offsetHeight;
-            event.preventDefault();
-        }
-    }
-
-    @HostListener('document:mousemove', ['$event'])
-    onMouseMove(event: MouseEvent) {
-        if (this.resizing) {
-            const deltaX = event.clientX - this.startX;
-            const deltaY = event.clientY - this.startY;
-            this.resizableBox.nativeElement.style.width = `${this.startWidth + deltaX}px`;
-            this.resizableBox.nativeElement.style.height = `${this.startHeight + deltaY}px`;
-            event.preventDefault();
-        }
-    }
-
-    @HostListener('document:mouseup')
-    onMouseUp() {
-        this.resizing = false;
-    }
 
     onAddFile() {
         let fileInput = this.file.nativeElement as HTMLInputElement;
