@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 
 @Component({
@@ -6,7 +6,8 @@ import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
     standalone: true,
     imports: [],
     templateUrl: './alert-new-bag.component.html',
-    styleUrl: './alert-new-bag.component.scss'
+    styleUrl: './alert-new-bag.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AlertNewBagComponent {
     @ViewChild('input') input!: ElementRef;

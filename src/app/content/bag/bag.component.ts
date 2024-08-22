@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Bag, MyFile as MyFile } from '../../shared/models/content.models';
@@ -18,15 +18,17 @@ import { InfoService } from '../../shared/services/info.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MoreOptionsComponent } from "./more-options/more-options.component";
 import { SortBy, FilterBy, State, FileType } from '../../shared/enums/content.enums';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-bag',
     standalone: true,
     templateUrl: './bag.component.html',
     styleUrl: './bag.component.scss',
-    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent]
+    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BagComponent implements AfterViewInit, OnInit {
+export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     @Input('bag') bag!: Bag;
     @Output('focus') focus = new EventEmitter<HTMLElement>();
     @Output('focusOnly') focusOnly = new EventEmitter<HTMLElement>();
@@ -48,11 +50,20 @@ export class BagComponent implements AfterViewInit, OnInit {
     deleteAlert: boolean = false;
     newBagAlert: boolean = false;
     elementToEdit!: ElementToEdit;
+    refreshSub!: Subscription;
 
-    constructor(private bagService: BagService, private fileService: FileService, private info: InfoService, private renderer: Renderer2) { }
+    constructor(private bagService: BagService, private fileService: FileService, private info: InfoService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
+        this.refreshSub = this.bagService.refreshFolder$.subscribe(id => {
+            if (id === this.bag.id)
+                this.cdr.markForCheck();
+        })
         this.sortByNewest();
+    }
+
+    ngOnDestroy(): void {
+        this.refreshSub.unsubscribe();
     }
 
     ngAfterViewInit(): void {
@@ -63,19 +74,9 @@ export class BagComponent implements AfterViewInit, OnInit {
         this.focus.emit(this.bagElement.nativeElement);
     }
 
-
     onFilter($event: FilterBy) {
         this.currentFilter = $event;
     }
-
-
-
-    @ViewChild('bagElement') resizableBox!: ElementRef;
-    private resizing = false;
-    private startX = 0;
-    private startY = 0;
-    private startWidth = 0;
-    private startHeight = 0;
 
     onAddFile() {
         let fileInput = this.file.nativeElement as HTMLInputElement;
@@ -102,22 +103,7 @@ export class BagComponent implements AfterViewInit, OnInit {
 
     onOpen($event: Bag) {
         this.setOpenBagCoords($event);
-        this.openBag.emit($event);
-    }
-
-    deleteBag(element: ElementToEdit) {
-        this.bagService.deleteBag(element).subscribe({
-            next: () => {
-                for (let i = 0; i < this.bag.bags.length; i++)
-                    if (element.id === this.bag.bags[i].id)
-                        this.bag.bags.splice(i, 1);
-                this.info.displaySuccess(`Successfully deleted bag ${element.name}`);
-            },
-            error: (error) => {
-                console.log("Error in deleting bag: ", error);
-                this.info.displayError('Error in deleting bag, try again')
-            }
-        });
+        this.bagService.openBag($event);
     }
 
     createNewBag(name: string) {
@@ -125,9 +111,9 @@ export class BagComponent implements AfterViewInit, OnInit {
             next: e => {
                 this.bag.bags.push(Bag.fromJSON(e));
                 this.info.displaySuccess("Successfully created bag");
+                this.cdr.markForCheck();
             },
-            error: (error) => {
-                console.log("Error in creating bag: ", error);
+            error: () => {
                 this.info.displayError("Fail in creating bag, try again")
             }
         });
@@ -168,15 +154,17 @@ export class BagComponent implements AfterViewInit, OnInit {
     onDelete($event: ElementToEdit) {
         this.disableAlerts();
         if ($event.bag)
-            this.deleteBag($event);
+            this.bagService.deleteBag($event.id);
         if ($event.file)
             this.deleteFile($event);
     }
 
     onChangeName($event: ElementToEdit) {
         this.disableAlerts();
+
         if ($event.bag)
-            this.changeBagName($event);
+            this.bagService.changeBagName($event.id, $event.newName!);
+
         if ($event.file)
             this.changeFileName($event);
     }
@@ -191,23 +179,6 @@ export class BagComponent implements AfterViewInit, OnInit {
                 this.info.displaySuccess(`Successfully deleted file ${element.name}`);
             },
             error: () => this.info.displayError('Error in deleting file, try again')
-        });
-    }
-
-    changeBagName(element: ElementToEdit) {
-        if (this.isBagNameExists(element.newName!)) {
-            this.info.displayError(`Bag with name '${element.newName}' already exist`)
-            return;
-        }
-
-        this.bagService.changeBagName(element).subscribe({
-            next: () => {
-                for (let i = 0; i < this.bag.bags.length; i++)
-                    if (element.id === this.bag.bags[i].id)
-                        this.bag.bags[i].name = element.newName!;
-                this.info.displaySuccess(`Successfully changed bag name to ${element.newName}`);
-            },
-            error: () => this.info.displayError('Error in changing bag name, try again')
         });
     }
 

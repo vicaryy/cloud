@@ -1,4 +1,4 @@
-import { Component, ElementRef, NgModule, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, NgModule, ViewChild } from '@angular/core';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
 
 @Component({
@@ -6,7 +6,8 @@ import { FormsModule, NgForm, NgModel } from '@angular/forms';
     standalone: true,
     imports: [FormsModule],
     templateUrl: './search.component.html',
-    styleUrl: './search.component.scss'
+    styleUrl: './search.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchComponent {
 

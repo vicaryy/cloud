@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 
 @Component({
@@ -6,7 +6,8 @@ import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
     standalone: true,
     imports: [],
     templateUrl: './alert-name.component.html',
-    styleUrl: './alert-name.component.scss'
+    styleUrl: './alert-name.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AlertNameComponent {
     @ViewChild('input') input!: ElementRef;

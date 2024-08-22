@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChildren, numberAttribute } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren, numberAttribute } from '@angular/core';
 import { BagComponent } from "./bag/bag.component";
 import { SearchComponent } from './search/search.component';
 import { BagService } from '../shared/services/bag.service';
@@ -17,31 +17,25 @@ import { BackdropService } from '../shared/services/backdrop.service';
     standalone: true,
     templateUrl: './content.component.html',
     styleUrl: './content.component.scss',
-    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent]
+    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContentComponent implements OnInit {
 
     user!: User;
-    bags: Bag[] = new Array();
+    openedBags!: Bag[];
     @ViewChildren("bag") activeBags!: QueryList<BagComponent>;
     info: Info | undefined;
     deleteBar: boolean = false;
     backdrop: boolean = false;
 
-    constructor(private bagService: BagService, private userService: UserService, private infoService: InfoService, private backdropService: BackdropService) { }
+    constructor(private bagService: BagService, private userService: UserService, private infoService: InfoService, private backdropService: BackdropService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
-        this.userService.getUser(7).subscribe({
-            next: user => {
-                console.log(user);
 
-                this.user = User.fromJSON(user);
-                this.bags = this.user.bags;
-                this.bags[0].x = 100;
-                this.bags[0].y = 250;
-            },
-            error: () => this.infoService.displayError("Fail in fetching user")
-
+        this.bagService.openedBags$.subscribe(next => {
+            this.openedBags = [...next];
+            this.cdr.markForCheck();
         });
 
         this.infoService.sub$.subscribe(next => this.displayInfo(next));
@@ -52,7 +46,10 @@ export class ContentComponent implements OnInit {
     displayInfo(info: Info) {
         if (this.info)
             return;
-        this.info = info;
+        console.log(this.info);
+        this.info = new Info(info.text, info.success, info.error);
+        this.cdr.markForCheck();
+
         setTimeout(() => this.info = undefined, 3200);
     }
 
@@ -65,7 +62,7 @@ export class ContentComponent implements OnInit {
     }
 
     deleteActiveBag(id: number) {
-        this.bags = this.bags.filter(e => e.id !== id);
+        this.openedBags = this.openedBags.filter(e => e.id !== id);
     }
 
     onFocusEvent($event: HTMLElement) {
@@ -87,7 +84,6 @@ export class ContentComponent implements OnInit {
         this.bagService.focusOnlyElement($event);
     }
 
-
     unfocusActiveBags() {
         this.activeBags.forEach(e => this.bagService.unfocusElement(e.bagElement.nativeElement));
     }
@@ -97,8 +93,8 @@ export class ContentComponent implements OnInit {
     }
 
     onOpenBag($event: Bag) {
-        if (!this.bags.find(e => e.id === $event.id))
-            this.bags = [...this.bags, $event];
+        if (!this.openedBags.find(e => e.id === $event.id))
+            this.openedBags = [...this.openedBags, $event];
     }
 
     trackById(index: number, bag: any): any {

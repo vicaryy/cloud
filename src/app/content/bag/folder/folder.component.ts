@@ -1,23 +1,37 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 import { Bag } from '../../../shared/models/content.models';
+import { Subscription } from 'rxjs';
+import { BagService } from '../../../shared/services/bag.service';
 
 @Component({
     selector: 'app-folder',
     standalone: true,
     imports: [],
     templateUrl: './folder.component.html',
-    styleUrl: './folder.component.scss'
+    styleUrl: './folder.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FolderComponent implements OnInit {
-    @Input('bag') bag!: Bag;
+    @Input({ required: true }) bag!: Bag;
     @Output('change') change = new EventEmitter<ElementToEdit>();
     @Output('open') open = new EventEmitter<Bag>();
     detailsActive: boolean = false;
     date: string = '';
+    sub!: Subscription;
+
+    constructor(private bagService: BagService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
+        this.initRefreshFolder();
         this.initDate();
+    }
+
+    initRefreshFolder() {
+        this.sub = this.bagService.refreshFolder$.subscribe(id => {
+            if (id === this.bag.id)
+                this.cdr.markForCheck();
+        });
     }
 
     initDate() {

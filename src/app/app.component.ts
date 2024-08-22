@@ -1,4 +1,4 @@
-import { Component, HostBinding } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BagComponent } from './content/bag/bag.component';
 import { HeaderComponent } from "./header/header.component";

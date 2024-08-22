@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MyFile } from '../../../shared/models/content.models';
 import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,8 @@ import { ImageDialogComponent } from '../../../shared/components/image-dialog/im
     standalone: true,
     templateUrl: './file.component.html',
     styleUrl: './file.component.scss',
-    imports: [CommonModule, MatProgressSpinnerModule]
+    imports: [CommonModule, MatProgressSpinnerModule],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FileComponent implements OnInit {
 

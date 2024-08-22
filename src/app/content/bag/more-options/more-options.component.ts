@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { FilterBy, SortBy } from '../../../shared/enums/content.enums';
 import { BackdropService } from '../../../shared/services/backdrop.service';
@@ -10,7 +10,8 @@ import { BackdropComponent } from "../../../shared/components/backdrop/backdrop.
     standalone: true,
     imports: [MatButton, BackdropComponent],
     templateUrl: './more-options.component.html',
-    styleUrl: './more-options.component.scss'
+    styleUrl: './more-options.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MoreOptionsComponent {
 
