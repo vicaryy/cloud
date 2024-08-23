@@ -1,14 +1,11 @@
 <div #bagElement class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)" (cdkDragStarted)="onDragStart($event)"
     (mousedown)="onFocus()" [class.blur]="alert">
 
-
-    <!-- <img src="./assets/images/resize.png" class="handle"> -->
-
     <div class="option-bar" cdkDragHandle>
         <div class="bag-logo"><i class="fa-regular fa-folder-open"></i></div>
         <div class="bag-info">
             <p class="directory"> {{ bag.getFullDirectory() }}</p>
-            <p class="amount">{{bag.getAmountOfBags()}} bags · {{bag.getAmountOfFiles()}} files </p>
+            <p class="amount">{{ bag.getAmountOfBags() }} bags · {{bag.getAmountOfFiles()}} files </p>
         </div>
 
         <app-add class="add" (addFile)="onAddFile()" (addBag)="displayNewBagAlert()"></app-add>
@@ -38,12 +35,6 @@
         <div class="empty-file"></div>
         <div class="empty-file"></div>
     </div>
-
-    <!-- <div class="grab-block">
-        <div class="grab" cdkDragHandle><i class="fa-solid fa-grip-lines"></i></div>
-        <div class="handle">
-        </div>
-    </div> -->
 
     @if (newBagAlert) {
     <app-alert-new-bag [element]="elementToEdit" (ok)="onNewBag($event)" (cancel)="alertCancel()"></app-alert-new-bag>

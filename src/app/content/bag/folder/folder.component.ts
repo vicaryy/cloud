@@ -28,7 +28,7 @@ export class FolderComponent implements OnInit {
     }
 
     initRefreshFolder() {
-        this.sub = this.bagService.refreshFolder$.subscribe(id => {
+        this.sub = this.bagService.refreshBag$.subscribe(id => {
             if (id === this.bag.id)
                 this.cdr.markForCheck();
         });

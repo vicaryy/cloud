@@ -1,12 +1,9 @@
 <div class="content">
     <app-search></app-search>
     <ng-container *ngFor="let b of openedBags; index as i; trackBy: trackById">
-        <app-bag #bag *ngIf="i === 0" [bag]="b" (focus)="onFocusEvent($event)" (openBag)="onOpenBag($event)"
-            (deleteActiveChildBag)="onDeleteActiveChildBag($event)"></app-bag>
-        <app-bag #bag *ngIf="i !== 0" [bag]="b" (focus)="onFocusEvent($event)" (focusOnly)="onFocusOnlyEvent($event)"
-            (openBag)="onOpenBag($event)" (deleteActiveChildBag)="onDeleteActiveChildBag($event)"
-            (dragStart)="onDragStart()" (dragEnd)="onDragEnd($event)"
-            (removeActiveBag)="deleteActiveBag($event)"></app-bag>
+        <app-bag #bag *ngIf="i === 0" [bag]="b"></app-bag>
+        <app-bag #bag *ngIf="i !== 0" [bag]="b" (dragStart)="onDragStart()"
+            (dragEnd)="onDragEnd($event)"></app-bag>
     </ng-container>
 
     @if (deleteBar) {
@@ -19,7 +16,6 @@
     }
 
     @if (info) {
-        <p>Powinno wyswietlic</p>
     <app-info [info]="info"></app-info>
     }
 </div>

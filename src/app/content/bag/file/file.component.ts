@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MyFile } from '../../../shared/models/content.models';
 import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 import { CommonModule } from '@angular/common';
@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { BagComponent } from '../bag.component';
 import { ImageDialogComponent } from '../../../shared/components/image-dialog/image-dialog.component';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-file',
@@ -17,7 +18,7 @@ import { ImageDialogComponent } from '../../../shared/components/image-dialog/im
     imports: [CommonModule, MatProgressSpinnerModule],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FileComponent implements OnInit {
+export class FileComponent implements OnInit, OnDestroy {
 
     @Input('file') file!: MyFile;
     @Output('change') change = new EventEmitter<ElementToEdit>();
@@ -28,15 +29,28 @@ export class FileComponent implements OnInit {
     size: string = '';
     date: string = '';
     logoUrl: string = "./assets/images/extensions/";
+    subRefresh!: Subscription;
 
 
-    constructor(private fileService: FileService, private dialog: MatDialog) { }
+    constructor(private fileService: FileService, private dialog: MatDialog, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.initSize();
         this.initDate();
         this.initLogoUrl();
         this.initPreview();
+        this.initRefresh();
+    }
+
+    ngOnDestroy(): void {
+        this.subRefresh.unsubscribe();
+    }
+
+    initRefresh() {
+        this.subRefresh = this.fileService.refreshFile$.subscribe(id => {
+            if (id === this.file.id)
+                this.cdr.markForCheck();
+        });
     }
 
     initPreview() {
@@ -46,6 +60,8 @@ export class FileComponent implements OnInit {
 
     initLogoUrl() {
         let ext = this.file.extension.split(".")[1];
+
+        //todo zoptymalizować to troche trzeba
 
         if (ext === 'dmg')
             this.logoUrl = this.logoUrl + "dmg.png";
@@ -73,9 +89,6 @@ export class FileComponent implements OnInit {
             this.logoUrl = this.logoUrl + "zip.png";
         else
             this.logoUrl = this.logoUrl + "default.png";
-
-
-
     }
 
     initDate() {

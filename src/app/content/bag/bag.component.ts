@@ -30,13 +30,8 @@ import { Subscription } from 'rxjs';
 })
 export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     @Input('bag') bag!: Bag;
-    @Output('focus') focus = new EventEmitter<HTMLElement>();
-    @Output('focusOnly') focusOnly = new EventEmitter<HTMLElement>();
-    @Output('openBag') openBag = new EventEmitter<Bag>();
-    @Output('deleteActiveChildBag') deleteActiveChildBag = new EventEmitter<number>();
     @Output('dragStart') dragStart = new EventEmitter<void>();
     @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
-    @Output('removeActiveBag') removeActiveBag = new EventEmitter<number>();
     @ViewChild("bagElement") bagElement!: ElementRef;
     @ViewChild('file') file!: ElementRef;
     State = State;
@@ -51,19 +46,37 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     newBagAlert: boolean = false;
     elementToEdit!: ElementToEdit;
     refreshSub!: Subscription;
+    focusSub!: Subscription;
 
     constructor(private bagService: BagService, private fileService: FileService, private info: InfoService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
-        this.refreshSub = this.bagService.refreshFolder$.subscribe(id => {
+        this.initRefreshSub()
+        this.initFocusSub();
+        this.sortByNewest();
+    }
+
+    initRefreshSub() {
+        this.refreshSub = this.bagService.refreshBag$.subscribe(id => {
             if (id === this.bag.id)
                 this.cdr.markForCheck();
         })
-        this.sortByNewest();
+    }
+
+    initFocusSub() {
+        this.focusSub = this.bagService.focusBag$.subscribe(id => {
+            if (id === this.bag.id) {
+                this.bagElement.nativeElement.style.backgroundColor = 'var(--bag-color-focus)';
+                this.bagElement.nativeElement.style.zIndex = `${this.bagService.highestIndex++}`;
+            }
+            else
+                this.bagElement.nativeElement.style.backgroundColor = 'var(--bag-color)';
+        });
     }
 
     ngOnDestroy(): void {
         this.refreshSub.unsubscribe();
+        this.focusSub.unsubscribe();
     }
 
     ngAfterViewInit(): void {
@@ -71,7 +84,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         el.style.left = `${this.bag.x}px`;
         el.style.top = `${this.bag.y}px`;
         el.style.transformOrigin = ``;
-        this.focus.emit(this.bagElement.nativeElement);
+        this.bagService.focusBag(this.bag.id);
     }
 
     onFilter($event: FilterBy) {
@@ -156,7 +169,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         if ($event.bag)
             this.bagService.deleteBag($event.id);
         if ($event.file)
-            this.deleteFile($event);
+            this.fileService.deleteFile($event.id, this.bag.id);
     }
 
     onChangeName($event: ElementToEdit) {
@@ -167,19 +180,6 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
 
         if ($event.file)
             this.changeFileName($event);
-    }
-
-
-    deleteFile(element: ElementToEdit) {
-        this.fileService.deleteFile(element).subscribe({
-            next: () => {
-                for (let i = 0; i < this.bag.files.length; i++)
-                    if (element.id === this.bag.files[i].id)
-                        this.bag.files.splice(i, 1);
-                this.info.displaySuccess(`Successfully deleted file ${element.name}`);
-            },
-            error: () => this.info.displayError('Error in deleting file, try again')
-        });
     }
 
     isBagNameExists(name: string): boolean {
@@ -206,13 +206,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         if (fileToEdit?.extension !== 'unknown' && !element.newName?.endsWith(fileToEdit!.extension!))
             element.newName = element.newName + fileToEdit!.extension!;
 
-        this.fileService.changeFileName(element).subscribe({
-            next: () => {
-                fileToEdit!.name = element.newName!;
-                this.info.displaySuccess(`Successfully changed file name to ${element.newName}`);
-            },
-            error: () => this.info.displayError('Error in changing file name, try again')
-        });
+        this.fileService.changeFileName(fileToEdit!, element.newName!);
     }
 
     onDragStart(event: CdkDragStart) {
@@ -229,11 +223,11 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     onFocus() {
-        this.focus.emit(this.bagElement.nativeElement);
+        this.bagService.focusBag(this.bag.id);
     }
 
     onRemoveActiveBag() {
-        this.removeActiveBag.emit(this.bag.id);
+        this.bagService.removeOpenedBag(this.bag.id);
     }
 
     displayNewBagAlert() {

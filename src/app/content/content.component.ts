@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren, numberAttribute } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren, numberAttribute } from '@angular/core';
 import { BagComponent } from "./bag/bag.component";
 import { SearchComponent } from './search/search.component';
 import { BagService } from '../shared/services/bag.service';
@@ -23,7 +23,7 @@ import { BackdropService } from '../shared/services/backdrop.service';
 export class ContentComponent implements OnInit {
 
     user!: User;
-    openedBags!: Bag[];
+    openedBags: Bag[] = [];
     @ViewChildren("bag") activeBags!: QueryList<BagComponent>;
     info: Info | undefined;
     deleteBar: boolean = false;
@@ -32,7 +32,6 @@ export class ContentComponent implements OnInit {
     constructor(private bagService: BagService, private userService: UserService, private infoService: InfoService, private backdropService: BackdropService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
-
         this.bagService.openedBags$.subscribe(next => {
             this.openedBags = [...next];
             this.cdr.markForCheck();
@@ -46,7 +45,6 @@ export class ContentComponent implements OnInit {
     displayInfo(info: Info) {
         if (this.info)
             return;
-        console.log(this.info);
         this.info = new Info(info.text, info.success, info.error);
         this.cdr.markForCheck();
 
@@ -65,11 +63,6 @@ export class ContentComponent implements OnInit {
         this.openedBags = this.openedBags.filter(e => e.id !== id);
     }
 
-    onFocusEvent($event: HTMLElement) {
-        this.unfocusActiveBags();
-        this.focusBag($event);
-    }
-
     onDragStart() {
         this.deleteBar = true;
     }
@@ -78,23 +71,6 @@ export class ContentComponent implements OnInit {
         if ($event.x < 140)
             this.deleteActiveBag($event.id);
         this.deleteBar = false;
-    }
-
-    onFocusOnlyEvent($event: HTMLElement) {
-        this.bagService.focusOnlyElement($event);
-    }
-
-    unfocusActiveBags() {
-        this.activeBags.forEach(e => this.bagService.unfocusElement(e.bagElement.nativeElement));
-    }
-
-    focusBag(element: HTMLElement) {
-        this.bagService.focusElement(element);
-    }
-
-    onOpenBag($event: Bag) {
-        if (!this.openedBags.find(e => e.id === $event.id))
-            this.openedBags = [...this.openedBags, $event];
     }
 
     trackById(index: number, bag: any): any {

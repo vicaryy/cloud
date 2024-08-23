@@ -13,15 +13,22 @@ import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
 import { InfoService } from './info.service';
 import { PreviewFile } from '../interfaces/content.interfaces';
 import { FileReducerService } from './file-reducer.service';
+import { BagService } from './bag.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class FileService {
+    private _refreshFile = new Subject<number>;
+    refreshFile$ = this._refreshFile.asObservable();
 
     FileType = FileType;
 
-    constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService, private fileReducer: FileReducerService) { }
+    constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService, private fileReducer: FileReducerService, private bagService: BagService) { }
+
+    private refreshFile(id: number) {
+        this._refreshFile.next(id);
+    }
 
     async downloadPreview(file: PreviewFile) {
         try {
@@ -41,12 +48,25 @@ export class FileService {
         file.state = State.DONE;
     }
 
-    deleteFile(element: ElementToEdit) {
-        return this.backend.deleteFile(element);
+    deleteFile(id: number, parentBagId: number) {
+        this.backend.deleteFile(id).subscribe({
+            next: () => {
+                this.bagService.deleteFileFromBag(id, parentBagId);
+                this.info.displaySuccess('File deleted successfully');
+            },
+            error: () => this.info.displayError('Error in deleting file, try again')
+        });
     }
 
-    changeFileName(element: ElementToEdit) {
-        return this.backend.changeFileName(element);
+    changeFileName(file: MyFile, newName: string) {
+        this.backend.changeFileName(file.id, newName).subscribe({
+            next: () => {
+                file!.name = newName;
+                this._refreshFile.next(file.id);
+                this.info.displaySuccess(`Successfully changed file name to ${newName}`);
+            },
+            error: () => this.info.displayError('Error in changing file name, try again')
+        });
     }
 
     async tryAgain(file: MyFile) {
@@ -67,16 +87,17 @@ export class FileService {
                 await this.downloadBlobs(file);
         } catch (error) {
             file.state = State.ERROR;
-            console.log(`Error in downloading file '${file.name}'`, error);
-
+            this.refreshFile(file.id);
             this.info.displayError(`Error in downloading file '${file.name}'`);
         }
     }
 
     private async downloadBlobs(file: MyFile) {
         file.state = State.DOWNLOAD;
+        this.refreshFile(file.id);
         await this.wait(200);
         file.progress = 0;
+        this.refreshFile(file.id);
         await this.wait(1500);
         if (!file.downloadState.entireSize) {
             file.downloadState.entireSize = 0;
@@ -85,6 +106,7 @@ export class FileService {
         if (!file.downloadState.prevProgress)
             file.downloadState.prevProgress = 0;
         let currProggres = 0;
+
 
         while (file.fileParts.length > 0) {
             const f = file.fileParts[0];
@@ -96,6 +118,7 @@ export class FileService {
                 }
                 if (event.type === HttpEventType.Response)
                     file.downloadState.prevProgress! += currProggres;
+                this.refreshFile(file.id);
             })));
             let blobResponse = blob as HttpResponse<Blob>;
             if (!file.downloadState.downloadedBlobs)
@@ -110,6 +133,7 @@ export class FileService {
 
     private async decryptBlobs(file: MyFile) {
         file.state = State.DECRYPT;
+        this.refreshFile(file.id);
         await this.wait(200);
 
         while (file.downloadState.downloadedBlobs!.length > 0) {
@@ -127,6 +151,7 @@ export class FileService {
     private async createDownloadUrl(file: MyFile) {
         file.url = URL.createObjectURL(new Blob(file.downloadState.decryptedBlobs));
         file.state = State.DONE;
+        this.refreshFile(file.id);
         file.downloadState = {};
         file.uploadState = {};
         file.progress = 0;
@@ -138,7 +163,7 @@ export class FileService {
         const file: File = fileInput.files[0];
 
         const newFile: MyFile = this.createNewFile(file, parentBag);
-        parentBag.files.push(newFile);
+        this.bagService.addFileAsView(parentBag.id, newFile);
         this.uploadFile(newFile);
     }
 
@@ -162,14 +187,13 @@ export class FileService {
                 await this.sliceBlob(file);
         } catch (error) {
             file.state = State.ERROR;
+            this.refreshFile(file.id);
             console.log(`Error in uploading file '${file.name}'`, error);
             this.info.displayError(`Error in uploading file '${file.name}'`);
         }
     }
 
     private async uploadPreview(file: MyFile) {
-        console.log("zaczynam robić preview");
-
         const previewBlob = await this.fileReducer.compressImage(file.blob!);
         const encryptedBlob = new Blob([await this.crypto.encrypt(await previewBlob.arrayBuffer())]);
         const response = await lastValueFrom(this.telegram.sendBlob(encryptedBlob)) as HttpResponse<TelegramResponse<Message>>;
@@ -192,6 +216,7 @@ export class FileService {
 
     private async encryptBlobs(file: MyFile) {
         file.state = State.ENCRYPT;
+        this.refreshFile(file.id);
         await this.wait(200);
         while (file.uploadState.slicedBlobs!.length > 0) {
             const slBlob = file.uploadState.slicedBlobs![0];
@@ -209,8 +234,10 @@ export class FileService {
 
     private async sendBlobs(file: MyFile) {
         file.state = State.UPLOAD;
+        this.refreshFile(file.id);
         await this.wait(200);
         file.progress = 0;
+        this.refreshFile(file.id);
         await this.wait(1500);
         if (!file.uploadState.entireSize) {
             file.uploadState.entireSize = 0;
@@ -218,20 +245,27 @@ export class FileService {
         }
         if (!file.uploadState.prevProgress)
             file.uploadState.prevProgress = 0;
-        let currProggres = 0;
+        let currProgress = 0;
 
         while (file.uploadState.encryptedBlobs!.length > 0) {
             const enBlob = file.uploadState.encryptedBlobs![0];
 
+            let prevProgess = 0;
             const response = await lastValueFrom(this.telegram.sendBlob(enBlob).pipe(tap(event => {
                 if (event.type === HttpEventType.UploadProgress) {
-                    currProggres = event.loaded;
-                    file.progress = Math.floor(((currProggres + file.uploadState.prevProgress!) / file.uploadState.entireSize!) * 100);
+                    currProgress = event.loaded;
+                    file.progress = Math.floor(((currProgress + file.uploadState.prevProgress!) / file.uploadState.entireSize!) * 100);
                 }
                 if (event.type === HttpEventType.Sent)
-                    file.uploadState.prevProgress! += currProggres;
+                    file.uploadState.prevProgress! += currProgress;
 
+                if (currProgress - prevProgess > 2000000) {
+                    prevProgess = currProgress;
+                    this.refreshFile(file.id);
+                }
             })));
+            this.refreshFile(file.id);
+            await this.wait(500);
             const responseAs = response as HttpResponse<TelegramResponse<Message>>;
             if (!responseAs.ok && !responseAs.body!.ok) {
                 console.log("Fail in sending blob: ");
@@ -260,9 +294,11 @@ export class FileService {
                 file.downloadState = {};
                 file.preview = response.preview;
                 this.info.displaySuccess(`Successfully uploaded file '${file.name}'`);
+                this.refreshFile(file.id);
             },
             error: () => {
                 file.state = State.ERROR;
+                this.refreshFile(file.id);
                 this.info.displayError("Fail in uploading file, try again")
             }
         });
@@ -305,7 +341,7 @@ export class FileService {
 
     private createNewFile(file: File, parentBag: Bag) {
         return new MyFile(
-            0,
+            this.getRandomId(),
             file.name,
             BlobUtils.getExtensionFromName(file.name),
             file.size,
@@ -325,5 +361,9 @@ export class FileService {
 
     wait(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    getRandomId(): number {
+        return Math.floor(Math.random() * (5000000 - 1000000 + 1)) + 1000000;
     }
 }

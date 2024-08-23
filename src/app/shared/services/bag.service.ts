@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { BackendApiService } from './backend-api.service';
 import { TelegramApiService } from './telegram-api.service';
 import { CryptoService } from './crypto.service';
-import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { Observable, Subject } from 'rxjs';
 import { UserService } from './user.service';
-import { Bag } from '../models/content.models';
+import { Bag, MyFile } from '../models/content.models';
 import { InfoService } from './info.service';
 
 @Injectable({
@@ -13,12 +12,14 @@ import { InfoService } from './info.service';
 })
 export class BagService {
     highestIndex: number = 1;
-    private openedBagsSubject: Subject<Bag[]> = new Subject<Bag[]>;
-    private refreshFolder = new Subject<number>;
-    private bags!: Bag[];
-    private openedBags!: Bag[];
-    openedBags$: Observable<Bag[]> = this.openedBagsSubject.asObservable();
-    refreshFolder$ = this.refreshFolder.asObservable();
+    private _openedBagsSubject: Subject<Bag[]> = new Subject<Bag[]>;
+    private _refreshBag = new Subject<number>;
+    private _focusBag = new Subject<number>;
+    private bags: Bag[] = [];
+    private openedBags: Bag[] = [];
+    openedBags$: Observable<Bag[]> = this._openedBagsSubject.asObservable();
+    refreshBag$ = this._refreshBag.asObservable();
+    focusBag$ = this._focusBag.asObservable();
 
     constructor(private userService: UserService, private backend: BackendApiService, private telegram: TelegramApiService, private crypto: CryptoService, private infoService: InfoService) {
         this.loadBags();
@@ -28,6 +29,8 @@ export class BagService {
         this.userService.user$.subscribe({
             next: user => {
                 this.bags = user.bags;
+                this.bags[0].x = 100;
+                this.bags[0].y = 250;
                 this.openedBags = [...this.bags];
                 this.emitOpenedBags();
             }
@@ -35,7 +38,12 @@ export class BagService {
     }
 
     private emitOpenedBags() {
-        this.openedBagsSubject.next(this.openedBags);
+        this._openedBagsSubject.next(this.openedBags);
+    }
+
+    removeOpenedBag(id: number) {
+        this.openedBags = this.openedBags.filter(e => e.id !== id);
+        this.emitOpenedBags();
     }
 
     createBag(parentId: number, name: string) {
@@ -43,10 +51,26 @@ export class BagService {
     }
 
     openBag(bag: Bag) {
-        if (this.openedBags.find(e => e.id === bag.id))
+        if (this.openedBags.find(e => e.id === bag.id)) {
+            this.focusBag(bag.id);
             return;
+        }
         this.openedBags.push(bag);
         this.emitOpenedBags();
+    }
+
+    addFileAsView(bagId: number, newFile: MyFile) {
+        for (let i = 0; i < this.openedBags.length; i++) {
+            if (bagId === this.openedBags[i].id) {
+                this.openedBags[i].files.push(newFile);
+                this._refreshBag.next(bagId);
+                break;
+            }
+        }
+    }
+
+    changeFileName(id: number, newName: string) {
+        throw new Error('Method not implemented.');
     }
 
     changeBagName(bagId: number, newName: string) {
@@ -55,7 +79,7 @@ export class BagService {
                 const bag = this.getBagFromMainBag(bagId);
                 if (bag) {
                     bag.name = newName;
-                    this.refreshFolder.next(bagId);
+                    this._refreshBag.next(bagId);
                     this.infoService.displaySuccess(`Successfully changed bag name to: ${newName}`);
                 }
             },
@@ -71,7 +95,7 @@ export class BagService {
                 const bag = this.deleteBagFromMainBag(bagId);
                 if (bag) {
                     this.deleteBagFromOpenedBags(bagId);
-                    this.refreshFolder.next(bagId);
+                    this._refreshBag.next(bagId);
                     this.infoService.displaySuccess(`Successfully deleted bag`);
                 }
             },
@@ -79,6 +103,20 @@ export class BagService {
                 this.infoService.displayError(`Error in deleteing bag`);
             }
         });
+    }
+
+    deleteFileFromBag(id: number, parentBagId: number) {
+        const parentBag = this.getBagFromMainBag(parentBagId);
+        if (!parentBag)
+            return;
+
+        for (let i = 0; i < parentBag.files.length; i++) {
+            if (parentBag.files[i].id === id) {
+                parentBag.files.splice(i, 1);
+                this._refreshBag.next(parentBagId);
+                break;
+            }
+        }
     }
 
     private deleteBagFromOpenedBags(id: number) {
@@ -127,18 +165,7 @@ export class BagService {
         return null;
     }
 
-    focusElement(element: HTMLElement) {
-        element.style.zIndex = `${this.highestIndex++}`;
-        element.style.backgroundColor = `var(--bag-color-focus)`;
+    focusBag(id: number) {
+        this._focusBag.next(id);
     }
-
-    focusOnlyElement(element: HTMLElement) {
-        element.style.backgroundColor = `var(--bag-color-focus)`;
-    }
-
-    unfocusElement(element: HTMLElement) {
-        element.style.backgroundColor = `var(--bag-color)`;
-    }
-
-
 }

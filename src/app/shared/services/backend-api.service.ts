@@ -26,11 +26,11 @@ export class BackendApiService {
     changeBagName(bagId: number, newName: string): Observable<void> {
         return this.http.patch<void>(`${environment.apiUrl}/api/bag/edit/${bagId}`, {"name": newName});
     }
-    deleteFile(element: ElementToEdit): Observable<void> {
-        return this.http.delete<void>(environment.apiUrl + "/api/file/delete/" + element.id);
+    deleteFile(id: number): Observable<void> {
+        return this.http.delete<void>(environment.apiUrl + "/api/file/delete/" + id);
     }
-    changeFileName(element: ElementToEdit): Observable<void> {
-        return this.http.patch<void>(`${environment.apiUrl}/api/file/edit/${element.id}`, {"name": element.newName});
+    changeFileName(id: number, newName: string): Observable<void> {
+        return this.http.patch<void>(`${environment.apiUrl}/api/file/edit/${id}`, {"name": newName});
     }
     getUser(userId: number): Observable<User> {
         return this.http.get<User>(environment.apiUrl + "/api/user/" + userId);
