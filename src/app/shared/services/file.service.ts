@@ -6,7 +6,7 @@ import { FileType, State } from '../enums/content.enums';
 import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BackendApiService } from './backend-api.service';
 import { CryptoService } from './crypto.service';
-import { from, lastValueFrom, of, Subject, switchMap, tap } from 'rxjs';
+import { concatMap, from, lastValueFrom, map, of, Subject, switchMap, tap, toArray } from 'rxjs';
 import { FilePart, NewFileRequest } from '../interfaces/http-interfaces';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
@@ -105,30 +105,48 @@ export class FileService {
         }
         if (!file.downloadState.prevProgress)
             file.downloadState.prevProgress = 0;
+
+        const filePaths = await this.getAllFilePaths(file);
         let currProggres = 0;
-
-
         while (file.fileParts.length > 0) {
             const f = file.fileParts[0];
-            let fileUrl = await lastValueFrom(this.telegram.getFilePath(f.fileId));
-            let blob = await lastValueFrom(this.telegram.downloadBlob(fileUrl.result.file_path).pipe(tap(event => {
+
+            let prevProgessForRefresh = 0;
+            let currProgessForRefresh = 0;
+            let blob = await lastValueFrom(this.telegram.downloadBlob(filePaths[0]).pipe(tap(event => {
                 if (event.type === HttpEventType.DownloadProgress) {
                     currProggres = event.loaded;
                     file.progress = Math.floor(((currProggres + file.downloadState.prevProgress!) / file.downloadState.entireSize!) * 100);
                 }
                 if (event.type === HttpEventType.Response)
                     file.downloadState.prevProgress! += currProggres;
-                this.refreshFile(file.id);
+
+                if (currProgessForRefresh - prevProgessForRefresh > 2000000) {
+                    prevProgessForRefresh = currProgessForRefresh;
+                    this.refreshFile(file.id);
+                }
             })));
+            this.refreshFile(file.id);
             let blobResponse = blob as HttpResponse<Blob>;
             if (!file.downloadState.downloadedBlobs)
                 file.downloadState.downloadedBlobs = [];
 
             file.downloadState.downloadedBlobs!.push(blobResponse.body!);
             file.fileParts.shift();
+            filePaths.shift();
         }
+        await this.wait(500);
         file.downloadState.downloaded = true;
         await this.decryptBlobs(file);
+    }
+
+    private async getAllFilePaths(file: MyFile) {
+        return await lastValueFrom(from(file.fileParts)
+            .pipe(
+                concatMap(part => this.telegram.getFilePath(part.fileId)
+                    .pipe(map(response => response.result.file_path))),
+                toArray()
+            ));
     }
 
     private async decryptBlobs(file: MyFile) {
@@ -250,22 +268,23 @@ export class FileService {
         while (file.uploadState.encryptedBlobs!.length > 0) {
             const enBlob = file.uploadState.encryptedBlobs![0];
 
-            let prevProgess = 0;
+            let prevProgessForRefresh = 0;
+            let currProgessForRefresh = 0;
             const response = await lastValueFrom(this.telegram.sendBlob(enBlob).pipe(tap(event => {
                 if (event.type === HttpEventType.UploadProgress) {
                     currProgress = event.loaded;
+                    currProgessForRefresh = event.loaded;
                     file.progress = Math.floor(((currProgress + file.uploadState.prevProgress!) / file.uploadState.entireSize!) * 100);
                 }
                 if (event.type === HttpEventType.Sent)
                     file.uploadState.prevProgress! += currProgress;
 
-                if (currProgress - prevProgess > 2000000) {
-                    prevProgess = currProgress;
+                if (currProgessForRefresh - prevProgessForRefresh > 2000000) {
+                    prevProgessForRefresh = currProgessForRefresh;
                     this.refreshFile(file.id);
                 }
             })));
             this.refreshFile(file.id);
-            await this.wait(500);
             const responseAs = response as HttpResponse<TelegramResponse<Message>>;
             if (!responseAs.ok && !responseAs.body!.ok) {
                 console.log("Fail in sending blob: ");
@@ -276,6 +295,7 @@ export class FileService {
             file.fileParts.push(filePart);
             file.uploadState.encryptedBlobs?.shift()
         }
+        await this.wait(500);
         file.uploadState.sended = true;
         await this.sendToBackend(file);
     }
@@ -304,40 +324,6 @@ export class FileService {
         });
 
     }
-
-    // getFileTypeByExtension(ext: string): FileType {
-    //     let e = ext.includes('.') ? ext.split('.')[1].toLowerCase() : ext.toLowerCase();
-
-    //     if (e === 'jpeg' || e === 'jpg' || e === 'png' || e === 'gif' ||
-    //         e === 'bmp' || e === 'tiff' || e === 'tif' || e === 'webp' ||
-    //         e === 'heif' || e === 'heic' || e === 'cr2' || e === 'crw' ||
-    //         e === 'nef' || e === 'nrw' || e === 'arw' || e === 'srf' ||
-    //         e === 'sr2' || e === 'raf' || e === 'orf' || e === 'rw2' ||
-    //         e === 'pef' || e === 'dng' || e === 'psd' || e === 'svg' ||
-    //         e === 'ico' || e === 'avif')
-    //         return FileType.IMAGE;
-
-    //     if (e === 'mp4' || e === 'avi' || e === 'mov' || e === 'mkv' ||
-    //         e === 'wmv' || e === 'flv' || e === 'webm' || e === 'mpg' ||
-    //         e === 'mpeg' || e === '3gp' || e === 'ogv' || e === 'mts' ||
-    //         e === 'm2ts' || e === 'ts')
-    //         return FileType.VIDEO;
-
-    //     if (e === 'mp3' || e === 'wav' || e === 'aac' || e === 'flac' ||
-    //         e === 'ogg' || e === 'm4a' || e === 'wma' || e === 'alac' ||
-    //         e === 'aiff' || e === 'opus' || e === 'mid' || e === 'midi')
-    //         return FileType.MUSIC;
-
-    //     if (e === 'pdf' || e === 'doc' || e === 'docx' || e === 'xls' ||
-    //         e === 'xlsx' || e === 'ppt' || e === 'pptx' || e === 'txt' ||
-    //         e === 'rtf' || e === 'odt' || e === 'ods' || e === 'odp' ||
-    //         e === 'html' || e === 'htm' || e === 'md' || e === 'epub' ||
-    //         e === 'csv' || e === 'tex')
-    //         return FileType.DOCUMENT;
-
-    //     return FileType.UNKNOWN;
-    // }
-
 
     private createNewFile(file: File, parentBag: Bag) {
         return new MyFile(

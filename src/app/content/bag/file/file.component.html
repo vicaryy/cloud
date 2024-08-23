@@ -138,23 +138,19 @@
                 </div>
                 }
                 @if (file.preview.state === State.ERROR) {
-                    <button class="preview preview-ready" (click)="emitDownloadPreview()">
-                        <p>Something goes wrong, try again</p>
-                        <img src="./assets/images/preview-photo.jpg" alt="preview-photo">
-                    </button>
+                <button class="preview preview-ready" (click)="emitDownloadPreview()">
+                    <p>Something goes wrong, try again</p>
+                    <img src="./assets/images/preview-photo.jpg" alt="preview-photo">
+                </button>
                 }
             </div>
             }
 
-            @if (!file.preview) {
-
-            }
-
-            <button class="change-name" (click)="emitChangeName()">
+            <button class="change-name" (click)="emitChangeName()" [disabled]="file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.ERROR">
                 <i class="fa-solid fa-pencil"></i>
                 <p>Change name</p>
             </button>
-            <button class="delete" (click)="emitDelete()">
+            <button class="delete" (click)="emitDelete()" [disabled]="file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.ERROR">
                 <i class="fa-solid fa-trash-can"></i>
                 <p>Delete file</p>
             </button>
