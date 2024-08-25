@@ -244,6 +244,7 @@
     overflow: hidden;
     display: grid;
     grid-template-rows: 0fr;
+    margin: 0 2px;
     background-color: var(--file-hover-color);
     border-bottom-left-radius: 30px;
     border-bottom-right-radius: 30px;

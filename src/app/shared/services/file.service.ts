@@ -3,7 +3,6 @@ import { TelegramApiService } from './telegram-api.service';
 import { Bag, MyFile } from '../models/content.models';
 import { BlobUtils } from '../utils/blob.utils';
 import { FileType, State } from '../enums/content.enums';
-import { ElementToEdit } from '../interfaces/alert-interfaces';
 import { BackendApiService } from './backend-api.service';
 import { CryptoService } from './crypto.service';
 import { concatMap, from, lastValueFrom, map, of, Subject, switchMap, tap, toArray } from 'rxjs';
@@ -26,26 +25,32 @@ export class FileService {
 
     constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService, private fileReducer: FileReducerService, private bagService: BagService) { }
 
+    sortBagById(parentId: number) {
+        this.bagService.sortBag(parentId);
+    }
+
     private refreshFile(id: number) {
         this._refreshFile.next(id);
     }
 
-    async downloadPreview(file: PreviewFile) {
+    async downloadPreview(file: MyFile) {
         try {
             await this.downloadPreviewBlob(file);
         } catch (error) {
-            file.state = State.ERROR;
+            file.preview!.state = State.ERROR;
             this.info.displayError("Fail in displaying preview, try again");
         }
+        this.refreshFile(file.id);
     }
 
-    private async downloadPreviewBlob(file: PreviewFile) {
-        file.state = State.DOWNLOAD;
-        const filePath = await lastValueFrom(this.telegram.getFilePath(file.fileId!));
+    private async downloadPreviewBlob(file: MyFile) {
+        file.preview!.state = State.DOWNLOAD;
+        this.refreshFile(file.id);
+        const filePath = await lastValueFrom(this.telegram.getFilePath(file.preview!.fileId!));
         const blob = await lastValueFrom(this.telegram.downloadBlob(filePath.result.file_path)) as HttpResponse<Blob>;
         const decryptedBlob = new Blob([await this.crypto.decrypt(await blob.body!.arrayBuffer())])
-        file.url = URL.createObjectURL(decryptedBlob);
-        file.state = State.DONE;
+        file.preview!.url = URL.createObjectURL(decryptedBlob);
+        file.preview!.state = State.DONE;
     }
 
     deleteFile(id: number, parentBagId: number) {

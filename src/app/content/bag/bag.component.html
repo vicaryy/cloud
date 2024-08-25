@@ -17,7 +17,7 @@
 
         <ng-container *ngFor="let f of bag.files; trackBy: trackById">
             @if (isUploadFileNeedsToBeDisplay(f)) {
-            <app-file [file]="f" (change)="displayAlert($event)" (tryAgain)="onTryAgain($event)"></app-file>
+            <app-file [file]="f" [parentId]="bag.id" (change)="displayAlert($event)"></app-file>
             }
         </ng-container>
 
@@ -28,8 +28,7 @@
         }
         <ng-container *ngFor="let f of bag.files; trackBy: trackById">
             @if (isFileNeedsToBeDisplay(f)) {
-            <app-file [file]="f" (change)="displayAlert($event)" (download)="onDownloadFile($event)"
-                (tryAgain)="onTryAgain($event)"></app-file>
+            <app-file [file]="f" [parentId]="bag.id" (change)="displayAlert($event)"></app-file>
             }
         </ng-container>
         <div class="empty-file"></div>

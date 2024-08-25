@@ -20,10 +20,9 @@ import { Subscription } from 'rxjs';
 })
 export class FileComponent implements OnInit, OnDestroy {
 
-    @Input('file') file!: MyFile;
+    @Input({ required: true }) file!: MyFile;
+    @Input({ required: true }) parentId!: number;
     @Output('change') change = new EventEmitter<ElementToEdit>();
-    @Output('download') download = new EventEmitter<MyFile>();
-    @Output('tryAgain') tryAgain = new EventEmitter<MyFile>();
     detailsActive: boolean = false;
     State = State;
     size: string = '';
@@ -120,8 +119,9 @@ export class FileComponent implements OnInit, OnDestroy {
         this.fileService.downloadFile(this.file);
     }
 
-    emitTryAgain() {
-        this.tryAgain.emit(this.file);
+    async emitTryAgain() {
+        await this.fileService.tryAgain(this.file);
+        this.fileService.sortBagById(this.parentId);
     }
 
     emitChangeName() {
@@ -143,12 +143,12 @@ export class FileComponent implements OnInit, OnDestroy {
     }
 
     emitDownloadPreview() {
-        this.fileService.downloadPreview(this.file.preview!);
+        this.fileService.downloadPreview(this.file);
     }
 
     displayPreviewPhoto() {
         this.dialog.open(ImageDialogComponent, {
-            data: {name: this.file.preview?.url}
-    })
+            data: { name: this.file.preview?.url }
+        })
     }
 }

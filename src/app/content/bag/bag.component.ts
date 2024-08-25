@@ -47,13 +47,28 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     elementToEdit!: ElementToEdit;
     refreshSub!: Subscription;
     focusSub!: Subscription;
+    sortSub!: Subscription;
 
     constructor(private bagService: BagService, private fileService: FileService, private info: InfoService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.initRefreshSub()
         this.initFocusSub();
+        this.initSortSub();
         this.sortByNewest();
+    }
+
+    ngOnDestroy(): void {
+        this.refreshSub.unsubscribe();
+        this.focusSub.unsubscribe();
+        this.sortSub.unsubscribe();
+    }
+
+    initSortSub() {
+        this.sortSub = this.bagService.sortBag$.subscribe(id => {
+            if (id === this.bag.id)
+                this.onSort(this.currentSort);
+        })
     }
 
     initRefreshSub() {
@@ -72,11 +87,6 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
             else
                 this.bagElement.nativeElement.style.backgroundColor = 'var(--bag-color)';
         });
-    }
-
-    ngOnDestroy(): void {
-        this.refreshSub.unsubscribe();
-        this.focusSub.unsubscribe();
     }
 
     ngAfterViewInit(): void {
@@ -103,15 +113,6 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         const file: File = fileInput.files[0];
         await this.fileService.addFile(this.file.nativeElement, this.bag);
         this.onSort(this.currentSort);
-    }
-
-    async onTryAgain($event: MyFile) {
-        await this.fileService.tryAgain($event);
-        this.onSort(this.currentSort);
-    }
-
-    onDownloadFile($event: MyFile) {
-        this.fileService.downloadFile($event);
     }
 
     onOpen($event: Bag) {
@@ -160,10 +161,6 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         }
     }
 
-    getRandomNumber(min: number, max: number) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
     onDelete($event: ElementToEdit) {
         this.disableAlerts();
         if ($event.bag)
@@ -173,13 +170,16 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     onChangeName($event: ElementToEdit) {
-        this.disableAlerts();
-
-        if ($event.bag)
+        if ($event.bag) {
+            if (this.isBagNameExists($event.newName!)) {
+                this.info.displayError(`Bag name '${$event.newName}' already exist`);
+                return;
+            }
             this.bagService.changeBagName($event.id, $event.newName!);
-
+        }
         if ($event.file)
             this.changeFileName($event);
+        this.disableAlerts();
     }
 
     isBagNameExists(name: string): boolean {
@@ -198,7 +198,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
 
     changeFileName(element: ElementToEdit) {
         if (this.isFileNameExists(element.newName!)) {
-            this.info.displayError(`File with name '${element.newName}' already exist`);
+            this.info.displayError(`File name '${element.newName}' already exist`);
             return;
         }
 
@@ -249,6 +249,10 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     onNewBag($event: string) {
+        if (this.isBagNameExists($event)) {
+            this.info.displayError(`Bag name '${$event}' already exist`);
+            return;
+        }
         this.disableAlerts();
         this.createNewBag($event);
     }
@@ -296,8 +300,6 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     onSort($event: SortBy) {
-        console.log("Sortuje...");
-
         this.currentSort = $event;
         if ($event === SortBy.DATE_DOWN)
             this.sortByOldest();
@@ -328,7 +330,6 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     sortByNameAz() {
         this.bag.files = this.bag.files.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
     }
-
     sortByNameZa() {
         this.bag.files = this.bag.files.sort((a, b) => b.name.toLowerCase().localeCompare(a.name.toLowerCase()));
     }

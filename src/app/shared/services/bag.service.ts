@@ -12,14 +12,18 @@ import { InfoService } from './info.service';
 })
 export class BagService {
     highestIndex: number = 1;
-    private _openedBagsSubject: Subject<Bag[]> = new Subject<Bag[]>;
+    private _openedBags: Subject<Bag[]> = new Subject<Bag[]>;
     private _refreshBag = new Subject<number>;
     private _focusBag = new Subject<number>;
+    private _sortBag = new Subject<number>;
+    private _searchedFiles = new Subject<MyFile[]>;
     private bags: Bag[] = [];
     private openedBags: Bag[] = [];
-    openedBags$: Observable<Bag[]> = this._openedBagsSubject.asObservable();
+    openedBags$: Observable<Bag[]> = this._openedBags.asObservable();
     refreshBag$ = this._refreshBag.asObservable();
     focusBag$ = this._focusBag.asObservable();
+    sortBag$ = this._sortBag.asObservable();
+    searchedFiles = this._searchedFiles.asObservable();
 
     constructor(private userService: UserService, private backend: BackendApiService, private telegram: TelegramApiService, private crypto: CryptoService, private infoService: InfoService) {
         this.loadBags();
@@ -38,7 +42,7 @@ export class BagService {
     }
 
     private emitOpenedBags() {
-        this._openedBagsSubject.next(this.openedBags);
+        this._openedBags.next(this.openedBags);
     }
 
     removeOpenedBag(id: number) {
@@ -167,5 +171,9 @@ export class BagService {
 
     focusBag(id: number) {
         this._focusBag.next(id);
+    }
+
+    sortBag(id: number) {
+        this._sortBag.next(id);
     }
 }

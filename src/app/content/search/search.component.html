@@ -1,4 +1,4 @@
-<div class="search">
+<div class="search" [class.active]="result">
     <p class="welcome">Welcome to freeCloud</p>
     <div class="search-bar">
         <div class="search-input-wrapper">
@@ -15,7 +15,19 @@
                 </div>
             </div>
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="search" [(ngModel)]="input" (ngModelChange)="search()">
+            <input type="search" [(ngModel)]="input" (ngModelChange)="search()" (blur)="onBlur()" (click)="onClick()">
         </div>
     </div>
+
+    @if (result) {
+        <div class="search-result-wrapper">
+            <div class="search-result">
+                <div class="files">
+                    @for (file of files; track $index) {
+                        <app-file [file]="file" [parentId]="1"></app-file>
+                    }
+                </div>
+            </div>
+        </div>
+    }
 </div>
