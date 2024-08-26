@@ -1,0 +1,43 @@
+@import 'vars';
+
+.option-bar-wrapper {
+    position: absolute;
+    top: 100%;
+    left: 100%;
+    translate: -100% 0;
+
+    .option-bar {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line-color);
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
+        background-color: var(--bar-color);
+
+        button {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            padding: 10px 65px 10px 10px;
+            color: var(--font-color-fifth);
+            border-radius: 5px;
+            font-size: 1.4rem;
+            transition: background-color .2s;
+
+            &:hover {
+                background-color: rgba(198, 198, 198, .15);
+            }
+
+            p {
+                margin-left: 10px;
+            }
+
+            i {
+                width: 15px;
+            }
+        }
+    }
+}

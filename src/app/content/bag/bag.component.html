@@ -11,7 +11,7 @@
         <app-add class="add" (addFile)="onAddFile()" (addBag)="displayNewBagAlert()"></app-add>
         <input #file type="file" id="file" class="add-file" (change)="addFile()">
     </div>
-    <div class="files">
+    <div #scrollElement class="files">
         <app-more-options (filter)="onFilter($event)" (sort)="onSort($event)"
             (remove)="onRemoveActiveBag()"></app-more-options>
 
@@ -28,7 +28,7 @@
         }
         <ng-container *ngFor="let f of bag.files; trackBy: trackById">
             @if (isFileNeedsToBeDisplay(f)) {
-            <app-file [file]="f" [parentId]="bag.id" (change)="displayAlert($event)"></app-file>
+            <app-file #filesElements [file]="f" [parentId]="bag.id" (change)="displayAlert($event)"></app-file>
             }
         </ng-container>
         <div class="empty-file"></div>

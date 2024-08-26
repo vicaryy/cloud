@@ -1,4 +1,4 @@
-<div class="file" [class.details-active]="detailsActive">
+<div #f class="file" [class.details-active]="detailsActive" [class.glow]="glowUp">
     @if (file.state === State.READY) {
     <div class="main-wrapper ready">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
@@ -146,14 +146,22 @@
             </div>
             }
 
-            <button class="change-name" (click)="emitChangeName()" [disabled]="file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.ERROR">
-                <i class="fa-solid fa-pencil"></i>
-                <p>Change name</p>
-            </button>
-            <button class="delete" (click)="emitDelete()" [disabled]="file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.ERROR">
-                <i class="fa-solid fa-trash-can"></i>
-                <p>Delete file</p>
-            </button>
+            @if (!inSearchBar) {
+                <button class="change-name" (click)="emitChangeName()" [disabled]="file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.ERROR">
+                    <i class="fa-solid fa-pencil"></i>
+                    <p>Change name</p>
+                </button>
+                <button class="delete" (click)="emitDelete()" [disabled]="file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.ERROR">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <p>Delete file</p>
+                </button>
+            }
+            @if (inSearchBar) {
+                <button class="open-folder" (click)="emitOpenInBag()">
+                    <i class="fa-regular fa-folder-open"></i>
+                    <p>Open in bag</p>
+                </button>
+            }
         </div>
     </div>
 </div>

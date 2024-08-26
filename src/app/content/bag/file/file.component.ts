@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { MyFile } from '../../../shared/models/content.models';
 import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
 import { CommonModule } from '@angular/common';
@@ -19,17 +19,19 @@ import { Subscription } from 'rxjs';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FileComponent implements OnInit, OnDestroy {
-
     @Input({ required: true }) file!: MyFile;
-    @Input({ required: true }) parentId!: number;
+    @Input() parentId!: number;
+    @Input() inSearchBar!: boolean;
     @Output('change') change = new EventEmitter<ElementToEdit>();
+    @Output() openInBag = new EventEmitter<number>();
+    @ViewChild("f") fileElement!: ElementRef;
     detailsActive: boolean = false;
+    glowUp = false;
     State = State;
     size: string = '';
     date: string = '';
     logoUrl: string = "./assets/images/extensions/";
     subRefresh!: Subscription;
-
 
     constructor(private fileService: FileService, private dialog: MatDialog, private cdr: ChangeDetectorRef) { }
 
@@ -142,6 +144,10 @@ export class FileComponent implements OnInit, OnDestroy {
         })
     }
 
+    emitOpenInBag() {
+        this.openInBag.emit(this.file.id);
+    }
+
     emitDownloadPreview() {
         this.fileService.downloadPreview(this.file);
     }
@@ -150,5 +156,18 @@ export class FileComponent implements OnInit, OnDestroy {
         this.dialog.open(ImageDialogComponent, {
             data: { name: this.file.preview?.url }
         })
+    }
+
+    glowUpFile() {
+        console.log("eeee?");
+        console.log(this.glowUp);
+
+
+        this.glowUp = true;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+            this.glowUp = false;
+            this.cdr.markForCheck();
+        }, 2000);
     }
 }

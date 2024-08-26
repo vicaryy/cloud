@@ -5,6 +5,7 @@
     flex-direction: column;
     margin-top: 30px;
 
+
     p {
         text-align: center;
         font-size: 2.4rem;
@@ -16,7 +17,6 @@
         display: flex;
         justify-content: center;
         margin-top: 15px;
-        z-index: 1000000;
 
 
         .search-input-wrapper {
@@ -25,6 +25,7 @@
             width: 50%;
             max-width: 600px;
             min-width: 300px;
+            z-index: 990;
 
             input {
                 height: 100%;
@@ -32,6 +33,10 @@
                 padding: 0 20px 0 60px;
                 border: none;
                 border-radius: 60px;
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
+                border-bottom-left-radius: 20px;
+                border-bottom-right-radius: 20px;
                 background-color: var(--search-bar-color);
                 font-size: 1.8rem;
                 font-family: "Montserrat";
@@ -76,8 +81,8 @@
 
                     .words {
                         position: absolute;
-                        top: calc(-67.5px - 22.5px);
-                        transform: translateY(0);
+                        top: 0%;
+                        transform: translateY(-80%);
                         animation: slide-words 12s 2s forwards;
 
                         p {
@@ -93,6 +98,7 @@
         display: flex;
         justify-content: center;
 
+
         .search-result {
             overflow-y: scroll;
             width: 50%;
@@ -103,9 +109,10 @@
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             background-color: var(--bag-color-focus);
-            z-index: 1000000;
+            z-index: 10000;
             box-sizing: border-box;
             box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
+            z-index: 991;
         }
     }
 
@@ -113,49 +120,61 @@
         .search-bar {
             .search-input-wrapper {
                 input {
-                    border-radius: 0;
                     border-top-left-radius: 20px;
                     border-top-right-radius: 20px;
+                    border-bottom-left-radius: 0px;
+                    border-bottom-right-radius: 0px;
                 }
             }
         }
     }
 }
 
+.backdrop {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 100vw;
+    height: 100vh;
+    z-index: 899;
+    background-color: rgba(12, 12, 12, 0.4);
+}
+
 @keyframes slide-words {
     0% {
-        transform: translateY(0);
+        transform: translateY(-80%);
     }
 
     5% {
-        transform: translateY(20%);
+        transform: translateY(-60%);
     }
 
     25% {
-        transform: translateY(20%);
+        transform: translateY(-60%);
     }
 
     30% {
-        transform: translateY(40%);
+        transform: translateY(-40%);
     }
 
     50% {
-        transform: translateY(40%);
+        transform: translateY(-40%);
     }
 
     55% {
-        transform: translateY(60%);
+        transform: translateY(-20%);
     }
 
     75% {
-        transform: translateY(60%);
+        transform: translateY(-20%);
     }
 
     80% {
-        transform: translateY(80%);
+        transform: translateY(0%);
     }
 
     100% {
-        transform: translateY(80%);
+        transform: translateY(0%);
     }
 }

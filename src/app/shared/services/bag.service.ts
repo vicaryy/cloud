@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BackendApiService } from './backend-api.service';
 import { TelegramApiService } from './telegram-api.service';
 import { CryptoService } from './crypto.service';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from './user.service';
 import { Bag, MyFile } from '../models/content.models';
 import { InfoService } from './info.service';
@@ -16,14 +16,17 @@ export class BagService {
     private _refreshBag = new Subject<number>;
     private _focusBag = new Subject<number>;
     private _sortBag = new Subject<number>;
-    private _searchedFiles = new Subject<MyFile[]>;
+    private _searchedFiles = new BehaviorSubject<MyFile[]>([]);
+    private _scrollToFile = new Subject<number>;
     private bags: Bag[] = [];
     private openedBags: Bag[] = [];
+    private searchedFiles: MyFile[] = [];
     openedBags$: Observable<Bag[]> = this._openedBags.asObservable();
     refreshBag$ = this._refreshBag.asObservable();
     focusBag$ = this._focusBag.asObservable();
     sortBag$ = this._sortBag.asObservable();
-    searchedFiles = this._searchedFiles.asObservable();
+    searchedFiles$ = this._searchedFiles.asObservable();
+    scrollToFile$ = this._scrollToFile.asObservable();
 
     constructor(private userService: UserService, private backend: BackendApiService, private telegram: TelegramApiService, private crypto: CryptoService, private infoService: InfoService) {
         this.loadBags();
@@ -41,8 +44,34 @@ export class BagService {
         });
     }
 
+    scrollToFile(id: number) {
+        this._scrollToFile.next(id);
+    }
+
+    searchFiles(word: string) {
+        this.searchedFiles = this.searchFilesRecursive(word, this.bags);
+        this.emitSearchedFiles();
+    }
+
+    private searchFilesRecursive(word: string, bags: Bag[]): MyFile[] {
+        const found: MyFile[] = [];
+
+        for (const bag of bags) {
+            if (bag.bags)
+                found.push(...this.searchFilesRecursive(word, bag.bags));
+            for (const file of bag.files)
+                if (file.name.toLowerCase().includes(word.toLowerCase()))
+                    found.push(file);
+        }
+        return found;
+    }
+
     private emitOpenedBags() {
         this._openedBags.next(this.openedBags);
+}
+
+    private emitSearchedFiles() {
+        this._searchedFiles.next(this.searchedFiles);
     }
 
     removeOpenedBag(id: number) {
@@ -54,6 +83,20 @@ export class BagService {
         return this.backend.createBag(parentId, name);
     }
 
+    openBagByFileId(id: number) {
+        const bag = this.getBagFromMainBagByFileId(id);
+        if (bag) {
+            this.setOpenBagCoords(bag);
+            this.openBag(bag);
+            setTimeout(() => this.scrollToFile(id), 200);
+        }
+    }
+
+    private setOpenBagCoords(bag: Bag) {
+        bag.x = window.innerWidth / 2 - 150;
+        bag.y = window.innerHeight / 2 - 200;
+    }
+
     openBag(bag: Bag) {
         if (this.openedBags.find(e => e.id === bag.id)) {
             this.focusBag(bag.id);
@@ -62,6 +105,8 @@ export class BagService {
         this.openedBags.push(bag);
         this.emitOpenedBags();
     }
+
+
 
     addFileAsView(bagId: number, newFile: MyFile) {
         for (let i = 0; i < this.openedBags.length; i++) {
@@ -150,6 +195,24 @@ export class BagService {
             }
         }
         return false;
+    }
+
+    private getBagFromMainBagByFileId(id: number) {
+        return this.getBagFromMainBagByFileIdRevursive(id, this.bags);
+    }
+
+    private getBagFromMainBagByFileIdRevursive(id: number, bags: Bag[]): Bag | null {
+        for (const bag of bags) {
+            if (bag.bags) {
+                const foundBag = this.getBagFromMainBagByFileIdRevursive(id, bag.bags);
+                if (foundBag)
+                    return foundBag;
+            }
+            for (const file of bag.files)
+                if (file.id === id)
+                    return bag;
+        }
+        return null;
     }
 
     private getBagFromMainBag(id: number) {

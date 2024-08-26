@@ -6,9 +6,21 @@
     justify-content: center;
     align-items: center;
     height: 30px;
-    padding: 5px 0 0px 0;
-    margin: 3px 0 0 0;
-    border-radius: 30px;
+    padding: 5px 0 2px 0;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    background-color: var(--option-bar-color);
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        translate: -50% 0px;
+        width: 100%;
+        height: 1px;
+        background-color: var(--line-color)
+    }
 
 
     &>button {
@@ -24,7 +36,6 @@
         position: relative;
 
         &>button {
-            font-size: 1.8rem;
             color: var(--font-color-third);
 
             i {
@@ -32,6 +43,9 @@
             }
         }
 
+        .sort-btn {
+            font-size: 1.4rem;
+        }
         .sort-btn.active {
 
             i {
@@ -40,7 +54,7 @@
         }
 
         .filter-btn {
-            font-size: 1.7rem;
+            font-size: 1.3rem;
         }
 
         .filter-btn.active {
@@ -51,8 +65,7 @@
         }
 
         .x-btn {
-            color: red;
-            font-size: 1.9rem;
+            font-size: 1.7rem;
         }
 
         .sort-block {

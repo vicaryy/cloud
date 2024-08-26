@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Bag, MyFile as MyFile } from '../../shared/models/content.models';
@@ -33,7 +33,9 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     @Output('dragStart') dragStart = new EventEmitter<void>();
     @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
     @ViewChild("bagElement") bagElement!: ElementRef;
+    @ViewChild("scrollElement") scrollElement!: ElementRef;
     @ViewChild('file') file!: ElementRef;
+    @ViewChildren('filesElements') filesElements!: QueryList<FileComponent>;
     State = State;
     SortBy = SortBy;
     FilterBy = FilterBy;
@@ -48,6 +50,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     refreshSub!: Subscription;
     focusSub!: Subscription;
     sortSub!: Subscription;
+    scrollSub!: Subscription;
 
     constructor(private bagService: BagService, private fileService: FileService, private info: InfoService, private cdr: ChangeDetectorRef) { }
 
@@ -55,6 +58,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         this.initRefreshSub()
         this.initFocusSub();
         this.initSortSub();
+        this.initScrollSub();
         this.sortByNewest();
     }
 
@@ -62,6 +66,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         this.refreshSub.unsubscribe();
         this.focusSub.unsubscribe();
         this.sortSub.unsubscribe();
+        this.scrollSub.unsubscribe();
     }
 
     initSortSub() {
@@ -86,6 +91,20 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
             }
             else
                 this.bagElement.nativeElement.style.backgroundColor = 'var(--bag-color)';
+        });
+    }
+
+    initScrollSub() {
+        this.scrollSub = this.bagService.scrollToFile$.subscribe(id => {
+            for (const a of this.filesElements) {
+                if (id === a.file.id) {
+                    this.scrollElement.nativeElement.scroll({
+                        top: a.fileElement.nativeElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    })
+                    a.glowUpFile();
+                }
+            }
         });
     }
 

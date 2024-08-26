@@ -4,31 +4,31 @@ import { FolderComponent } from "../bag/folder/folder.component";
 import { FileComponent } from "../bag/file/file.component";
 import { BagService } from '../../shared/services/bag.service';
 import { Bag, MyFile } from '../../shared/models/content.models';
+import { CommonModule } from '@angular/common';
+import { AlertDeleteComponent } from "../bag/alert-delete/alert-delete.component";
+import { BlurBlockComponent } from "../../shared/components/blur-block/blur-block.component";
+import { AlertNameComponent } from "../bag/alert-name/alert-name.component";
+import { ElementToEdit } from '../../shared/interfaces/alert-interfaces';
+import { State } from '../../shared/enums/content.enums';
+import { FileService } from '../../shared/services/file.service';
 
 @Component({
     selector: 'app-search',
     standalone: true,
-    imports: [FormsModule, FolderComponent, FileComponent],
+    imports: [FormsModule, FolderComponent, FileComponent, CommonModule, AlertDeleteComponent, BlurBlockComponent, AlertNameComponent],
     templateUrl: './search.component.html',
     styleUrl: './search.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchComponent implements OnInit {
-
-
+export class SearchComponent {
     @ViewChild('placeholder') placeholder!: ElementRef;
-    files: MyFile[] = [];
     input: string = '';
-    result = true;
+    result = false;
 
-    constructor(private bagService: BagService, private cdr: ChangeDetectorRef) { }
+    constructor(private fileService: FileService, private bagService: BagService, private cdr: ChangeDetectorRef) { }
 
-    ngOnInit(): void {
-        // this.bagService.openedBags$.subscribe(bags => {
-        //     this.files = bags[0].files
-        //     this.cdr.markForCheck();
-        // });
-        this.bagService.searchedFiles.subscribe(files => this.files = files);
+    get searchedFiles$() {
+        return this.bagService.searchedFiles$;
     }
 
     search() {
@@ -38,7 +38,7 @@ export class SearchComponent implements OnInit {
     }
 
     searchFiles() {
-        this.bagService.searchedFiles(this.input);
+        this.bagService.searchFiles(this.input);
     }
 
     switchPlaceholder() {
@@ -51,9 +51,23 @@ export class SearchComponent implements OnInit {
 
     onClick() {
         this.result = true;
-        }
+        this.searchFiles();
+    }
 
     onBlur() {
         this.result = false;
+    }
+
+    trackById(index: number, file: any): any {
+        return file.id;
+    }
+
+    doesFileNeedsToBeDisplayed(file: MyFile) {
+        return file.state === State.READY || file.state === State.DONE || file.state === State.DECRYPT || file.state === State.DOWNLOAD || file.state === State.ERROR;
+    }
+
+    onOpenInBag($event: number) {
+        this.onBlur();
+        this.bagService.openBagByFileId($event);
     }
 }

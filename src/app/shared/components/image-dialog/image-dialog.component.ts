@@ -14,11 +14,13 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     .dialog-content {
         width: 50vw;
         background-color: transparent;
+        z-index: 1000000;
     }
     img {
         width: 100%;
         max-height: 90vh;
         background-color: transparent;
+        z-index: 1000000;
     }
   `]
 })

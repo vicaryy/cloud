@@ -11,13 +11,14 @@ import { UserService } from '../shared/services/user.service';
 import { DragBagEnd } from '../shared/interfaces/content.interfaces';
 import { InfoService } from '../shared/services/info.service';
 import { BackdropService } from '../shared/services/backdrop.service';
+import { PasswordProtectedComponent } from "./password-protected/password-protected.component";
 
 @Component({
     selector: 'app-content',
     standalone: true,
     templateUrl: './content.component.html',
     styleUrl: './content.component.scss',
-    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent],
+    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent, PasswordProtectedComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContentComponent implements OnInit {

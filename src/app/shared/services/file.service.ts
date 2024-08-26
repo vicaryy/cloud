@@ -10,7 +10,6 @@ import { FilePart, NewFileRequest } from '../interfaces/http-interfaces';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
 import { InfoService } from './info.service';
-import { PreviewFile } from '../interfaces/content.interfaces';
 import { FileReducerService } from './file-reducer.service';
 import { BagService } from './bag.service';
 
