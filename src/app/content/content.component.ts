@@ -12,6 +12,8 @@ import { DragBagEnd } from '../shared/interfaces/content.interfaces';
 import { InfoService } from '../shared/services/info.service';
 import { BackdropService } from '../shared/services/backdrop.service';
 import { PasswordProtectedComponent } from "./password-protected/password-protected.component";
+import { MatDialog } from '@angular/material/dialog';
+import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 
 @Component({
     selector: 'app-content',
@@ -30,7 +32,7 @@ export class ContentComponent implements OnInit {
     deleteBar: boolean = false;
     backdrop: boolean = false;
 
-    constructor(private bagService: BagService, private userService: UserService, private infoService: InfoService, private backdropService: BackdropService, private cdr: ChangeDetectorRef) { }
+    constructor(private dialog: MatDialog, private bagService: BagService, private userService: UserService, private infoService: InfoService, private backdropService: BackdropService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.bagService.openedBags$.subscribe(next => {
@@ -41,6 +43,8 @@ export class ContentComponent implements OnInit {
         this.infoService.sub$.subscribe(next => this.displayInfo(next));
         this.backdropService.turnOn$.subscribe(next => this.backdrop = true);
         this.backdropService.clicked$.subscribe(next => this.backdrop = false);
+
+        // this.dialog.open(SettingsDialogComponent);
     }
 
     displayInfo(info: Info) {

@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, Host, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-options-bar',
@@ -8,8 +9,11 @@ import { AfterViewInit, Component, EventEmitter, Host, HostListener, Output } fr
     styleUrl: './options-bar.component.scss'
 })
 export class OptionsBarComponent {
+
     firstClick = 0;
     @Output() close = new EventEmitter<void>();
+
+    constructor(private router: Router) { }
 
     onClick($event: MouseEvent) {
         $event.stopPropagation();
@@ -19,5 +23,15 @@ export class OptionsBarComponent {
     closeBar() {
         if (this.firstClick++ !== 0)
             this.close.emit();
+    }
+
+    closeBarNow() {
+        this.close.emit();
+    }
+
+    displaySettingsDialog($event: MouseEvent) {
+        $event.stopPropagation();
+        this.closeBarNow();
+        this.router.navigate(['settings/general']);
     }
 }

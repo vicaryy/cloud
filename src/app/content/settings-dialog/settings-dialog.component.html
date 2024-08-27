@@ -1,0 +1,32 @@
+<div class="settings-wrapper" (click)="onClickSettings($event)">
+    <div class="settings">
+        <div class="info">
+            <p>Settings</p>
+            <button mat-button class="exit" (click)="closeSettings()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="content">
+            <div class="navigation">
+                <button routerLink="/settings/general" routerLinkActive="active" >
+                    <i class="fa-solid fa-gear"></i>
+                    <p>General</p>
+                </button>
+                <button routerLink="/settings/encryption-password">
+                    <i class="fa-solid fa-key"></i>
+                    <p>Encryption Password</p>
+                </button>
+                <button routerLink="/settings/security">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <p>Security</p>
+                </button>
+            </div>
+            <div class="nav-content">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="backdrop" (click)="closeSettings()"></div>
