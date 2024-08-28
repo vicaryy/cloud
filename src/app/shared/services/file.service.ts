@@ -182,11 +182,19 @@ export class FileService {
     async addFile(fileInput: HTMLInputElement, parentBag: Bag) {
         if (!fileInput.files)
             return;
-        const file: File = fileInput.files[0];
+        const files: File[] = [];
+        for (let i = 0; i < fileInput.files.length; i++)
+            files.push(fileInput.files[i]);
 
-        const newFile: MyFile = this.createNewFile(file, parentBag);
-        this.bagService.addFileAsView(parentBag.id, newFile);
-        this.uploadFile(newFile);
+        const newFiles: MyFile[] = [];
+        for (const f of files)
+            newFiles.push(this.createNewFile(f, parentBag));
+
+        for (const f of newFiles)
+            this.bagService.addFileAsView(parentBag.id, f);
+
+        for (const f of newFiles)
+            await this.uploadFile(f);
     }
 
     private isPreviewable(ext: string) {
@@ -196,6 +204,7 @@ export class FileService {
 
     private async uploadFile(file: MyFile) {
         try {
+            file.uploadState.started = true;
             if (!file.preview && this.isPreviewable(file.extension))
                 await this.uploadPreview(file);
 
@@ -228,10 +237,8 @@ export class FileService {
     }
 
     private async sliceBlob(file: MyFile) {
-        console.log("Kroje na kawałki plik...");
         const slicedBlob = BlobUtils.sliceBlob(file.blob!);
         file.uploadState.slicedBlobs = slicedBlob;
-        console.log("Pokroiłem na kawałki, ilość: " + slicedBlob.length);
         file.uploadState.sliced = true;
         await this.encryptBlobs(file);
     }
@@ -342,7 +349,7 @@ export class FileService {
             [],
             parentBag,
             file,
-            State.ENCRYPT,
+            State.LOADING,
             {},
             {},
             null

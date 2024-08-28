@@ -7,6 +7,7 @@ export interface DragBagEnd {
 }
 
 export interface UploadState {
+    started?: boolean,
     sliced?: boolean,
     encrypted?: boolean,
     sended?: boolean,

@@ -158,6 +158,10 @@ export class FileComponent implements OnInit, OnDestroy {
         })
     }
 
+    isOptionsDisabled() {
+        return this.file.state === State.ENCRYPT || this.file.state === State.UPLOAD || this.file.state === State.ERROR || this.file.state === State.LOADING;
+    }
+
     glowUpFile() {
         console.log("eeee?");
         console.log(this.glowUp);

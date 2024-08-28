@@ -135,7 +135,6 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         let fileInput = this.file.nativeElement as HTMLInputElement;
         if (!fileInput.files)
             return;
-        const file: File = fileInput.files[0];
         await this.fileService.addFile(this.file.nativeElement, this.bag);
         this.onSort(this.currentSort);
     }

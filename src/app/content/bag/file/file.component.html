@@ -21,6 +21,20 @@
     </div>
     }
 
+    @if (file.state === State.LOADING) {
+    <div class="main-wrapper loading">
+        <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
+        <div class="name" (click)="toggleDetails()">
+            <p>{{file.name}}</p>
+            <p>Waiting...</p>
+        </div>
+        <div class="state state-loading">
+            <i class="fa-regular fa-hourglass-half"></i>
+            <mat-progress-spinner mode="indeterminate" [value]="50" diameter="30"
+                color="primary"></mat-progress-spinner>
+        </div>
+    </div>
+    }
     @if (file.state === State.ENCRYPT) {
     <div class="main-wrapper encrypt">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
@@ -147,20 +161,22 @@
             }
 
             @if (!inSearchBar) {
-                <button class="change-name" (click)="emitChangeName()" [disabled]="file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.ERROR">
-                    <i class="fa-solid fa-pencil"></i>
-                    <p>Change name</p>
-                </button>
-                <button class="delete" (click)="emitDelete()" [disabled]="file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.ERROR">
-                    <i class="fa-solid fa-trash-can"></i>
-                    <p>Delete file</p>
-                </button>
+            <button class="change-name" (click)="emitChangeName()"
+                [disabled]="isOptionsDisabled()">
+                <i class="fa-solid fa-pencil"></i>
+                <p>Change name</p>
+            </button>
+            <button class="delete" (click)="emitDelete()"
+                [disabled]="isOptionsDisabled()">
+                <i class="fa-solid fa-trash-can"></i>
+                <p>Delete file</p>
+            </button>
             }
             @if (inSearchBar) {
-                <button class="open-folder" (click)="emitOpenInBag()">
-                    <i class="fa-regular fa-folder-open"></i>
-                    <p>Open in bag</p>
-                </button>
+            <button class="open-folder" (click)="emitOpenInBag()">
+                <i class="fa-regular fa-folder-open"></i>
+                <p>Open in bag</p>
+            </button>
             }
         </div>
     </div>
