@@ -1,0 +1,44 @@
+@import 'vars';
+
+.empty {
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    translate: -50% -50%;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    animation: opa .3s forwards;
+
+    .empty-img {
+        width: 200px;
+
+        img {
+            width: 100%;
+        }
+    }
+
+    p {
+        margin-bottom: 15px;
+        color: var(--font-color-second);
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 1.3rem;
+        font-weight: 600;
+        letter-spacing: .5px;
+    }
+
+    button {
+        font-size: 1.5rem;
+        letter-spacing: 0px;
+        font-family: 'Montserrat';
+        color: var(--font-color-fifth);
+        background-color: var(--font-color-third)
+    }
+}
+
+@keyframes opa {
+    to {
+        opacity: 1;
+    }
+}

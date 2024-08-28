@@ -19,16 +19,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MoreOptionsComponent } from "./more-options/more-options.component";
 import { SortBy, FilterBy, State, FileType } from '../../shared/enums/content.enums';
 import { Subscription } from 'rxjs';
+import { EmptyBagComponent } from "./empty-bag/empty-bag.component";
 
 @Component({
     selector: 'app-bag',
     standalone: true,
     templateUrl: './bag.component.html',
     styleUrl: './bag.component.scss',
-    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent],
+    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent, EmptyBagComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
+
     @Input('bag') bag!: Bag;
     @Output('dragStart') dragStart = new EventEmitter<void>();
     @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
@@ -114,6 +116,10 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         el.style.top = `${this.bag.y}px`;
         el.style.transformOrigin = ``;
         this.bagService.focusBag(this.bag.id);
+    }
+
+    isFoldersAndFilesEmpty() {
+        return this.bag.getAmountOfBags() === 0 && this.bag.getAmountOfFiles() === 0;
     }
 
     onFilter($event: FilterBy) {

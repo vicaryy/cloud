@@ -29,6 +29,10 @@
                     }
                 </ng-container>
             </div>
+
+            @if ((searchedFiles$ | async)?.length === 0) {
+                <app-empty-search></app-empty-search>
+            }
         </div>
     </div>
     }

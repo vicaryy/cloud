@@ -106,6 +106,11 @@ export class BagService {
         this.emitOpenedBags();
     }
 
+    openMainBag() {
+        this.openedBags = [this.bags[0]];
+        this.emitOpenedBags();
+    }
+
 
 
     addFileAsView(bagId: number, newFile: MyFile) {
@@ -116,10 +121,6 @@ export class BagService {
                 break;
             }
         }
-    }
-
-    changeFileName(id: number, newName: string) {
-        throw new Error('Method not implemented.');
     }
 
     changeBagName(bagId: number, newName: string) {

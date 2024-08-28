@@ -19,5 +19,9 @@
     <app-info [info]="info"></app-info>
     }
 
+    @if (openedBags.length === 0) {
+        <app-empty></app-empty>
+    }
+
     <app-password-protected></app-password-protected>
 </div>

@@ -14,13 +14,14 @@ import { BackdropService } from '../shared/services/backdrop.service';
 import { PasswordProtectedComponent } from "./password-protected/password-protected.component";
 import { MatDialog } from '@angular/material/dialog';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
+import { EmptyComponent } from "./empty/empty.component";
 
 @Component({
     selector: 'app-content',
     standalone: true,
     templateUrl: './content.component.html',
     styleUrl: './content.component.scss',
-    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent, PasswordProtectedComponent],
+    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent, PasswordProtectedComponent, EmptyComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContentComponent implements OnInit {
@@ -43,8 +44,6 @@ export class ContentComponent implements OnInit {
         this.infoService.sub$.subscribe(next => this.displayInfo(next));
         this.backdropService.turnOn$.subscribe(next => this.backdrop = true);
         this.backdropService.clicked$.subscribe(next => this.backdrop = false);
-
-        // this.dialog.open(SettingsDialogComponent);
     }
 
     displayInfo(info: Info) {
@@ -56,16 +55,8 @@ export class ContentComponent implements OnInit {
         setTimeout(() => this.info = undefined, 3200);
     }
 
-    onDeleteActiveChildBag($event: number) {
-        this.deleteActiveBag($event);
-    }
-
     onClickedBackdrop() {
         this.backdropService.clicked();
-    }
-
-    deleteActiveBag(id: number) {
-        this.openedBags = this.openedBags.filter(e => e.id !== id);
     }
 
     onDragStart() {
@@ -74,7 +65,7 @@ export class ContentComponent implements OnInit {
 
     onDragEnd($event: DragBagEnd) {
         if ($event.x < 140)
-            this.deleteActiveBag($event.id);
+            this.bagService.removeOpenedBag($event.id);
         this.deleteBar = false;
     }
 

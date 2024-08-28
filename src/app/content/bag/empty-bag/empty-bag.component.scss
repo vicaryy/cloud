@@ -1,0 +1,58 @@
+@import 'vars';
+
+.empty {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    translate: -50% -50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .empty-img {
+        text-align: center;
+        width: 100%;
+        max-width: 200px;
+
+        img {
+            width: 50%;
+        }
+    }
+
+    &>p {
+        margin-bottom: 15px;
+        color: var(--font-color-second);
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: .5px;
+    }
+
+    button {
+        display: flex!important;
+        flex-direction: row;
+        margin-bottom: 5px;
+        width: 85%;
+        height: 35px;
+        font-size: 1.4rem;
+        letter-spacing: 0px;
+        font-family: 'Montserrat';
+        color: var(--font-color-fifth);
+        background-color: var(--font-color-third);
+
+        p {
+            display: inline-block;
+            text-align: left;
+            margin-left: 5px;
+            min-width: 70px;
+            max-width: 70px;
+        }
+
+        i {
+            display: inline-block;
+            min-width: 20px;
+            max-width: 20px;
+        }
+    }
+}

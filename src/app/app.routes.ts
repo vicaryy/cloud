@@ -14,7 +14,7 @@ export const routes: Routes = [
                 component: GeneralComponent,
             },
             {
-                path: 'encryption-password',
+                path: 'encryption',
                 component: EncryptionPasswordComponent,
             },
             {

@@ -5,13 +5,14 @@ import { HeaderComponent } from "./header/header.component";
 import { GlowComponent } from "./glow/glow.component";
 import { FooterComponent } from "./footer/footer.component";
 import { ContentComponent } from "./content/content.component";
+import { ChatComponent } from "./chat/chat.component";
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss',
-    imports: [RouterOutlet, BagComponent, HeaderComponent, GlowComponent, FooterComponent, ContentComponent]
+    imports: [RouterOutlet, BagComponent, HeaderComponent, GlowComponent, FooterComponent, ContentComponent, ChatComponent]
 })
 export class AppComponent {
 }

@@ -5,11 +5,11 @@
         <div class="bag-logo"><i class="fa-regular fa-folder-open"></i></div>
         <div class="bag-info">
             <p class="directory"> {{ bag.getFullDirectory() }}</p>
-            <p class="amount">{{ bag.getAmountOfBags() }} bags · {{bag.getAmountOfFiles()}} files </p>
+            <p class="amount">{{ bag.getAmountOfBags() }} bags · {{ bag.getAmountOfFiles() }} files </p>
         </div>
 
         <app-add class="add" (addFile)="onAddFile()" (addBag)="displayNewBagAlert()"></app-add>
-        <input #file type="file" id="file" class="add-file" (change)="addFile()">
+        <input #file type="file" multiple id="file" class="add-file" (change)="addFile()">
     </div>
     <div #scrollElement class="files">
         <app-more-options (filter)="onFilter($event)" (sort)="onSort($event)"
@@ -33,6 +33,10 @@
         </ng-container>
         <div class="empty-file"></div>
         <div class="empty-file"></div>
+
+        @if (isFoldersAndFilesEmpty()) {
+            <app-empty-bag (addFile)="onAddFile()" (addBag)="displayNewBagAlert()"></app-empty-bag>
+        }
     </div>
 
     @if (newBagAlert) {

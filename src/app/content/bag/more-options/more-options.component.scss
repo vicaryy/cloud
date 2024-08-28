@@ -6,18 +6,18 @@
     justify-content: center;
     align-items: center;
     height: 30px;
-    padding: 5px 0 2px 0;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
-    background-color: var(--option-bar-color);
+    padding: 5px 0 5px 0;
+    // border-bottom-left-radius: 20px;
+    // border-bottom-right-radius: 20px;
+    // background-color: var(--option-bar-color);
 
     &::after {
         content: "";
         position: absolute;
-        top: 0;
+        bottom: 0;
         left: 50%;
         translate: -50% 0px;
-        width: 100%;
+        width: 80%;
         height: 1px;
         background-color: var(--line-color)
     }

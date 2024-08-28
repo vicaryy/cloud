@@ -3,19 +3,19 @@ import { FormsModule, NgForm, NgModel } from '@angular/forms';
 import { FolderComponent } from "../bag/folder/folder.component";
 import { FileComponent } from "../bag/file/file.component";
 import { BagService } from '../../shared/services/bag.service';
-import { Bag, MyFile } from '../../shared/models/content.models';
+import { MyFile } from '../../shared/models/content.models';
 import { CommonModule } from '@angular/common';
 import { AlertDeleteComponent } from "../bag/alert-delete/alert-delete.component";
 import { BlurBlockComponent } from "../../shared/components/blur-block/blur-block.component";
 import { AlertNameComponent } from "../bag/alert-name/alert-name.component";
-import { ElementToEdit } from '../../shared/interfaces/alert-interfaces';
 import { State } from '../../shared/enums/content.enums';
 import { FileService } from '../../shared/services/file.service';
+import { EmptySearchComponent } from "./empty-search/empty-search.component";
 
 @Component({
     selector: 'app-search',
     standalone: true,
-    imports: [FormsModule, FolderComponent, FileComponent, CommonModule, AlertDeleteComponent, BlurBlockComponent, AlertNameComponent],
+    imports: [FormsModule, FolderComponent, FileComponent, CommonModule, AlertDeleteComponent, BlurBlockComponent, AlertNameComponent, EmptySearchComponent],
     templateUrl: './search.component.html',
     styleUrl: './search.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
