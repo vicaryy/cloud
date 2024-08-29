@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content" (dragover)="onDragOver($event)" (click)="onCloseDragDrop()">
     <app-search></app-search>
     <ng-container *ngFor="let b of openedBags; index as i; trackBy: trackById">
         <app-bag #bag *ngIf="i === 0" [bag]="b"></app-bag>
@@ -23,5 +23,17 @@
         <app-empty></app-empty>
     }
 
+    <div class="chat-toggle" (click)="turnOnChat()">
+        <i class="fa-solid fa-angle-up"></i>
+    </div>
+
+    @if (chat) {
+        <app-chat></app-chat>
+    }
+
     <app-password-protected></app-password-protected>
 </div>
+
+@if (dragDropController) {
+    <app-drag-drop-controller></app-drag-drop-controller>
+}

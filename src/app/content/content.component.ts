@@ -12,28 +12,30 @@ import { DragBagEnd } from '../shared/interfaces/content.interfaces';
 import { InfoService } from '../shared/services/info.service';
 import { BackdropService } from '../shared/services/backdrop.service';
 import { PasswordProtectedComponent } from "./password-protected/password-protected.component";
-import { MatDialog } from '@angular/material/dialog';
-import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { EmptyComponent } from "./empty/empty.component";
+import { ChatComponent } from "./chat/chat.component";
+import { DragDropControllerComponent } from "./drag-drop-controller/drag-drop-controller.component";
+import { DragDropService } from '../shared/services/drag-drop.service';
 
 @Component({
     selector: 'app-content',
     standalone: true,
     templateUrl: './content.component.html',
     styleUrl: './content.component.scss',
-    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent, PasswordProtectedComponent, EmptyComponent],
+    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, InfoComponent, PasswordProtectedComponent, EmptyComponent, ChatComponent, DragDropControllerComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContentComponent implements OnInit {
-
     user!: User;
     openedBags: Bag[] = [];
     @ViewChildren("bag") activeBags!: QueryList<BagComponent>;
     info: Info | undefined;
     deleteBar: boolean = false;
+    chat = false;
     backdrop: boolean = false;
+    dragDropController = false;
 
-    constructor(private dialog: MatDialog, private bagService: BagService, private userService: UserService, private infoService: InfoService, private backdropService: BackdropService, private cdr: ChangeDetectorRef) { }
+    constructor(private dragDropService: DragDropService, private bagService: BagService, private userService: UserService, private infoService: InfoService, private backdropService: BackdropService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.bagService.openedBags$.subscribe(next => {
@@ -44,6 +46,10 @@ export class ContentComponent implements OnInit {
         this.infoService.sub$.subscribe(next => this.displayInfo(next));
         this.backdropService.turnOn$.subscribe(next => this.backdrop = true);
         this.backdropService.clicked$.subscribe(next => this.backdrop = false);
+        this.dragDropService.dragDrop$.subscribe(next => {
+            this.dragDropController = next
+            this.bagService.setDragAndDrop(next);
+        });
     }
 
     displayInfo(info: Info) {
@@ -59,6 +65,23 @@ export class ContentComponent implements OnInit {
         this.backdropService.clicked();
     }
 
+    onCloseDragDrop() {
+        this.dragDropService.setDragDrop(false);
+    }
+    onDragOver($event: DragEvent) {
+        $event.preventDefault();
+        if (this.dragDropController)
+            return;
+
+        const mouseX = $event.clientX;
+        const mouseY = $event.clientY;
+        const windowX = window.innerWidth;
+        const windowY = window.innerHeight;
+
+        if ((mouseX > 60 && mouseY > 60) && (windowX - mouseX > 60 && mouseY > 60) && (mouseX > 60 && windowY - mouseY > 200) && (windowX - mouseX > 60 && windowY - mouseY > 200))
+            this.dragDropService.setDragDrop(true);
+    }
+
     onDragStart() {
         this.deleteBar = true;
     }
@@ -71,5 +94,27 @@ export class ContentComponent implements OnInit {
 
     trackById(index: number, bag: any): any {
         return bag.id;
+    }
+
+    turnOnChat() {
+        this.chat = true;
+    }
+
+    onDragLeave($event: DragEvent) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        setTimeout(() => {
+            if (!this.bagService.dragAndDropOnBag)
+                this.bagService.setDragAndDrop(false)
+        }, 100);
+
+    }
+
+    onDragStartt($event: DragEvent) {
+        console.log("DRAG ENTER");
+
+        $event.preventDefault();
+        // $event.stopPropagation();
+        this.bagService.setDragAndDrop(true);
     }
 }

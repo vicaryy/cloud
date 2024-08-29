@@ -61,7 +61,28 @@
             }
         }
     }
+
+
+    .chat-toggle {
+        content: "asd";
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        translate: -50% -50%;
+        transform: translatey(0px);
+        cursor: pointer;
+        animation: float 4s ease-in-out infinite;
+
+
+        i {
+            padding: 10px;
+            font-size: 2rem;
+            color: white;
+        }
+    }
 }
+
+
 
 @keyframes slide {
     from {
@@ -72,4 +93,16 @@
     to {
         translate: -30% 0;
     }
+}
+
+@keyframes float {
+	0% {
+		transform: translatey(0px);
+	}
+	50% {
+		transform: translatey(-8px);
+	}
+	100% {
+		transform: translatey(0px);
+	}
 }

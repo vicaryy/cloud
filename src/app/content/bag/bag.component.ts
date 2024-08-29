@@ -20,17 +20,21 @@ import { MoreOptionsComponent } from "./more-options/more-options.component";
 import { SortBy, FilterBy, State, FileType } from '../../shared/enums/content.enums';
 import { Subscription } from 'rxjs';
 import { EmptyBagComponent } from "./empty-bag/empty-bag.component";
+import { DragAndDropComponent } from "./drag-and-drop/drag-and-drop.component";
 
 @Component({
     selector: 'app-bag',
     standalone: true,
     templateUrl: './bag.component.html',
     styleUrl: './bag.component.scss',
-    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent, EmptyBagComponent],
+    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent, EmptyBagComponent, DragAndDropComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
-
+onDragEnter($event: DragEvent) {
+    $event.preventDefault();
+    this.bagService.setDragAndDrop(true);
+}
     @Input('bag') bag!: Bag;
     @Output('dragStart') dragStart = new EventEmitter<void>();
     @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
@@ -48,11 +52,13 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     changeNameAlert: boolean = false;
     deleteAlert: boolean = false;
     newBagAlert: boolean = false;
+    dragAndDrop: boolean = false;
     elementToEdit!: ElementToEdit;
     refreshSub!: Subscription;
     focusSub!: Subscription;
     sortSub!: Subscription;
     scrollSub!: Subscription;
+    dragAndDropSub!: Subscription;
 
     constructor(private bagService: BagService, private fileService: FileService, private info: InfoService, private cdr: ChangeDetectorRef) { }
 
@@ -61,6 +67,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         this.initFocusSub();
         this.initSortSub();
         this.initScrollSub();
+        this.initDragAndDropSub();
         this.sortByNewest();
     }
 
@@ -69,6 +76,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         this.focusSub.unsubscribe();
         this.sortSub.unsubscribe();
         this.scrollSub.unsubscribe();
+        this.dragAndDropSub.unsubscribe();
     }
 
     initSortSub() {
@@ -82,6 +90,13 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         this.refreshSub = this.bagService.refreshBag$.subscribe(id => {
             if (id === this.bag.id)
                 this.cdr.markForCheck();
+        })
+    }
+
+    initDragAndDropSub() {
+        this.dragAndDropSub = this.bagService.dragAndDrop$.subscribe(drag => {
+            this.dragAndDrop = drag;
+            this.cdr.markForCheck();
         })
     }
 
@@ -131,11 +146,32 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         fileInput.click();
     }
 
-    async addFile() {
+    onAddFileDragAndDrop($event: DragEvent) {
+        this.addFilesDragAndDrop($event);
+    }
+
+    async addFilesDragAndDrop($event: DragEvent) {
+        if (!$event.dataTransfer?.files)
+            return;
+
+        const files: File[] = [];
+        for (let i = 0; i < $event.dataTransfer.files.length; i++)
+            files.push($event.dataTransfer.files[i]);
+
+        await this.fileService.addFiles(files, this.bag);
+        this.onSort(this.currentSort);
+    }
+
+    async addFiles() {
         let fileInput = this.file.nativeElement as HTMLInputElement;
         if (!fileInput.files)
             return;
-        await this.fileService.addFile(this.file.nativeElement, this.bag);
+
+        const files: File[] = [];
+        for (let i = 0; i < fileInput.files.length; i++)
+            files.push(fileInput.files[i]);
+
+        await this.fileService.addFiles(files, this.bag);
         this.onSort(this.currentSort);
     }
 

@@ -1,5 +1,5 @@
-<div #bagElement class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)" (cdkDragStarted)="onDragStart($event)"
-    (mousedown)="onFocus()" [class.blur]="alert">
+<div #bagElement class="bag" cdkDrag (cdkDragEnded)="onDragEnd($event)"
+    (cdkDragStarted)="onDragStart($event)" (mousedown)="onFocus()" [class.blur]="alert">
 
     <div class="option-bar" cdkDragHandle>
         <div class="bag-logo"><i class="fa-regular fa-folder-open"></i></div>
@@ -9,35 +9,41 @@
         </div>
 
         <app-add class="add" (addFile)="onAddFile()" (addBag)="displayNewBagAlert()"></app-add>
-        <input #file type="file" multiple id="file" class="add-file" (change)="addFile()">
+        <input #file type="file" multiple id="file" class="add-file" (change)="addFiles()">
     </div>
-    <div #scrollElement class="files">
-        <app-more-options (filter)="onFilter($event)" (sort)="onSort($event)"
-            (remove)="onRemoveActiveBag()"></app-more-options>
-
-        <ng-container *ngFor="let f of bag.files; trackBy: trackById">
-            @if (isUploadFileNeedsToBeDisplay(f)) {
-            <app-file [file]="f" [parentId]="bag.id" (change)="displayAlert($event)"></app-file>
-            }
-        </ng-container>
-
-        @if (isFoldersNeedsToBeDisplay()) {
-        <ng-container *ngFor="let b of bag.bags; trackBy: trackById">
-            <app-folder [bag]="b" (change)="displayAlert($event)" (open)="onOpen($event)"></app-folder>
-        </ng-container>
+    <div class="files-wrapper" [class.blur]="dragAndDrop">
+        @if (dragAndDrop) {
+            <app-drag-and-drop (dropFiles)="onAddFileDragAndDrop($event)"></app-drag-and-drop>
         }
-        <ng-container *ngFor="let f of bag.files; trackBy: trackById">
-            @if (isFileNeedsToBeDisplay(f)) {
-            <app-file #filesElements [file]="f" [parentId]="bag.id" (change)="displayAlert($event)"></app-file>
-            }
-        </ng-container>
-        <div class="empty-file"></div>
-        <div class="empty-file"></div>
+        <div #scrollElement class="files">
+            <app-more-options (filter)="onFilter($event)" (sort)="onSort($event)"
+                (remove)="onRemoveActiveBag()"></app-more-options>
 
-        @if (isFoldersAndFilesEmpty()) {
+            <ng-container *ngFor="let f of bag.files; trackBy: trackById">
+                @if (isUploadFileNeedsToBeDisplay(f)) {
+                <app-file [file]="f" [parentId]="bag.id" (change)="displayAlert($event)"></app-file>
+                }
+            </ng-container>
+
+            @if (isFoldersNeedsToBeDisplay()) {
+            <ng-container *ngFor="let b of bag.bags; trackBy: trackById">
+                <app-folder [bag]="b" (change)="displayAlert($event)" (open)="onOpen($event)"></app-folder>
+            </ng-container>
+            }
+            <ng-container *ngFor="let f of bag.files; trackBy: trackById">
+                @if (isFileNeedsToBeDisplay(f)) {
+                <app-file #filesElements [file]="f" [parentId]="bag.id" (change)="displayAlert($event)"></app-file>
+                }
+            </ng-container>
+            <div class="empty-file"></div>
+            <div class="empty-file"></div>
+
+            @if (isFoldersAndFilesEmpty()) {
             <app-empty-bag (addFile)="onAddFile()" (addBag)="displayNewBagAlert()"></app-empty-bag>
-        }
+            }
+        </div>
     </div>
+
 
     @if (newBagAlert) {
     <app-alert-new-bag [element]="elementToEdit" (ok)="onNewBag($event)" (cancel)="alertCancel()"></app-alert-new-bag>

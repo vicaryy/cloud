@@ -5,7 +5,7 @@ import { HeaderComponent } from "./header/header.component";
 import { GlowComponent } from "./glow/glow.component";
 import { FooterComponent } from "./footer/footer.component";
 import { ContentComponent } from "./content/content.component";
-import { ChatComponent } from "./chat/chat.component";
+import { ChatComponent } from "./content/chat/chat.component";
 
 @Component({
     selector: 'app-root',

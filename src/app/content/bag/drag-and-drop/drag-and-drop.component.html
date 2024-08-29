@@ -1,0 +1,9 @@
+<div class="drag-and-drop-wrapper" [class.active]="dragOver">
+    <div class="drag-and-drop">
+        <div class="img-wrapper">
+            <img src="./assets/images/add-file.png" alt="add-file">
+        </div>
+        <p>Drop files here</p>
+    </div>
+</div>
+<div class="drag-and-drop-dummy" (dragenter)="onDragEnter($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (dragover)="onDragOver($event)"></div>

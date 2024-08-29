@@ -124,14 +124,25 @@
     }
 }
 
-.files {
+.files-wrapper {
     position: relative;
     overflow-y: scroll;
     overflow-x: hidden;
     height: 100%;
 
-    .empty-file {
-        height: 50px;
+    .files {
+        position: relative;
+
+        .empty-file {
+            height: 50px;
+        }
+    }
+
+    &.blur {
+        overflow-y: hidden;
+        .files {
+            filter: blur(5px);
+        }
     }
 }
 

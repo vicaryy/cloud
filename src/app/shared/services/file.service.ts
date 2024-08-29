@@ -113,8 +113,6 @@ export class FileService {
         const filePaths = await this.getAllFilePaths(file);
         let currProggres = 0;
         while (file.fileParts.length > 0) {
-            const f = file.fileParts[0];
-
             let prevProgessForRefresh = 0;
             let currProgessForRefresh = 0;
             let blob = await lastValueFrom(this.telegram.downloadBlob(filePaths[0]).pipe(tap(event => {
@@ -179,13 +177,7 @@ export class FileService {
         file.progress = 0;
     }
 
-    async addFile(fileInput: HTMLInputElement, parentBag: Bag) {
-        if (!fileInput.files)
-            return;
-        const files: File[] = [];
-        for (let i = 0; i < fileInput.files.length; i++)
-            files.push(fileInput.files[i]);
-
+    async addFiles(files: File[], parentBag: Bag) {
         const newFiles: MyFile[] = [];
         for (const f of files)
             newFiles.push(this.createNewFile(f, parentBag));

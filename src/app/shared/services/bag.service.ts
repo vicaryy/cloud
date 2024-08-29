@@ -18,15 +18,19 @@ export class BagService {
     private _sortBag = new Subject<number>;
     private _searchedFiles = new BehaviorSubject<MyFile[]>([]);
     private _scrollToFile = new Subject<number>;
+    private _dragAndDrop = new BehaviorSubject<boolean>(false);
     private bags: Bag[] = [];
     private openedBags: Bag[] = [];
     private searchedFiles: MyFile[] = [];
+    private dragAndDrop = false;
+    dragAndDropOnBag = false;
     openedBags$: Observable<Bag[]> = this._openedBags.asObservable();
     refreshBag$ = this._refreshBag.asObservable();
     focusBag$ = this._focusBag.asObservable();
     sortBag$ = this._sortBag.asObservable();
     searchedFiles$ = this._searchedFiles.asObservable();
     scrollToFile$ = this._scrollToFile.asObservable();
+    dragAndDrop$ = this._dragAndDrop.asObservable();
 
     constructor(private userService: UserService, private backend: BackendApiService, private telegram: TelegramApiService, private crypto: CryptoService, private infoService: InfoService) {
         this.loadBags();
@@ -46,6 +50,13 @@ export class BagService {
 
     scrollToFile(id: number) {
         this._scrollToFile.next(id);
+    }
+
+    setDragAndDrop(dragAndDrop: boolean) {
+        if (dragAndDrop !== this.dragAndDrop) {
+            this.dragAndDrop = dragAndDrop;
+            this._dragAndDrop.next(this.dragAndDrop);
+        }
     }
 
     searchFiles(word: string) {
@@ -68,7 +79,7 @@ export class BagService {
 
     private emitOpenedBags() {
         this._openedBags.next(this.openedBags);
-}
+    }
 
     private emitSearchedFiles() {
         this._searchedFiles.next(this.searchedFiles);
