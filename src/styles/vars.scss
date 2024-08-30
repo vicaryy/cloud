@@ -39,11 +39,15 @@
 
     --file-hover-color: #e8e8f2;
 
-    --info-color: #1f2024;
-    --info-color-success: rgba(161, 134, 0, 0.9);
-    --info-color-error: rgba(192, 0, 0, 0.9);
-    --info-font-color: #fbfbfd;
-    --info-font-color-second: #9f9f9f;
+    --alert-color: #1f2024;
+    --alert-color-success: rgba(151, 190, 100, 0.9);
+    // --alert-color-success: rgba(28, 199, 28, 0.9);
+    --alert-color-error: rgba(208, 68, 147, 0.9);
+    // --alert-color-error: rgba(192, 0, 0, 0.9);
+    --alert-color-info: rgba(70, 117, 225, 0.9);
+    // --alert-color-info: rgba(100, 94, 255, 0.9);
+    --alert-font-color: #fbfbfd;
+    --alert-font-color-second: #9f9f9f;
 
     --bar-color: #35363a;
 

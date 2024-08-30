@@ -9,7 +9,6 @@ import { AlertDeleteComponent } from "../bag/alert-delete/alert-delete.component
 import { BlurBlockComponent } from "../../shared/components/blur-block/blur-block.component";
 import { AlertNameComponent } from "../bag/alert-name/alert-name.component";
 import { State } from '../../shared/enums/content.enums';
-import { FileService } from '../../shared/services/file.service';
 import { EmptySearchComponent } from "./empty-search/empty-search.component";
 
 @Component({
@@ -25,7 +24,7 @@ export class SearchComponent {
     input: string = '';
     result = false;
 
-    constructor(private fileService: FileService, private bagService: BagService, private cdr: ChangeDetectorRef) { }
+    constructor(private bagService: BagService, private cdr: ChangeDetectorRef) { }
 
     get searchedFiles$() {
         return this.bagService.searchedFiles$;

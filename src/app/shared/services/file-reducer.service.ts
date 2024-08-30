@@ -18,8 +18,6 @@ export class FileReducerService {
     }
 
     private async compress(dataURL: string): Promise<string> {
-        console.log(this.getDataUrlSize(dataURL));
-
         if (this.getDataUrlSize(dataURL) < 400000)
             return dataURL;
         let dataURLAfter = await this.imageCompress.compressFile(dataURL, DOC_ORIENTATION.Default, 90, 90);
@@ -32,13 +30,4 @@ export class FileReducerService {
         const sizeInBytes = (base64String.length * 3) / 4 - padding;
         return sizeInBytes;
     }
-
-    // async compressImage(blob: Blob): Promise<Blob> {
-    //     if (blob.size < 500000)
-    //         return blob;
-    //     let dataURL = await BlobUtils.blobToDataURL(blob);
-
-    //     let dataURLAfter = await this.imageCompress.getImageWithMaxSizeAndMetas({fileName: 'blob', image: dataURL, orientation: DOC_ORIENTATION.Default}, this.MAX_REDUCE_SIZE);
-    //     return BlobUtils.dataURLToBlob(dataURLAfter.image);
-    // }
 }

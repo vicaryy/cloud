@@ -1,0 +1,43 @@
+<div class="alerts">
+    @for (alert of alerts; track $index) {
+    @if (isSuccess(alert)) {
+    <div class="alert success">
+        <div class="bar">
+            <p>Success</p>
+            <button mat-button (click)="closeAlert(alert.id())">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="content">
+            <p class="text">{{ alert.info() }}</p>
+        </div>
+    </div>
+    }
+    @if (isError(alert)) {
+    <div class="alert error">
+        <div class="bar">
+            <p>Error</p>
+            <button mat-button (click)="closeAlert(alert.id())">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="content">
+            <p class="text">{{ alert.info() }}</p>
+        </div>
+    </div>
+    }
+    @if (isInfo(alert)) {
+    <div class="alert info">
+        <div class="bar">
+            <p>Info</p>
+            <button mat-button (click)="closeAlert(alert.id())">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="content">
+            <p class="text">{{ alert.info() }}</p>
+        </div>
+    </div>
+    }
+    }
+</div>

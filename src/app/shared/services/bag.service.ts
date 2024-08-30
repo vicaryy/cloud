@@ -5,7 +5,7 @@ import { CryptoService } from './crypto.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { UserService } from './user.service';
 import { Bag, MyFile } from '../models/content.models';
-import { InfoService } from './info.service';
+import { AlertService } from './alert.service';
 
 @Injectable({
     providedIn: 'root'
@@ -32,7 +32,7 @@ export class BagService {
     scrollToFile$ = this._scrollToFile.asObservable();
     dragAndDrop$ = this._dragAndDrop.asObservable();
 
-    constructor(private userService: UserService, private backend: BackendApiService, private telegram: TelegramApiService, private crypto: CryptoService, private infoService: InfoService) {
+    constructor(private userService: UserService, private backend: BackendApiService, private telegram: TelegramApiService, private crypto: CryptoService, private alertService: AlertService) {
         this.loadBags();
     }
 
@@ -141,11 +141,11 @@ export class BagService {
                 if (bag) {
                     bag.name = newName;
                     this._refreshBag.next(bagId);
-                    this.infoService.displaySuccess(`Successfully changed bag name to: ${newName}`);
+                    this.alertService.displaySuccess(`Successfully changed bag name to: ${newName}`);
                 }
             },
             error: (error) => {
-                this.infoService.displayError(`Error in changing bag name to: ${newName}`);
+                this.alertService.displayError(`Error in changing bag name to: ${newName}`);
             }
         });
     }
@@ -157,11 +157,11 @@ export class BagService {
                 if (bag) {
                     this.deleteBagFromOpenedBags(bagId);
                     this._refreshBag.next(bagId);
-                    this.infoService.displaySuccess(`Successfully deleted bag`);
+                    this.alertService.displaySuccess(`Successfully deleted bag`);
                 }
             },
             error: () => {
-                this.infoService.displayError(`Error in deleteing bag`);
+                this.alertService.displayError(`Error in deleteing bag`);
             }
         });
     }

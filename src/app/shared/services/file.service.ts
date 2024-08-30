@@ -9,9 +9,9 @@ import { concatMap, from, lastValueFrom, map, of, Subject, switchMap, tap, toArr
 import { FilePart, NewFileRequest } from '../interfaces/http-interfaces';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Message, TelegramResponse } from '../interfaces/telegram-interfaces';
-import { InfoService } from './info.service';
 import { FileReducerService } from './file-reducer.service';
 import { BagService } from './bag.service';
+import { AlertService } from './alert.service';
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +22,7 @@ export class FileService {
 
     FileType = FileType;
 
-    constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private info: InfoService, private fileReducer: FileReducerService, private bagService: BagService) { }
+    constructor(private telegram: TelegramApiService, private backend: BackendApiService, private crypto: CryptoService, private alertService: AlertService, private fileReducer: FileReducerService, private bagService: BagService) { }
 
     sortBagById(parentId: number) {
         this.bagService.sortBag(parentId);
@@ -37,7 +37,7 @@ export class FileService {
             await this.downloadPreviewBlob(file);
         } catch (error) {
             file.preview!.state = State.ERROR;
-            this.info.displayError("Fail in displaying preview, try again");
+            this.alertService.displayError("Fail in displaying preview, try again");
         }
         this.refreshFile(file.id);
     }
@@ -56,9 +56,9 @@ export class FileService {
         this.backend.deleteFile(id).subscribe({
             next: () => {
                 this.bagService.deleteFileFromBag(id, parentBagId);
-                this.info.displaySuccess('File deleted successfully');
+                this.alertService.displaySuccess('File deleted successfully');
             },
-            error: () => this.info.displayError('Error in deleting file, try again')
+            error: () => this.alertService.displayError('Error in deleting file, try again')
         });
     }
 
@@ -67,9 +67,9 @@ export class FileService {
             next: () => {
                 file!.name = newName;
                 this._refreshFile.next(file.id);
-                this.info.displaySuccess(`Successfully changed file name to ${newName}`);
+                this.alertService.displaySuccess(`Successfully changed file name to ${newName}`);
             },
-            error: () => this.info.displayError('Error in changing file name, try again')
+            error: () => this.alertService.displayError('Error in changing file name, try again')
         });
     }
 
@@ -92,7 +92,7 @@ export class FileService {
         } catch (error) {
             file.state = State.ERROR;
             this.refreshFile(file.id);
-            this.info.displayError(`Error in downloading file '${file.name}'`);
+            this.alertService.displayError(`Error in downloading file '${file.name}'`);
         }
     }
 
@@ -212,7 +212,7 @@ export class FileService {
             file.state = State.ERROR;
             this.refreshFile(file.id);
             console.log(`Error in uploading file '${file.name}'`, error);
-            this.info.displayError(`Error in uploading file '${file.name}'`);
+            this.alertService.displayError(`Error in uploading file '${file.name}'`);
         }
     }
 
@@ -316,13 +316,13 @@ export class FileService {
                 file.uploadState = {};
                 file.downloadState = {};
                 file.preview = response.preview;
-                this.info.displaySuccess(`Successfully uploaded file '${file.name}'`);
+                this.alertService.displaySuccess(`Successfully uploaded file '${file.name}'`);
                 this.refreshFile(file.id);
             },
             error: () => {
                 file.state = State.ERROR;
                 this.refreshFile(file.id);
-                this.info.displayError("Fail in uploading file, try again")
+                this.alertService.displayError("Fail in uploading file, try again")
             }
         });
 

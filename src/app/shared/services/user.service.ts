@@ -1,10 +1,8 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AsyncSubject, Observable } from 'rxjs';
 import { User } from '../models/content.models';
-import { environment } from '../../../environments/environment.development';
 import { BackendApiService } from './backend-api.service';
-import { InfoService } from './info.service';
+import { AlertService } from './alert.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +12,7 @@ export class UserService {
     private user!: User;
     user$ = this.userSubject.asObservable();
 
-    constructor(private backend: BackendApiService, private infoService: InfoService) {
+    constructor(private backend: BackendApiService, private alertService: AlertService) {
         this.loadUser();
     }
 
@@ -25,7 +23,7 @@ export class UserService {
                 this.userSubject.next(this.user);
                 this.userSubject.complete();
             },
-            error: () => this.infoService.displayError("Fail in fetching user")
+            error: () => this.alertService.displayError("Fail in fetching user")
         }
         );
     }

@@ -1,0 +1,91 @@
+@import 'vars';
+
+    .alerts {
+        position: fixed;
+        bottom: 45px;
+        left: 50%;
+        translate: -50% 0%;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+
+        .alert {
+            overflow: hidden;
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            max-width: 700px;
+            margin-bottom: 5px;
+            border-radius: 15px;
+            font-weight: 500;
+            box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
+            animation: slideIn .3s forwards;
+
+            .bar {
+                display: flex;
+                justify-content: space-between;
+                padding: 5px 18px;
+                box-sizing: border-box;
+                color: var(--alert-font-color);
+                font-size: 1.5rem;
+
+                button {
+                    width: 20px!important;
+                    min-width: unset!important;
+                    height: 20px!important;
+
+                    i {
+                        translate: 0 1px;
+                        color: var(--alert-font-color);
+                    }
+                }
+            }
+
+
+            .content {
+                padding: 25px;
+                text-align: left;
+                background-color: var(--alert-color);
+                color: var(--alert-font-color-second);
+
+                .text {
+                    font-size: 1.4rem;
+                }
+
+                i {
+                    font-size: 2rem;
+                    margin-left: 10px;
+                }
+            }
+        }
+
+        .alert.success {
+            .bar {
+                background-color: var(--alert-color-success);
+            }
+        }
+
+        .alert.error {
+            .bar {
+                background-color: var(--alert-color-error);
+            }
+        }
+        .alert.info {
+            .bar {
+                background-color: var(--alert-color-info);
+            }
+        }
+    }
+
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        translate: 0% 20%;
+    }
+
+    100% {
+        opacity: 1;
+        translate: 0% 0%;
+    }
+}
+

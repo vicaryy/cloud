@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FileComponent } from "./file/file.component";
 import { CdkDrag, CdkDragEnd, CdkDragHandle, CdkDragStart } from '@angular/cdk/drag-drop';
 import { Bag, MyFile as MyFile } from '../../shared/models/content.models';
@@ -11,30 +11,25 @@ import { AlertDeleteComponent } from "./alert-delete/alert-delete.component";
 import { AlertNewBagComponent } from "./alert-new-bag/alert-new-bag.component";
 import { BagService } from '../../shared/services/bag.service';
 import { BlurBlockComponent } from "../../shared/components/blur-block/blur-block.component";
-import { InfoComponent } from "../../shared/components/info/info.component";
 import { DragBagEnd } from '../../shared/interfaces/content.interfaces';
 import { FileService } from '../../shared/services/file.service';
-import { InfoService } from '../../shared/services/info.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MoreOptionsComponent } from "./more-options/more-options.component";
 import { SortBy, FilterBy, State, FileType } from '../../shared/enums/content.enums';
 import { Subscription } from 'rxjs';
 import { EmptyBagComponent } from "./empty-bag/empty-bag.component";
 import { DragAndDropComponent } from "./drag-and-drop/drag-and-drop.component";
+import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
     selector: 'app-bag',
     standalone: true,
     templateUrl: './bag.component.html',
     styleUrl: './bag.component.scss',
-    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, InfoComponent, MatButtonModule, MoreOptionsComponent, EmptyBagComponent, DragAndDropComponent],
+    imports: [FileComponent, CdkDrag, CdkDragHandle, AddComponent, FolderComponent, AlertNameComponent, CommonModule, AlertDeleteComponent, AlertNewBagComponent, BlurBlockComponent, MatButtonModule, MoreOptionsComponent, EmptyBagComponent, DragAndDropComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
-onDragEnter($event: DragEvent) {
-    $event.preventDefault();
-    this.bagService.setDragAndDrop(true);
-}
     @Input('bag') bag!: Bag;
     @Output('dragStart') dragStart = new EventEmitter<void>();
     @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
@@ -60,7 +55,7 @@ onDragEnter($event: DragEvent) {
     scrollSub!: Subscription;
     dragAndDropSub!: Subscription;
 
-    constructor(private bagService: BagService, private fileService: FileService, private info: InfoService, private cdr: ChangeDetectorRef) { }
+    constructor(private bagService: BagService, private fileService: FileService, private alertService: AlertService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.initRefreshSub()
@@ -155,11 +150,20 @@ onDragEnter($event: DragEvent) {
             return;
 
         const files: File[] = [];
-        for (let i = 0; i < $event.dataTransfer.files.length; i++)
-            files.push($event.dataTransfer.files[i]);
+        for (let i = 0; i < $event.dataTransfer.files.length; i++) {
+            if (this.isFileFolder($event.dataTransfer.items[i])) {
+                this.alertService.displayError(`Cannot add '${$event.dataTransfer.files[i].name}', folders are not supported yet`)
+            }
+            else
+                files.push($event.dataTransfer.files[i]);
+        }
 
         await this.fileService.addFiles(files, this.bag);
         this.onSort(this.currentSort);
+    }
+
+    isFileFolder(item: DataTransferItem) {
+        return item.webkitGetAsEntry()?.isDirectory;
     }
 
     async addFiles() {
@@ -184,11 +188,11 @@ onDragEnter($event: DragEvent) {
         this.bagService.createBag(this.bag.id, name).subscribe({
             next: e => {
                 this.bag.bags.push(Bag.fromJSON(e));
-                this.info.displaySuccess("Successfully created bag");
+                this.alertService.displaySuccess("Successfully created bag");
                 this.cdr.markForCheck();
             },
             error: () => {
-                this.info.displayError("Fail in creating bag, try again")
+                this.alertService.displayError("Fail in creating bag, try again")
             }
         });
     }
@@ -232,7 +236,7 @@ onDragEnter($event: DragEvent) {
     onChangeName($event: ElementToEdit) {
         if ($event.bag) {
             if (this.isBagNameExists($event.newName!)) {
-                this.info.displayError(`Bag name '${$event.newName}' already exist`);
+                this.alertService.displayError(`Bag name '${$event.newName}' already exist`);
                 return;
             }
             this.bagService.changeBagName($event.id, $event.newName!);
@@ -258,7 +262,7 @@ onDragEnter($event: DragEvent) {
 
     changeFileName(element: ElementToEdit) {
         if (this.isFileNameExists(element.newName!)) {
-            this.info.displayError(`File name '${element.newName}' already exist`);
+            this.alertService.displayError(`File name '${element.newName}' already exist`);
             return;
         }
 
@@ -310,7 +314,7 @@ onDragEnter($event: DragEvent) {
 
     onNewBag($event: string) {
         if (this.isBagNameExists($event)) {
-            this.info.displayError(`Bag name '${$event}' already exist`);
+            this.alertService.displayError(`Bag name '${$event}' already exist`);
             return;
         }
         this.disableAlerts();
@@ -318,7 +322,7 @@ onDragEnter($event: DragEvent) {
     }
 
     isUploadFileNeedsToBeDisplay(file: MyFile): boolean {
-        return file.state === State.ERROR || file.state === State.ENCRYPT || file.state === State.UPLOAD;
+        return file.state === State.ERROR || file.state === State.ENCRYPT || file.state === State.UPLOAD || file.state === State.LOADING;
     }
 
     isFoldersNeedsToBeDisplay() {
@@ -326,11 +330,10 @@ onDragEnter($event: DragEvent) {
     }
 
     isFileNeedsToBeDisplay(file: MyFile): boolean {
-        console.log("Bylem tu");
-
         return file.state !== State.ERROR
             && file.state !== State.ENCRYPT
             && file.state !== State.UPLOAD
+            && file.state !== State.LOADING
             && this.isFilePassesFilter(file);
     }
 
