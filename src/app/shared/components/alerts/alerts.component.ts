@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Alert, AlertFactory, ErrorAlert, InfoAlert, SuccessAlert } from '../../models/alert.models';
+import { Alert, ErrorAlert, InfoAlert, SuccessAlert } from '../../models/alert.models';
 import { Subscription } from 'rxjs';
 import { AlertService } from '../../services/alert.service';
 import { MatButton } from '@angular/material/button';
@@ -19,6 +19,8 @@ export class AlertsComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.subAlerts = this.alertService.alert$.subscribe(alert => {
+            console.log(alert);
+
             this.alerts = [...this.alerts, alert];
             setTimeout(() => this.closeAlert(alert.id()), 6000);
         });

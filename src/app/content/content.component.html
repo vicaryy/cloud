@@ -1,10 +1,9 @@
 <div class="content" (dragover)="onDragOver($event)" (click)="onCloseDragDrop()">
     <app-search></app-search>
-    <ng-container *ngFor="let b of openedBags; index as i; trackBy: trackById">
-        <app-bag #bag *ngIf="i === 0" [bag]="b"></app-bag>
-        <app-bag #bag *ngIf="i !== 0" [bag]="b" (dragStart)="onDragStart()"
-            (dragEnd)="onDragEnd($event)"></app-bag>
-    </ng-container>
+
+    @for (b of openedBags; track b.id) {
+    <app-bag #bag [bag]="b" (grabStart)="onGrabStart()" (grabEnd)="onGrabEnd($event)"></app-bag>
+    }
 
     @if (deleteBar) {
     <div class="delete-bar">
@@ -16,7 +15,7 @@
     }
 
     @if (openedBags.length === 0) {
-        <app-empty></app-empty>
+    <app-empty></app-empty>
     }
 
     <div class="chat-toggle" (click)="turnOnChat()">
@@ -24,12 +23,12 @@
     </div>
 
     @if (chat) {
-        <app-chat></app-chat>
+    <app-chat></app-chat>
     }
 
     <app-password-protected></app-password-protected>
 </div>
 
 @if (dragDropController) {
-    <app-drag-drop-controller></app-drag-drop-controller>
+<app-drag-drop-controller></app-drag-drop-controller>
 }

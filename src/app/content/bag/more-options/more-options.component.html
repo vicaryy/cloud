@@ -4,26 +4,26 @@
             <i class="fa-solid fa-arrow-up-wide-short"></i>
         </button>
 
-        <div class="sort-block" [class.active]="sort" [style]="'z-index: ' + getZIndex()">
+        <div [class]="{ 'sort-block': true, 'active': sort }" [style]="'z-index: 1001'">
             <div class="title">
                 <span>Sort by</span>
                 <span class="sort-type">
                     @if (sortBy === SortBy.DATE_UP) {
                         newest
                     }
-                    @if (sortBy === SortBy.DATE_DOWN) {
+                    @else if (sortBy === SortBy.DATE_DOWN) {
                         oldest
                     }
-                    @if (sortBy === SortBy.NAME_UP) {
+                    @else if (sortBy === SortBy.NAME_UP) {
                         z-a
                     }
-                    @if (sortBy === SortBy.NAME_DOWN) {
+                    @else if (sortBy === SortBy.NAME_DOWN) {
                         a-z
                     }
-                    @if (sortBy === SortBy.SIZE_UP) {
+                    @else if (sortBy === SortBy.SIZE_UP) {
                         heaviest
                     }
-                    @if (sortBy === SortBy.SIZE_DOWN) {
+                    @else if (sortBy === SortBy.SIZE_DOWN) {
                         lightest
                     }
                 </span>
@@ -60,7 +60,7 @@
             <i class="fa-solid fa-filter"></i>
         </button>
 
-        <div class="sort-block" [class.active]="filter" [style]="'z-index: ' + getZIndex()">
+        <div class="sort-block" [class.active]="filter" [style]="'z-index: 1001'">
             <div class="title">Filter by</div>
             <div class="options">
                 <button class="filter-all" [class.active]="filterBy === FilterBy.ALL" (click)="onFilter(FilterBy.ALL)"><i

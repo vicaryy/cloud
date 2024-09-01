@@ -31,8 +31,8 @@ import { AlertService } from '../../shared/services/alert.service';
 })
 export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     @Input('bag') bag!: Bag;
-    @Output('dragStart') dragStart = new EventEmitter<void>();
-    @Output('dragEnd') dragEnd = new EventEmitter<DragBagEnd>();
+    @Output() grabStart = new EventEmitter<void>();
+    @Output() grabEnd = new EventEmitter<DragBagEnd>();
     @ViewChild("bagElement") bagElement!: ElementRef;
     @ViewChild("scrollElement") scrollElement!: ElementRef;
     @ViewChild('file') file!: ElementRef;
@@ -90,7 +90,10 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
 
     initDragAndDropSub() {
         this.dragAndDropSub = this.bagService.dragAndDrop$.subscribe(drag => {
+            if (drag)
+                this.scrollToTop();
             this.dragAndDrop = drag;
+
             this.cdr.markForCheck();
         })
     }
@@ -117,6 +120,12 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
                     a.glowUpFile();
                 }
             }
+        });
+    }
+
+    scrollToTop() {
+        this.scrollElement.nativeElement.scroll({
+            top: 0,
         });
     }
 
@@ -273,13 +282,13 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         this.fileService.changeFileName(fileToEdit!, element.newName!);
     }
 
-    onDragStart(event: CdkDragStart) {
-        this.dragStart.emit();
+    onGrabStart(event: CdkDragStart) {
+        this.grabStart.emit();
     }
 
-    onDragEnd(event: CdkDragEnd) {
+    onGrabEnd(event: CdkDragEnd) {
         this.setTransformOriginAfterDragEnd(event.dropPoint.x, event.dropPoint.y);
-        this.dragEnd.emit({ x: event.dropPoint.x, y: event.dropPoint.y, id: this.bag.id });
+        this.grabEnd.emit({ x: event.dropPoint.x, y: event.dropPoint.y, id: this.bag.id });
     }
 
     setTransformOriginAfterDragEnd(x: any, y: any) {
@@ -356,10 +365,6 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         this.changeNameAlert = false;
         this.deleteAlert = false;
         this.newBagAlert = false;
-    }
-
-    trackById(index: number, file: any): any {
-        return file.id;
     }
 
     onSort($event: SortBy) {

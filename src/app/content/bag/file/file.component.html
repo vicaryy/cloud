@@ -1,4 +1,5 @@
-<div #f class="file" [class.details-active]="detailsActive" [class.glow]="glowUp">
+<div #f class="file" [class]="{ 'details-active': detailsActive, 'glow': glowUp }">
+
     @if (file.state === State.READY) {
     <div class="main-wrapper ready">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
@@ -6,7 +7,8 @@
         <button class="download state" (click)="emitDownload()"><i class="fa-solid fa-cloud-arrow-down"></i></button>
     </div>
     }
-    @if (file.state === State.DONE) {
+
+    @else if (file.state === State.DONE) {
     <div class="main-wrapper done">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">
@@ -21,7 +23,7 @@
     </div>
     }
 
-    @if (file.state === State.LOADING) {
+    @else if (file.state === State.LOADING) {
     <div class="main-wrapper loading">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">
@@ -35,7 +37,8 @@
         </div>
     </div>
     }
-    @if (file.state === State.ENCRYPT) {
+
+    @else if (file.state === State.ENCRYPT) {
     <div class="main-wrapper encrypt">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">
@@ -49,7 +52,8 @@
         </div>
     </div>
     }
-    @if (file.state === State.DECRYPT) {
+
+    @else if (file.state === State.DECRYPT) {
     <div class="main-wrapper decrypt">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">
@@ -63,7 +67,8 @@
         </div>
     </div>
     }
-    @if (file.state === State.UPLOAD) {
+
+    @else if (file.state === State.UPLOAD) {
     <div class="main-wrapper upload">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">
@@ -77,7 +82,8 @@
         </div>
     </div>
     }
-    @if (file.state === State.DOWNLOAD) {
+
+    @else if (file.state === State.DOWNLOAD) {
     <div class="main-wrapper download">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">
@@ -92,7 +98,7 @@
     </div>
     }
 
-    @if (file.state === State.ERROR) {
+    @else if (file.state === State.ERROR) {
     <div class="main-wrapper error">
         <div class="logo" (click)="toggleDetails()"><img [src]="logoUrl" alt="extension logo"></div>
         <div class="name" (click)="toggleDetails()">
@@ -132,7 +138,6 @@
 
             @if (file.preview) {
             <div class="preview-wrapper">
-
                 @if (file.preview.state === State.READY) {
                 <button class="preview preview-ready" (click)="emitDownloadPreview()">
                     <p>Click to see preview</p>
@@ -140,18 +145,21 @@
                     <img src="./assets/images/preview-photo.jpg" alt="preview-photo">
                 </button>
                 }
-                @if (file.preview.state === State.DOWNLOAD) {
+
+                @else if (file.preview.state === State.DOWNLOAD) {
                 <div class="preview preview-loading">
                     <img src="./assets/images/preview-photo.jpg" alt="preview-photo">
                     <mat-spinner mode="indeterminate" diameter="30"></mat-spinner>
                 </div>
                 }
-                @if (file.preview.state === State.DONE) {
+
+                @else if (file.preview.state === State.DONE) {
                 <div class="preview preview-done">
                     <img [src]="file.preview.url" alt="preview-photo" (click)="displayPreviewPhoto()">
                 </div>
                 }
-                @if (file.preview.state === State.ERROR) {
+
+                @else if (file.preview.state === State.ERROR) {
                 <button class="preview preview-ready" (click)="emitDownloadPreview()">
                     <p>Something goes wrong, try again</p>
                     <img src="./assets/images/preview-photo.jpg" alt="preview-photo">
@@ -172,7 +180,7 @@
                 <p>Delete file</p>
             </button>
             }
-            @if (inSearchBar) {
+            @else {
             <button class="open-folder" (click)="emitOpenInBag()">
                 <i class="fa-regular fa-folder-open"></i>
                 <p>Open in bag</p>

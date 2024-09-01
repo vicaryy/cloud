@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { BackdropService } from '../../services/backdrop.service';
 
 @Component({
     selector: 'app-backdrop',

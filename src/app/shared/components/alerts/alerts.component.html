@@ -1,5 +1,5 @@
 <div class="alerts">
-    @for (alert of alerts; track $index) {
+    @for (alert of alerts; track alert.id()) {
     @if (isSuccess(alert)) {
     <div class="alert success">
         <div class="bar">

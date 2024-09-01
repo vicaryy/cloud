@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import { FilterBy, SortBy } from '../../../shared/enums/content.enums';
-import { BackdropService } from '../../../shared/services/backdrop.service';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { BackdropComponent } from "../../../shared/components/backdrop/backdrop.component";
 
 @Component({
@@ -15,18 +14,18 @@ import { BackdropComponent } from "../../../shared/components/backdrop/backdrop.
 })
 export class MoreOptionsComponent {
 
-    FilterBy = FilterBy;
-    SortBy = SortBy;
     @Output('remove') remove = new EventEmitter<void>;
     @Output('sort') sortEmit = new EventEmitter<SortBy>;
     @Output('filter') filterEmit = new EventEmitter<FilterBy>;
+    FilterBy = FilterBy;
+    SortBy = SortBy;
     sort: boolean = false;
     filter: boolean = false;
     sortBy = SortBy.DATE_UP;
     filterBy = FilterBy.ALL;
     backdropClicked$!: Subscription;
 
-    constructor(private backdrop: BackdropService) { }
+    constructor() { }
 
     onRemove() {
         this.remove.emit();
@@ -71,9 +70,5 @@ export class MoreOptionsComponent {
     closeBlocks() {
         this.sort = false;
         this.filter = false;
-    }
-
-    getZIndex() {
-        return this.backdrop.getHigherZIndex();
     }
 }
