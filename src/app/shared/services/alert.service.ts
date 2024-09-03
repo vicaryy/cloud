@@ -19,4 +19,8 @@ export class AlertService {
     displayError(text: string) {
         this._alert.next(AlertFactory.errorAlert(text));
     }
+
+    displayInfo(text: string) {
+        this._alert.next(AlertFactory.infoAlert(text));
+    }
 }

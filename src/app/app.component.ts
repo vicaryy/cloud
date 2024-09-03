@@ -7,13 +7,14 @@ import { FooterComponent } from "./footer/footer.component";
 import { ContentComponent } from "./content/content.component";
 import { ChatComponent } from "./content/chat/chat.component";
 import { AlertsComponent } from "./shared/components/alerts/alerts.component";
+import { AuthComponent } from "./auth/auth.component";
 
 @Component({
     selector: 'app-root',
     standalone: true,
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss',
-    imports: [RouterOutlet, BagComponent, HeaderComponent, GlowComponent, FooterComponent, ContentComponent, ChatComponent, AlertsComponent]
+    imports: [RouterOutlet, BagComponent, HeaderComponent, GlowComponent, FooterComponent, ContentComponent, ChatComponent, AlertsComponent, AuthComponent]
 })
 export class AppComponent {
 }

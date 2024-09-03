@@ -1,0 +1,44 @@
+<div class="logo">
+    <img src="./assets/images/cloud-logo.png" alt="logo">
+</div>
+<div class="auth-wrapper">
+    <div class="auth">
+        <h1 class="text">Welcome back!</h1>
+        <form class="login-form">
+            <div class="form-input">
+                <mat-form-field>
+                    <mat-label>E-mail address</mat-label>
+                    <input matInput type="email">
+                </mat-form-field>
+            </div>
+            <div class="form-input">
+                <mat-form-field>
+                    <mat-label>Password</mat-label>
+                    <input matNativeControl matInput [type]="hide ? 'password' : 'text'">
+                    <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <button class="login-btn" mat-button>Login</button>
+        </form>
+
+        <span class="register-router">Does not have an account? <a routerLink="asd">Register</a></span>
+
+        <div class="or">
+            <div></div>
+            <p>OR</p>
+            <div></div>
+        </div>
+<!--
+            <div id="g_id_onload"
+                data-client_id="400395304378-6vvb8q6ouglk0ne3k0tdtg77h7k848fq.apps.googleusercontent.com"
+                data-context="signin" data-ux_mode="popup" data-login_uri="http://localhost:1234/api/login"
+                data-auto_select="true" data-itp_support="true">
+            </div>
+
+            <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_blue"
+                data-text="continue_with" data-size="large" data-logo_alignment="left">
+            </div>
+        </div>
+        <script src="https://accounts.google.com/gsi/client"></script> -->
+</div>
