@@ -1,0 +1,36 @@
+<div class="login-auth">
+    <h1 class="text">Welcome back!</h1>
+    <form class="login-form" [formGroup]="loginForm">
+        <div class="form-input">
+            <mat-form-field>
+                <mat-label>E-mail address</mat-label>
+                <input matInput type="email" [formControl]="controls.email">
+                <mat-error>{{ getEmailErrorMessage(controls.email) }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="form-input">
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matNativeControl matInput [type]="hide ? 'password' : 'text'" [formControl]="controls.password">
+                <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                <mat-error>siema</mat-error>
+            </mat-form-field>
+        </div>
+
+        <a routerLink="asd" class="forgot-password-router">Forgot password?</a>
+
+        <button class="login-btn" mat-flat-button >Login</button>
+    </form>
+
+    <span class="register-router">Does not have an account? <a routerLink="/auth/register">Register</a></span>
+
+    <div class="or">
+        <div></div>
+        <p>OR</p>
+        <div></div>
+    </div>
+
+    <div class="social-buttons">
+        <div id="google-button-login"></div>
+    </div>
+</div>

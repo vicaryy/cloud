@@ -1,4 +1,48 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+
+$theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$violet-palette,
+  ),
+  typography: (
+    brand-family: 'Montserrat',
+    plain-family: 'Montserrat',
+    bold-weight: 900,
+  ),
+  density: (
+    scale: 0
+  )
+));
+
+$violet-palette: mat.$violet-palette;
+
+// $red-palette
+// $green-palette
+// $blue-palette
+// $yellow-palette
+// $cyan-palette
+// $magenta-palette
+// $orange-palette
+// $chartreuse-palette
+// $spring-green-palette
+// $azure-palette
+// $violet-palette
+// $rose-palette
+
+
+
+/* You can add global styles to this file, and also import other style files */
+html {
+    @include mat.all-component-themes($theme);
+}
+
 @import 'vars';
+
+
 
 * {
     margin: 0;
@@ -34,12 +78,12 @@ body {
 }
 
 
-.mdc-text-field--filled:not(.mdc-text-field--disabled) {
-    background-color: transparent !important;
-    border: 2px solid var(--line-color);
-    border-radius: 10px;
-}
-/*Manipulate background color on hover and focus*/
-.mat-mdc-form-field-focus-overlay {
-    //   background-color: transparent !important;
-}
+// .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+//     background-color: transparent !important;
+//     border: 2px solid var(--line-color);
+//     border-radius: 10px;
+// }
+// /*Manipulate background color on hover and focus*/
+// .mat-mdc-form-field-focus-overlay {
+//     //   background-color: transparent !important;
+// }

@@ -6,7 +6,7 @@ import { AddComponent } from './add/add.component';
 import { FolderComponent } from "./folder/folder.component";
 import { AlertNameComponent } from "./alert-name/alert-name.component";
 import { CommonModule } from '@angular/common';
-import { ElementToEdit } from '../../shared/interfaces/alert-interfaces';
+import { ElementToEdit } from '../../shared/interfaces/alert.interfaces';
 import { AlertDeleteComponent } from "./alert-delete/alert-delete.component";
 import { AlertNewBagComponent } from "./alert-new-bag/alert-new-bag.component";
 import { BagService } from '../../shared/services/bag.service';

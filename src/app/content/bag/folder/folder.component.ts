@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
+import { ElementToEdit } from '../../../shared/interfaces/alert.interfaces';
 import { Bag } from '../../../shared/models/content.models';
 import { Subscription } from 'rxjs';
 import { BagService } from '../../../shared/services/bag.service';

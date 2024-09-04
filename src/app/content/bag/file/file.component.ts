@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { MyFile } from '../../../shared/models/content.models';
-import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
+import { ElementToEdit } from '../../../shared/interfaces/alert.interfaces';
 import { CommonModule } from '@angular/common';
 import { State } from '../../../shared/enums/content.enums';
 import { FileService } from '../../../shared/services/file.service';

@@ -11,13 +11,15 @@ import { EmptyComponent } from "./empty/empty.component";
 import { ChatComponent } from "./chat/chat.component";
 import { DragDropControllerComponent } from "./drag-drop-controller/drag-drop-controller.component";
 import { DragDropService } from '../shared/services/drag-drop.service';
+import { HeaderComponent } from "../header/header.component";
+import { RouterOutlet } from '@angular/router';
 
 @Component({
     selector: 'app-content',
     standalone: true,
     templateUrl: './content.component.html',
     styleUrl: './content.component.scss',
-    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, PasswordProtectedComponent, EmptyComponent, ChatComponent, DragDropControllerComponent],
+    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, PasswordProtectedComponent, EmptyComponent, ChatComponent, DragDropControllerComponent, HeaderComponent, RouterOutlet],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContentComponent implements OnInit {

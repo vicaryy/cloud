@@ -1,6 +1,6 @@
 import { FileType, State } from "../enums/content.enums";
 import { DownloadState, PreviewFile, UploadState } from "../interfaces/content.interfaces";
-import { FilePart } from "../interfaces/http-interfaces";
+import { FilePart } from "../interfaces/backend.interfaces";
 
 export class User {
     constructor(

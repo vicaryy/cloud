@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FileTelegram, Message, TelegramResponse } from '../interfaces/telegram-interfaces';
+import { FileTelegram, Message, TelegramResponse } from '../interfaces/telegram.interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({

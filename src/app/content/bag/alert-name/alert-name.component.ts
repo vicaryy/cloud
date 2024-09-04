@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { ElementToEdit } from '../../../shared/interfaces/alert-interfaces';
+import { ElementToEdit } from '../../../shared/interfaces/alert.interfaces';
 
 @Component({
     selector: 'app-alert-name',

@@ -1,10 +1,10 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { NewBagRequest, NewFileRequest, ServerResponse } from '../interfaces/http-interfaces';
+import { NewBagRequest, NewFileRequest, ServerResponse } from '../interfaces/backend.interfaces';
 import { Bag, MyFile, User } from '../models/content.models';
 import { environment } from '../../../environments/environment.development';
-import { ElementToEdit } from '../interfaces/alert-interfaces';
+import { ElementToEdit } from '../interfaces/alert.interfaces';
 
 @Injectable({
     providedIn: 'root'
