@@ -8,6 +8,7 @@ import { AuthComponent } from './auth/auth.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ForgotComponent } from './auth/forgot/forgot.component';
+import { ConfirmationComponent } from './auth/confirmation/confirmation.component';
 
 export const routes: Routes = [
     {
@@ -49,12 +50,15 @@ export const routes: Routes = [
             },
             {
                 path: 'register',
-                loadComponent: () => import('./auth/register/register.component').then(e => e.RegisterComponent),
-                // component: RegisterComponent
+                component: RegisterComponent
             },
             {
                 path: 'forgot',
                 component: ForgotComponent
+            },
+            {
+                path: 'confirmation',
+                component: ConfirmationComponent
             }
         ]
     }

@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { LoginCredentials, RegisterCredentials } from '../interfaces/form.interfaces';
+import { OAuth2Response } from '../interfaces/google.interfaces';
+import { BackendApiService } from './backend-api.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
 
-    constructor() { }
+    constructor(private backend: BackendApiService) { }
 
-    getLoginForm(): FormGroup<any> {
-        return new FormGroup({
-            email: new FormControl('', Validators.required),
-            password: new FormControl('', Validators.required)
-        });
+    login(credentials: LoginCredentials) {
+        return this.backend.login(credentials);
     }
 
-    getRegisterForm(): FormGroup<any> {
-        return new FormGroup({
-            email: new FormControl(''),
-            password: new FormControl(''),
-            repeatPassword: new FormControl('')
-        });
+    register(credentials: RegisterCredentials) {
+        return this.backend.register(credentials);
+    }
+
+    continueWithGoogle(credentials: OAuth2Response) {
+
     }
 }

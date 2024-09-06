@@ -1,4 +1,3 @@
-
 .login-auth {
     display: flex;
     flex-direction: column;
@@ -23,31 +22,21 @@
 
             mat-form-field {
                 width: 100%;
-
-                .mat-form-field-required-marker {
-                    font-size: 1.4rem;
-
-                    // color: white;
-                }
             }
 
             mat-label {
-                font-size: 1.4rem;
-                // color: var(--font-color-fourth);
+                // font-size: 1.4rem;
+                color: var(--font-color-fourth);
             }
 
             mat-icon {
-                font-size: 2.3rem;
-                // color: var(--font-color-fourth);
-            }
-
-            mat-error {
-                font-size: 1.3rem;
+                // font-size: 2.3rem;
+                color: var(--font-color-fourth);
             }
 
             input {
-                font-size: 1.4rem;
-                // color: var(--font-color-fifth);
+                // font-size: 1.4rem;
+                color: var(--font-color-fifth);
             }
         }
 
@@ -57,28 +46,24 @@
             font-size: 1.6rem;
             letter-spacing: .5px;
             font-family: var(--font);
-            // background-color: var(--font-color-third);
-            // color: var(--font-color-fifth);
+            background-color: var(--font-color-third);
+            color: var(--font-color-fifth);
+
+            &:disabled {
+                background-color: var(--line-color);
+            }
         }
 
         .forgot-password-router {
-            color: var(--font-color-third);
-            text-decoration: none;
-            font-size: 1.5rem;
         }
     }
 
     .register-router {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         color: var(--font-color-fourth);
         margin-top: 20px;
         width: 100%;
         text-align: left;
-
-        a {
-            color: var(--font-color-third);
-            text-decoration: none;
-        }
     }
 
     .or {

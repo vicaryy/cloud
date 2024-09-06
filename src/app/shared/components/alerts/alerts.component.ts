@@ -19,8 +19,6 @@ export class AlertsComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.subAlerts = this.alertService.alert$.subscribe(alert => {
-            console.log(alert);
-
             this.alerts = [...this.alerts, alert];
             setTimeout(() => this.closeAlert(alert.id()), 6000);
         });

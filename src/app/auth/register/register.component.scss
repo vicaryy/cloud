@@ -43,24 +43,27 @@
 
         .register-btn {
             height: 50px;
-            margin-top: 22.75px;
+            margin-top: 5px;
             font-size: 1.6rem;
             letter-spacing: .5px;
             font-family: var(--font);
             background-color: var(--font-color-third);
             color: var(--font-color-fifth);
+
+            &:disabled {
+                background-color: var(--line-color);
+            }
         }
     }
 
     .login-router {
-        font-size: 1.5rem;
-        color: var(--font-color-fifth);
+        font-size: 1.3rem;
+        color: var(--font-color-fourth);
         margin-top: 20px;
         width: 100%;
         text-align: left;
 
         a {
-            color: var(--font-color-third);
             text-decoration: none;
         }
     }

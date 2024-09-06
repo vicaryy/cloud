@@ -49,7 +49,7 @@ export class GoogleService {
                 width: "350",
                 type: "standard",
                 shape: "rectangular",
-                text: "signin_with",
+                text: "signup_with",
                 logo_aligment: "left"
             }
         );

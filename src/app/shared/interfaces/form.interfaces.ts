@@ -6,5 +6,13 @@ export interface LoginForm {
 }
 
 export interface RegisterForm extends LoginForm {
-    repeatPassword: FormControl;
+    confirmPassword: FormControl;
+}
+
+export interface LoginCredentials {
+    email: string;
+    password: string
+}
+
+export interface RegisterCredentials extends LoginCredentials {
 }
