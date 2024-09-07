@@ -1,11 +1,24 @@
-import { HttpEvent, HttpEventType, HttpHandlerFn, HttpRequest, HttpStatusCode } from "@angular/common/http";
-import { inject } from "@angular/core";
-import { catchError, Observable, tap, throwError } from "rxjs";
-import { AlertService } from "../services/alert.service";
+import { HttpEvent, HttpEventType, HttpHandlerFn, HttpHeaders, HttpRequest, HttpStatusCode } from "@angular/common/http";
+import { map, Observable } from "rxjs";
 
-export function loggingInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
-    const alertService = inject(AlertService);
+export function jwtInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
+    const jwtToken = sessionStorage.getItem('Authorization');
+    if (jwtToken) {
+        req = req.clone({
+            setHeaders: {
+                'Authorization': jwtToken
+            }
+        });
+    }
+
     return next(req).pipe(
-        tap(event => {
-        }));
+        map(event => {
+            if (event.type === HttpEventType.Response) {
+                const authHeader = event.headers.get('Authorization');
+                if (authHeader)
+                    sessionStorage.setItem('Authorization', authHeader);
+            }
+            return event;
+        })
+    )
 }

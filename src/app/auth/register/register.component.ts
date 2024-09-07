@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { FormService } from '../../shared/services/form.service';
@@ -87,9 +87,10 @@ export class RegisterComponent implements OnInit {
     onRegister() {
         this.waitForResponse = true;
         this.authService.register({ email: this.controls.email.value, password: this.controls.password.value }).subscribe({
-            next: () => {
+            next: (user) => {
                 this.alertService.displayInfo('Account created successfully')
                 this.waitForResponse = false;
+                localStorage.setItem('verificationEmail', user.email)
                 this.router.navigate(['/auth/confirmation']);
             },
             error: (err) => {

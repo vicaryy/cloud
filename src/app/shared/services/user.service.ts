@@ -17,22 +17,22 @@ export class UserService {
     }
 
     loadUser(): void {
-        this.getUser(7).subscribe({
+        this.getUser().subscribe({
             next: user => {
                 this.user = User.fromJSON(user);
                 this.userSubject.next(this.user);
                 this.userSubject.complete();
             },
-            error: () => this.alertService.displayError("Fail in fetching user")
+            error: () => this.alertService.displayError("Fail in fetching user data")
         }
         );
     }
 
-    private getUser(userId: number): Observable<User> {
-        return this.backend.getUser(userId);
+    private getUser(): Observable<User> {
+        return this.backend.getUser();
     }
 
-    getCurrentUser() {
+    get currentUser() {
         return this.user;
     }
 }

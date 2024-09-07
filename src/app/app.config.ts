@@ -5,11 +5,11 @@ import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
-import { loggingInterceptor } from './shared/interceptors/interceptors';
+import { jwtInterceptor } from './shared/interceptors/interceptors';
 
 export const appConfig: ApplicationConfig = {
     providers: [provideRouter(routes), provideAnimationsAsync(), provideHttpClient(
-        withInterceptors([loggingInterceptor])
+        withInterceptors([jwtInterceptor])
     ), provideServiceWorker('ngsw-worker.js', {
         enabled: !isDevMode(),
         registrationStrategy: 'registerWhenStable:30000'

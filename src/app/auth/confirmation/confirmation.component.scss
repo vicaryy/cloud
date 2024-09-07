@@ -1,0 +1,116 @@
+.confirmation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .img-wrapper {
+        width: 80px;
+        translate: 0 -30px;
+
+        img {
+            width: 100%;
+        }
+    }
+
+    .text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 25px;
+        font-size: 2.4rem;
+        font-weight: 500;
+        color: var(--font-color-fifth);
+
+        .text-title {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .description {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--font-color-sixth);
+        }
+    }
+
+
+    .form-wrapper {
+        .verification-form {
+
+            .inputs-wrapper {
+                display: flex;
+                margin-bottom: 15px;
+
+                .input-wrapper {
+                    width: 80px;
+                    height: 90px;
+                    margin: 0 8px;
+
+                    input {
+                        width: 100%;
+                        height: 100%;
+                        background-color: transparent;
+                        text-align: center;
+                        border: solid 2px var(--line-color);
+                        border-radius: 10px;
+                        font-size: 4.5rem;
+                        font-weight: 600;
+                        color: var(--font-color-fifth);
+
+
+                        &:focus {
+                            outline: none;
+                        }
+
+                        &.filled {
+                            border: solid 2px var(--alert-color-info);
+                        }
+                    }
+                }
+            }
+
+            .received-trouble {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+
+                span {
+                    font-size: 1.3rem;
+                    font-weight: 400;
+                    color: var(--font-color-sixth);
+
+                    button {
+                        margin-left: 2px;
+                        color: var(--alert-color-info);
+                        text-decoration: underline;
+                    }
+                }
+            }
+
+            .buttons-wrapper {
+                display: flex;
+
+                button {
+                    flex-basis: 50%;
+                    height: 40px;
+                    margin: 0 5px;
+                    font-size: 1.3rem;
+                }
+
+                .cancel {
+                    background-color: var(--font-color-fifth);
+                    color: var(--font-color);
+                }
+
+                .verify {
+                    background-color: var(--font-color-third);
+
+                    &:disabled {
+                        background-color: var(--line-color);
+                    }
+                }
+            }
+        }
+    }
+}

@@ -3,7 +3,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FormService } from '../../shared/services/form.service';
 import { LoginForm } from '../../shared/interfaces/form.interfaces';
@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
     loginForm: FormGroup<LoginForm> = this.formService.getLoginForm();
     errorMessage = '';
 
-    constructor(private formService: FormService, private googleService: GoogleService, private alertService: AlertService, private authService: AuthService) { }
+    constructor(private formService: FormService, private googleService: GoogleService, private alertService: AlertService, private authService: AuthService, private router: Router) { }
 
     ngOnInit(): void {
         this.initGoogleButton();
@@ -44,17 +44,22 @@ export class LoginComponent implements OnInit {
         console.log(this.controls.password.value);
         this.waitForResponse = true;
         this.authService.login({ email: this.controls.email.value, password: this.controls.password.value }).subscribe({
-            next: val => console.log(val),
-            error: err => console.log(err)
+            next: () => {
+                localStorage.removeItem('verificationEmail');
+                this.alertService.displayInfo("You have successfully logged in");
+                this.waitForResponse = false;
+                this.router.navigate([""]);
+            },
+            error: () => {
+                this.alertService.displayError("Invalid login credentials. Try again");
+                this.waitForResponse = false;
+            }
         });
     }
 
     getEmailErrorMessage(control: FormControl) {
         if (control.hasError('required'))
-            return 'Email address is required.'
-
-        if (control.hasError('email'))
-            return 'Invalid email address.'
+            return 'Email address is required.';
 
         return '';
     }
@@ -62,21 +67,6 @@ export class LoginComponent implements OnInit {
     getPasswordErrorMessage(control: FormControl) {
         if (control.hasError('required'))
             return 'Password is required.'
-
-        if (control.hasError('minlength'))
-            return 'Password must contain at least 8 letters.';
-
-        if (control.hasError('noSpecialChar'))
-            return 'Password must contain a special character.';
-
-        if (control.hasError('noUppercase'))
-            return 'Password must contain an uppercase letter.';
-
-        if (control.hasError('noLowercase'))
-            return 'Password must contain a lowercase letter.';
-
-        if (control.hasError('noNumber'))
-            return 'Password must contain a number.';
 
         return '';
     }

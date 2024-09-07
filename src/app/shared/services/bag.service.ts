@@ -42,7 +42,7 @@ export class BagService {
                 this.bags = user.bags;
                 this.bags[0].x = 100;
                 this.bags[0].y = 250;
-                this.openedBags = [...this.bags];
+                // this.openedBags = [...this.bags];
                 this.emitOpenedBags();
             }
         });

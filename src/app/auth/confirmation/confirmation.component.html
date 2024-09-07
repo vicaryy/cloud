@@ -1,5 +1,41 @@
-<div class="confirmation-wrapper">
-    <div class="confirmation">
-        <p class="text">Verify your email address</p>
+<div class="confirmation">
+    <div class="img-wrapper">
+        <img src="./assets/images/send.png" alt="sent-email">
+    </div>
+    <div class="text">
+        <p class="text-title">Verification Code</p>
+        <p class="description">Enter the 4-digit code we've sent to {{ userEmail }}</p>
+    </div>
+    <div class="form-wrapper">
+        <form class="verification-form">
+            <div class="inputs-wrapper">
+                <div class="first-input input-wrapper">
+                    <input #first (keydown)="onKeyDown($event, null, first, second)">
+                </div>
+                <div class="second-input input-wrapper">
+                    <input #second (keydown)="onKeyDown($event, first, second, third)">
+                </div>
+                <div class="third-input input-wrapper">
+                    <input #third (keydown)="onKeyDown($event, second, third, fourth)">
+                </div>
+                <div class="fourth-input input-wrapper">
+                    <input #fourth (keydown)="onKeyDown($event, third, fourth, null)">
+                </div>
+            </div>
+            <div class="received-trouble">
+                <span>Didn't get the code? <button (click)="onResend()">Click to resend</button></span>
+            </div>
+            <div class="buttons-wrapper">
+                <button (click)="onCancel()" mat-button class="cancel">Cancel</button>
+                <button (click)="onValid($event)" mat-button class="verify" [disabled]="isDisabled() || waitForResponse">
+                    @if (waitForResponse) {
+                    <mat-spinner diameter="25"></mat-spinner>
+                    }
+                    @else {
+                    Verify
+                    }
+                </button>
+            </div>
+        </form>
     </div>
 </div>

@@ -6,12 +6,14 @@ export class User {
     constructor(
         public id: number,
         public email: string,
+        public verifiedEmail: boolean,
         public bags: Bag[]) { }
 
     static fromJSON(json: User): User {
         return new User(
             json.id,
             json.email,
+            json.verifiedEmail,
             json.bags.map(e => Bag.fromJSON(e))
         );
     }

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { NewBagRequest, NewFileRequest } from '../interfaces/backend.interfaces';
 import { Bag, MyFile, User } from '../models/content.models';
 import { environment } from '../../../environments/environment.development';
-import { LoginCredentials, RegisterCredentials } from '../interfaces/form.interfaces';
+import { LoginCredentials, RegisterCredentials, Verification } from '../interfaces/form.interfaces';
 
 @Injectable({
     providedIn: 'root'
@@ -17,6 +17,9 @@ export class BackendApiService {
     }
     register(credentials: RegisterCredentials): Observable<User> {
         return this.http.post<User>(environment.apiUrl + "/auth/register", credentials);
+    }
+    verificate(verification: Verification): Observable<void> {
+        return this.http.post<void>(environment.apiUrl + "/auth/verify", verification);
     }
 
     createBag(parentId: number, name: string): Observable<Bag> {
@@ -38,7 +41,7 @@ export class BackendApiService {
     changeFileName(id: number, newName: string): Observable<void> {
         return this.http.patch<void>(`${environment.apiUrl}/api/file/edit/${id}`, { "name": newName });
     }
-    getUser(userId: number): Observable<User> {
-        return this.http.get<User>(environment.apiUrl + "/api/user/" + userId);
+    getUser(): Observable<User> {
+        return this.http.get<User>(environment.apiUrl + "/api/user");
     }
 }
