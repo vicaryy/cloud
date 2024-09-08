@@ -1,11 +1,19 @@
-export interface Alert {
-    id(): number;
-    info(): string;
+export abstract class Alert {
+    constructor(protected _id: number, protected _info: string) {
+        this._info = this.addDot(_info);
+    }
+
+    abstract id(): number;
+    abstract info(): string;
+
+    addDot(info: string): string {
+        if (info[info.length - 1] !== '.')
+            info = info + '.';
+        return info;
+    }
 }
 
-export class ErrorAlert implements Alert {
-    constructor(private _id: number, private _info: string) { }
-
+export class ErrorAlert extends Alert {
     id(): number {
         return this._id;
     }
@@ -15,9 +23,7 @@ export class ErrorAlert implements Alert {
     }
 }
 
-export class SuccessAlert implements Alert {
-    constructor(private _id: number, private _info: string) { }
-
+export class SuccessAlert extends Alert {
     id(): number {
         return this._id;
     }
@@ -27,9 +33,7 @@ export class SuccessAlert implements Alert {
     }
 }
 
-export class InfoAlert implements Alert {
-    constructor(private _id: number, private _info: string) { }
-
+export class InfoAlert extends Alert {
     id(): number {
         return this._id;
     }
