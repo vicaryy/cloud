@@ -5,7 +5,6 @@ import CryptoJS from 'crypto-js';
     providedIn: 'root'
 })
 export class CryptoService {
-
     private _secretKey: string = "1234";
 
     constructor() { }
@@ -37,5 +36,14 @@ export class CryptoService {
             uInt8Array[index++] = word & 0xff;
         }
         return uInt8Array;
+    }
+
+    loadData() {
+        this._secretKey = '1234';
+    }
+
+
+    clearData() {
+        this._secretKey = '';
     }
 }

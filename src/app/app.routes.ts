@@ -9,13 +9,13 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ForgotComponent } from './auth/forgot/forgot.component';
 import { ConfirmationComponent } from './auth/confirmation/confirmation.component';
-import { authGuard } from './shared/guards/auth.guard';
+import { authGuard, confirmationGuard, contentGuard } from './shared/guards/auth.guard';
 
 export const routes: Routes = [
     {
         path: '',
         component: ContentComponent,
-        canActivate: [authGuard],
+        canActivate: [contentGuard],
         children: [
             {
                 path: 'settings',
@@ -24,7 +24,6 @@ export const routes: Routes = [
                     {
                         path: 'general',
                         component: GeneralComponent,
-                        canActivate: [authGuard],
                     },
                     {
                         path: 'encryption',
@@ -41,6 +40,7 @@ export const routes: Routes = [
     {
         path: 'auth',
         component: AuthComponent,
+        canActivate: [authGuard],
         children: [
             {
                 path: '',
@@ -61,7 +61,8 @@ export const routes: Routes = [
             },
             {
                 path: 'confirmation',
-                component: ConfirmationComponent
+                component: ConfirmationComponent,
+                canActivate: [confirmationGuard]
             }
         ]
     }

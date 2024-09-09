@@ -23,11 +23,20 @@
                 </div>
             </div>
             <div class="received-trouble">
+                @if (waitForResendResponse) {
+                    <mat-spinner diameter="17"></mat-spinner>
+                }
+                @else if (resendResponseSended) {
+                    <span class="code-resended"><i class="fa-solid fa-check"></i> Code resended</span>
+                }
+                @else {
                 <span>Didn't get the code? <button (click)="onResend()">Click to resend</button></span>
+                }
             </div>
             <div class="buttons-wrapper">
-                <button (click)="onCancel()" mat-button class="cancel">Cancel</button>
-                <button (click)="onValid($event)" mat-button class="verify" [disabled]="isDisabled() || waitForResponse">
+                <button type="button" (click)="onCancel()" mat-button class="cancel">Cancel</button>
+                <button type="submit" (click)="onValid($event)" mat-button class="verify"
+                    [disabled]="isDisabled() || waitForResponse">
                     @if (waitForResponse) {
                     <mat-spinner diameter="25"></mat-spinner>
                     }

@@ -33,17 +33,19 @@
         justify-content: right;
 
         button {
+            display: flex;
             padding: 5px 15px;
             border-radius: 10px;
             color: var(--bgc);
             font-weight: 550;
             font-size: 1.5rem;
+            letter-spacing: .5px;
             font-family: 'Montserrat';
             cursor: pointer;
             transition: background-color .3s;
 
             &:hover {
-                background-color: #b1b1b1;
+                background-color: rgba(198, 198, 198, .15);
             }
         }
     }

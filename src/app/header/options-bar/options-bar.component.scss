@@ -18,27 +18,36 @@
         background-color: var(--bar-color);
 
         button {
-            display: flex;
             justify-content: flex-start;
             align-items: center;
             width: 100%;
             padding: 10px 65px 10px 10px;
             color: var(--font-color-fifth);
             border-radius: 5px;
+            letter-spacing: .5px;
             font-size: 1.4rem;
+            font-family: var(--font);
             transition: background-color .2s;
 
             &:hover {
                 background-color: rgba(198, 198, 198, .15);
             }
 
-            p {
-                margin-left: 10px;
+            .wrapper {
+                display: flex;
+                align-items: center;
+
+                p {
+                    margin-left: 10px;
+                }
+
+                i {
+                    height: 15px;
+                    width: 15px;
+                    translate: 0 -1px;
+                }
             }
 
-            i {
-                width: 15px;
-            }
         }
     }
 }

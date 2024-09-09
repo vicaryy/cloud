@@ -1,0 +1,12 @@
+@import 'mixins';
+
+.loading-screen {
+    width: 100vw;
+    height: 100vh;
+    @include center-fixed;
+    background-color: rgba(0, 0, 0, .3);
+
+    .loader {
+        @include center-absolute;
+    }
+}

@@ -11,7 +11,6 @@ import { AuthService } from '../../shared/services/auth.service';
 import { RegisterForm } from '../../shared/interfaces/form.interfaces';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'app-register',
@@ -28,7 +27,7 @@ export class RegisterComponent implements OnInit {
     errorMessage = '';
     repeatPasswordErrorMessage = '';
 
-    constructor(private formService: FormService, private googleService: GoogleService, private alertService: AlertService, private authService: AuthService, private router: Router) { }
+    constructor(private formService: FormService, private googleService: GoogleService, private authService: AuthService) { }
 
     ngOnInit(): void {
         this.initGoogleButton();
@@ -87,17 +86,8 @@ export class RegisterComponent implements OnInit {
     onRegister() {
         this.waitForResponse = true;
         this.authService.register({ email: this.controls.email.value, password: this.controls.password.value }).subscribe({
-            next: (user) => {
-                this.alertService.displayInfo('Account created successfully')
-                this.waitForResponse = false;
-                localStorage.setItem('verificationEmail', user.email)
-                this.router.navigate(['/auth/confirmation']);
-            },
-            error: (err) => {
-                const error = err as HttpErrorResponse;
-                this.alertService.displayError(error.error.result)
-                this.waitForResponse = false;
-            }
+            next: () => this.waitForResponse = false,
+            error: () => this.waitForResponse = false
         });
     }
 }

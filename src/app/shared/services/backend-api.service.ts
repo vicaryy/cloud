@@ -21,6 +21,12 @@ export class BackendApiService {
     verificate(verification: Verification): Observable<void> {
         return this.http.post<void>(environment.apiUrl + "/auth/verify", verification);
     }
+    resendVerificateCode(userEmail: string) {
+        return this.http.post<void>(environment.apiUrl + "/auth/verify/resend", { "email": userEmail });
+    }
+    forgotPassword(email: string) {
+        return this.http.post<void>(environment.apiUrl + "/auth/forgot", { "email": email });
+    }
 
     createBag(parentId: number, name: string): Observable<Bag> {
         const request: NewBagRequest = { id: parentId, name: name };

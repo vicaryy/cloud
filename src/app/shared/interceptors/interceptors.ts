@@ -26,8 +26,6 @@ export function jwtInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): 
 export function loggingInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> {
     return next(req).pipe(
         catchError((err: HttpErrorResponse) => {
-            console.log(err);
-
             console.error(`HTTP error\nURL: ${err.url}\nStatus: ${err.status}\nResult: ${err.error.result}`);
             return throwError(() => err);
         }));

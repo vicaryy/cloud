@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { BagComponent } from "./bag/bag.component";
 import { SearchComponent } from './search/search.component';
 import { BagService } from '../shared/services/bag.service';
@@ -13,40 +13,64 @@ import { DragDropControllerComponent } from "./drag-drop-controller/drag-drop-co
 import { DragDropService } from '../shared/services/drag-drop.service';
 import { HeaderComponent } from "../header/header.component";
 import { RouterOutlet } from '@angular/router';
+import { LoadingScreenComponent } from "../shared/components/loading-screen/loading-screen.component";
+import { Subscription } from 'rxjs';
+import { UserService } from '../shared/services/user.service';
+import { StateManagerService } from '../shared/services/state-manager.service';
 
 @Component({
     selector: 'app-content',
     standalone: true,
     templateUrl: './content.component.html',
     styleUrl: './content.component.scss',
-    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, PasswordProtectedComponent, EmptyComponent, ChatComponent, DragDropControllerComponent, HeaderComponent, RouterOutlet],
+    imports: [BagComponent, SearchComponent, CommonModule, FolderComponent, PasswordProtectedComponent, EmptyComponent, ChatComponent, DragDropControllerComponent, HeaderComponent, RouterOutlet, LoadingScreenComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ContentComponent implements OnInit {
+export class ContentComponent implements OnInit, OnDestroy {
     openedBags: Bag[] = [];
     deleteBar: boolean = false;
     chat = false;
     dragDropController = false;
+    loading = true;
+    subOpenedBags!: Subscription;
+    subDragAndDrop!: Subscription;
+    subLoadedUser!: Subscription;
 
-    constructor(private dragDropService: DragDropService, private bagService: BagService, private cdr: ChangeDetectorRef) { }
+    constructor(private dragDropService: DragDropService, private bagService: BagService, private cdr: ChangeDetectorRef, private userService: UserService, private stateManager: StateManagerService) { }
 
     ngOnInit(): void {
         this.initOpenedBags();
         this.initDragAndDrop();
+        this.initLoadedUser();
+        this.initLoadAllData();
+    }
+
+    ngOnDestroy(): void {
+        this.subOpenedBags.unsubscribe();
+        this.subDragAndDrop.unsubscribe();
+        this.subLoadedUser.unsubscribe();
     }
 
     initOpenedBags() {
-        this.bagService.openedBags$.subscribe(next => {
+        this.subOpenedBags = this.bagService.openedBags$.subscribe(next => {
             this.openedBags = [...next];
             this.cdr.markForCheck();
         });
     }
 
     initDragAndDrop() {
-        this.dragDropService.dragDrop$.subscribe(next => {
+        this.subDragAndDrop = this.dragDropService.dragDrop$.subscribe(next => {
             this.dragDropController = next;
             this.bagService.setDragAndDrop(next);
         });
+    }
+
+    initLoadedUser() {
+        this.subLoadedUser = this.userService.user$.subscribe(() => this.loading = false);
+    }
+
+    initLoadAllData() {
+        this.stateManager.loadAllData();
     }
 
     onCloseDragDrop() {

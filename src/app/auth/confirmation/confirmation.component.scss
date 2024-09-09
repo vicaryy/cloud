@@ -80,6 +80,10 @@
                     font-weight: 400;
                     color: var(--font-color-sixth);
 
+                    &.code-resended {
+                        color: var(--alert-color-success);
+                    }
+
                     button {
                         margin-left: 2px;
                         color: var(--alert-color-info);

@@ -2,9 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { UserService } from '../../shared/services/user.service';
 import { AuthService } from '../../shared/services/auth.service';
-import { AlertService } from '../../shared/services/alert.service';
 
 @Component({
     selector: 'app-confirmation',
@@ -19,9 +17,11 @@ export class ConfirmationComponent implements OnInit {
     @ViewChild('third') third!: ElementRef;
     @ViewChild('fourth') fourth!: ElementRef;
     waitForResponse = false;
+    waitForResendResponse = false;
+    resendResponseSended = false;
     userEmail!: string;
 
-    constructor(private router: Router, private authService: AuthService, private alertService: AlertService) { }
+    constructor(private router: Router, private authService: AuthService) { }
 
     ngOnInit(): void {
         this.initUserEmail();
@@ -63,21 +63,20 @@ export class ConfirmationComponent implements OnInit {
 
         this.waitForResponse = true;
         this.authService.verificate({ email: this.userEmail, verificationCode: this.getCode() }).subscribe({
-            next: () => {
-                localStorage.removeItem('verificationEmail');
-                this.alertService.displayInfo("Email verified successfully");
-                this.waitForResponse = false;
-                this.router.navigate([""]);
-            },
-            error: () => {
-                this.alertService.displayError("Invalid code, try again");
-                this.waitForResponse = false;
-            }
+            next: () => this.waitForResponse = false,
+            error: () => this.waitForResponse = false
         });
     }
 
     onResend() {
-        throw new Error('Method not implemented.');
+        this.waitForResendResponse = true;
+        this.authService.resendVerificateCode(this.userEmail).subscribe({
+            next: () => {
+                this.waitForResendResponse = false;
+                this.resendResponseSended = true;
+            },
+            error: () => this.waitForResendResponse = false
+        });
     }
 
     isDisabled() {

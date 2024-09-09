@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { LoginForm, RegisterForm, VerificationCodeForm } from '../interfaces/form.interfaces';
+import { ForgotPasswordForm, LoginForm, RegisterForm, VerificationCodeForm } from '../interfaces/form.interfaces';
 import { confirmPasswordValidator, passwordValidator } from '../validators/auth.validators';
 
 @Injectable({
@@ -33,6 +33,12 @@ export class FormService {
             inputSecond: new FormControl(''),
             inputThird: new FormControl(''),
             inputFourth: new FormControl(''),
+        })
+    }
+
+    getForgotPasswordForm(): FormGroup<ForgotPasswordForm> {
+        return new FormGroup({
+            email: new FormControl('', [Validators.required, Validators.email])
         })
     }
 }

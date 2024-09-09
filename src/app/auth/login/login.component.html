@@ -1,4 +1,7 @@
 <div class="login-auth">
+    <div class="img-wrapper">
+        <img src="./assets/images/login.png" alt="login">
+    </div>
     <h1 class="text">Welcome back!</h1>
     <form class="login-form" [formGroup]="loginForm">
         <div class="form-input">
@@ -17,7 +20,7 @@
             </mat-form-field>
         </div>
 
-        <a routerLink="asd" class="forgot-password-router">Forgot password?</a>
+        <a routerLink="/auth/forgot" class="forgot-password-router">Forgot password?</a>
 
         <button class="login-btn" (click)="onLogin()" mat-flat-button [disabled]="loginForm.invalid || waitForResponse">
             @if (waitForResponse) {

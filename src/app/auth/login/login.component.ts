@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
     loginForm: FormGroup<LoginForm> = this.formService.getLoginForm();
     errorMessage = '';
 
-    constructor(private formService: FormService, private googleService: GoogleService, private alertService: AlertService, private authService: AuthService, private router: Router) { }
+    constructor(private formService: FormService, private googleService: GoogleService, private authService: AuthService) { }
 
     ngOnInit(): void {
         this.initGoogleButton();
@@ -37,23 +37,10 @@ export class LoginComponent implements OnInit {
     }
 
     onLogin() {
-        console.log('Wysyłam do backendu login');
-        console.log('Email: ');
-        console.log(this.controls.email.value);
-        console.log('Password: ');
-        console.log(this.controls.password.value);
         this.waitForResponse = true;
         this.authService.login({ email: this.controls.email.value, password: this.controls.password.value }).subscribe({
-            next: () => {
-                localStorage.removeItem('verificationEmail');
-                this.alertService.displayInfo("You have successfully logged in");
-                this.waitForResponse = false;
-                this.router.navigate([""]);
-            },
-            error: () => {
-                this.alertService.displayError("Invalid login credentials. Try again");
-                this.waitForResponse = false;
-            }
+            next: () => this.waitForResponse = false,
+            error: () => this.waitForResponse = false
         });
     }
 

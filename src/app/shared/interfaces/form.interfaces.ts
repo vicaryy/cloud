@@ -16,6 +16,10 @@ export interface VerificationCodeForm {
     inputFourth: FormControl;
 }
 
+export interface ForgotPasswordForm {
+    email: FormControl;
+}
+
 export interface LoginCredentials {
     email: string;
     password: string
@@ -28,3 +32,4 @@ export interface Verification {
     email: string;
     verificationCode: string;
 }
+

@@ -4,7 +4,7 @@
         <p>freeCloud</p>
     </div>
     <div class="log-out-wrapper">
-        <button id="log-out">Log Out</button>
+        <button mat-button (click)="onLogout()" id="log-out">Log Out</button>
     </div>
     <div class="profile" (click)="onProfileClick($event)">
         <img src="./assets/images/profile-pic.jpg" alt="" class="profile-pic">

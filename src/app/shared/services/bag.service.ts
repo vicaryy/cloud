@@ -36,13 +36,19 @@ export class BagService {
         this.loadBags();
     }
 
+    clearData() {
+        this.highestIndex = 1;
+        this.bags = [];
+        this.openedBags = [];
+        this.searchedFiles = [];
+    }
+
     private loadBags() {
         this.userService.user$.subscribe({
             next: user => {
                 this.bags = user.bags;
                 this.bags[0].x = 100;
                 this.bags[0].y = 250;
-                // this.openedBags = [...this.bags];
                 this.emitOpenedBags();
             }
         });
@@ -121,8 +127,6 @@ export class BagService {
         this.openedBags = [this.bags[0]];
         this.emitOpenedBags();
     }
-
-
 
     addFileAsView(bagId: number, newFile: MyFile) {
         for (let i = 0; i < this.openedBags.length; i++) {
@@ -251,4 +255,5 @@ export class BagService {
     sortBag(id: number) {
         this._sortBag.next(id);
     }
+
 }

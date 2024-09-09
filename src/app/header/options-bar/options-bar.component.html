@@ -1,16 +1,22 @@
 <div class="option-bar-wrapper" (click)="onClick($event)">
     <div class="option-bar">
-        <button>
-            <i class="fa-solid fa-user"></i>
-            <p>Profile</p>
+        <button mat-button>
+            <div class="wrapper">
+                <i class="fa-solid fa-user"></i>
+                <p>Profile</p>
+            </div>
         </button>
-        <button (click)="displaySettingsDialog($event)">
-            <i class="fa-solid fa-gear"></i>
-            <p>Settings</p>
+        <button mat-button (click)="displaySettingsDialog($event)">
+            <div class="wrapper">
+                <i class="fa-solid fa-gear"></i>
+                <p>Settings</p>
+            </div>
         </button>
-        <button>
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <p>Log Out</p>
+        <button mat-button (click)="onLogout()">
+            <div class="wrapper">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <p>Log Out</p>
+            </div>
         </button>
     </div>
 </div>
