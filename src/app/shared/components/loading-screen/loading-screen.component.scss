@@ -1,12 +1,30 @@
 @import 'mixins';
 
 .loading-screen {
+    @include flex-c-c;
+    @include position-c-f;
     width: 100vw;
     height: 100vh;
-    @include center-fixed;
     background-color: rgba(0, 0, 0, .3);
 
+    .img-wrapper {
+        @include position-c-a;
+        top: 50px;
+        width: 40px;
+        margin-bottom: 130px;
+
+        img {
+            width: 100%;
+        }
+    }
+
     .loader {
-        @include center-absolute;
+        @include position-c-a;
+        @include flex-c-c;
+
+        span {
+            @include text-description;
+            margin-top: 12px;
+        }
     }
 }

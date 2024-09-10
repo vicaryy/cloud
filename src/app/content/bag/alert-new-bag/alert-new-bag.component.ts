@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ElementToEdit } from '../../../shared/interfaces/alert.interfaces';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'app-alert-new-bag',
     standalone: true,
-    imports: [],
+    imports: [MatButton],
     templateUrl: './alert-new-bag.component.html',
     styleUrl: './alert-new-bag.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush

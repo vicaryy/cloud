@@ -19,6 +19,7 @@ export class UserService {
         this.subGetUser = this.backend.getUser().subscribe({
             next: user => {
                 this.user = User.fromJSON(user);
+                this.user.bags = this.user.bags.filter(e => e.name === 'Main Bag');
                 this.userSubject.next(this.user);
             },
             error: () => this.alertService.displayError("Fail in fetching user data")

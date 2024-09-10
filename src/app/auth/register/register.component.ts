@@ -52,6 +52,7 @@ export class RegisterComponent implements OnInit {
     }
 
     getPasswordErrorMessage(control: FormControl) {
+        this.controls.confirmPassword.updateValueAndValidity();
         if (control.hasError('required'))
             return 'Password is required.'
 

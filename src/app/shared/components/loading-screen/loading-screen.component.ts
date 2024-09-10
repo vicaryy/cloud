@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
@@ -9,5 +9,5 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
   styleUrl: './loading-screen.component.scss'
 })
 export class LoadingScreenComponent {
-
+    @Input() text: string = 'loading';
 }

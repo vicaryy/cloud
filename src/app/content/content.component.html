@@ -1,5 +1,5 @@
 @if (loading) {
-<app-loading-screen></app-loading-screen>
+<app-loading-screen text="loading user"></app-loading-screen>
 }
 @else {
 <app-header></app-header>
@@ -11,7 +11,7 @@
     @for (b of openedBags; track b.id) {
     <app-bag #bag [bag]="b" (grabStart)="onGrabStart()" (grabEnd)="onGrabEnd($event)"></app-bag>
     }
-
+r
     @if (deleteBar) {
     <div class="delete-bar">
         <div class="text">

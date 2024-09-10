@@ -243,6 +243,11 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     onChangeName($event: ElementToEdit) {
+        if ($event.newName?.length === 0) {
+            this.alertService.displayError(`New name cannot be empty`);
+            return;
+        }
+
         if ($event.bag) {
             if (this.isBagNameExists($event.newName!)) {
                 this.alertService.displayError(`Bag name '${$event.newName}' already exist`);
@@ -322,6 +327,10 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     onNewBag($event: string) {
+        if (!$event) {
+            this.alertService.displayError(`Bag name cannot be empty`);
+            return;
+        }
         if (this.isBagNameExists($event)) {
             this.alertService.displayError(`Bag name '${$event}' already exist`);
             return;

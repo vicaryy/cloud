@@ -1,10 +1,11 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ElementToEdit } from '../../../shared/interfaces/alert.interfaces';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'app-alert-name',
     standalone: true,
-    imports: [],
+    imports: [MatButton],
     templateUrl: './alert-name.component.html',
     styleUrl: './alert-name.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
