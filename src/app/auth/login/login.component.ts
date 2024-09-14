@@ -11,11 +11,12 @@ import { GoogleService } from '../../shared/services/google.service';
 import { MatProgressSpinner, MatSpinner } from '@angular/material/progress-spinner';
 import { AlertService } from '../../shared/services/alert.service';
 import { AuthService } from '../../shared/services/auth.service';
+import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [MatInputModule, MatFormFieldModule, MatButtonModule, MatIconModule, RouterLink, ReactiveFormsModule, MatError, MatProgressSpinner],
+    imports: [MatInputModule, MatFormFieldModule, MatButtonModule, MatIconModule, RouterLink, ReactiveFormsModule, MatError, MatProgressSpinner, GoogleSigninButtonModule],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss'
 })
@@ -26,10 +27,13 @@ export class LoginComponent implements OnInit {
     loginForm: FormGroup<LoginForm> = this.formService.getLoginForm();
     errorMessage = '';
 
-    constructor(private formService: FormService, private googleService: GoogleService, private authService: AuthService) { }
+    constructor(private formService: FormService, private googleService: GoogleService, private authService: AuthService, private socialAuth: SocialAuthService) { }
 
     ngOnInit(): void {
-        this.initGoogleButton();
+        this.socialAuth.authState.subscribe(user => {
+            console.log(user);
+
+        });
     }
 
     get controls() {

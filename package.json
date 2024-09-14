@@ -9,10 +9,11 @@
     "watch": "ng build --watch --configuration development",
     "start:server": "http-server -p 8080 -c-1 dist/cloud/browser",
     "test": "ng test",
-    "electron": "ng build && electron ."
+    "electron": "ng build --base-href ./ && electron ."
   },
   "private": true,
   "dependencies": {
+    "@abacritt/angularx-social-login": "^2.3.0",
     "@angular/animations": "^17.3.0",
     "@angular/cdk": "^18.2.2",
     "@angular/common": "^17.3.0",
