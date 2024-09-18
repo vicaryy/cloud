@@ -20,9 +20,14 @@ export interface ForgotPasswordForm {
     email: FormControl;
 }
 
+export interface ResetPasswordForm {
+    verificationCode: FormControl;
+    password: FormControl;
+}
+
 export interface LoginCredentials {
     email: string;
-    password: string
+    password: string;
 }
 
 export interface RegisterCredentials extends LoginCredentials {

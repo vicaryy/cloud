@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatButton, MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { MatProgressSpinner, MatSpinner } from '@angular/material/progress-spinn
 import { AlertService } from '../../shared/services/alert.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-social-login';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -20,20 +21,24 @@ import { SocialAuthService, GoogleSigninButtonModule } from '@abacritt/angularx-
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit {
-
+export class LoginComponent implements OnInit, OnDestroy {
     hide: boolean = true;
     waitForResponse = false;
     loginForm: FormGroup<LoginForm> = this.formService.getLoginForm();
     errorMessage = '';
+    authSub!: Subscription;
 
     constructor(private formService: FormService, private googleService: GoogleService, private authService: AuthService, private socialAuth: SocialAuthService) { }
 
     ngOnInit(): void {
-        this.socialAuth.authState.subscribe(user => {
+        this.authSub = this.socialAuth.authState.subscribe(user => {
             console.log(user);
 
         });
+    }
+
+    ngOnDestroy(): void {
+        this.authSub.unsubscribe();
     }
 
     get controls() {

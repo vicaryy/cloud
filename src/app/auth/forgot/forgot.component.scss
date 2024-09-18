@@ -14,19 +14,6 @@
             color: var(--font-color-fifth);
             margin-bottom: 25px;
         }
-
-        button {
-            height: 45px;
-            width: 150px;
-            margin: 0 5px;
-            font-size: 1.3rem;
-            font-family: var(--font);
-
-            &.cancel {
-                background-color: var(--font-color-fifth);
-                color: var(--font-color);
-            }
-        }
     }
 
     .img-wrapper {
@@ -61,6 +48,7 @@
 
 
     .form-wrapper {
+        // width: 70%;
         .forgot-form {
             .input-wrapper {
                 width: 400px;
@@ -108,6 +96,11 @@
                     }
                 }
             }
+        }
+
+        .forgot-form.reset {
+            display: flex;
+            flex-direction: column;
         }
     }
 }

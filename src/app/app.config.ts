@@ -10,7 +10,7 @@ import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
-    providers: [{provide: LocationStrategy, useClass: HashLocationStrategy} ,provideRouter(routes), provideAnimationsAsync(), provideHttpClient(
+    providers: [provideRouter(routes), provideAnimationsAsync(), provideHttpClient(
         withInterceptors([jwtInterceptor, loggingInterceptor])),
     // ), provideServiceWorker('ngsw-worker.js', {
     //     enabled: !isDevMode(),

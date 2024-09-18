@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,26 +11,36 @@ import { AuthService } from '../../shared/services/auth.service';
 import { RegisterForm } from '../../shared/interfaces/form.interfaces';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-register',
     standalone: true,
-    imports: [MatInputModule, MatFormFieldModule, MatButtonModule, MatIconModule, RouterLink, ReactiveFormsModule, MatError, MatProgressSpinner],
+    imports: [MatInputModule, MatFormFieldModule, MatButtonModule, MatIconModule, RouterLink, ReactiveFormsModule, MatError, MatProgressSpinner, GoogleSigninButtonModule],
     templateUrl: './register.component.html',
     styleUrl: './register.component.scss'
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, OnDestroy {
     hideFirst: boolean = true;
     hideSecond: boolean = true;
     waitForResponse = false;
     registerForm: FormGroup<RegisterForm> = this.formService.getRegisterForm();
     errorMessage = '';
     repeatPasswordErrorMessage = '';
+    authSub!: Subscription;
 
-    constructor(private formService: FormService, private googleService: GoogleService, private authService: AuthService) { }
+    constructor(private formService: FormService, private googleService: GoogleService, private authService: AuthService, private socialAuth: SocialAuthService) { }
 
     ngOnInit(): void {
-        this.initGoogleButton();
+        this.authSub = this.socialAuth.authState.subscribe(user => {
+            console.log(user);
+
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.authSub.unsubscribe();
     }
 
     initGoogleButton() {
