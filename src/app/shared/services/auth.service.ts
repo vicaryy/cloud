@@ -8,6 +8,7 @@ import { StateManagerService } from './state-manager.service';
 import { catchError, tap, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Storage } from '../security/security';
+import { ChangePasswordRequest } from '../interfaces/backend.interfaces';
 
 @Injectable({
     providedIn: 'root'
@@ -72,6 +73,18 @@ export class AuthService {
 
     forgotPassword(email: string) {
         return this.backend.forgotPassword(email).pipe(
+            catchError(err => {
+                if (err.status === 404)
+                    this.alertService.displayError('User does not exists.');
+                else
+                    this.alertService.displayError('Something goes wrong, try again.');
+                return throwError(() => err);
+            })
+        );
+    }
+
+    changePassword(request: ChangePasswordRequest) {
+        return this.backend.changePassword(request).pipe(
             catchError(err => {
                 this.alertService.displayError('Something goes wrong, try again.');
                 return throwError(() => err);

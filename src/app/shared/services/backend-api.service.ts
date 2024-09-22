@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { NewBagRequest, NewFileRequest } from '../interfaces/backend.interfaces';
+import { ChangePasswordRequest, NewBagRequest, NewFileRequest } from '../interfaces/backend.interfaces';
 import { Bag, MyFile, User } from '../models/content.models';
 import { environment } from '../../../environments/environment.development';
 import { LoginCredentials, RegisterCredentials, Verification } from '../interfaces/form.interfaces';
@@ -26,6 +26,9 @@ export class BackendApiService {
     }
     forgotPassword(email: string) {
         return this.http.post<void>(environment.apiUrl + "/auth/forgot", { "email": email });
+    }
+    changePassword(request: ChangePasswordRequest): Observable<void> {
+        return this.http.patch<void>(environment.apiUrl + "auth/forgot", request);
     }
 
     createBag(parentId: number, name: string): Observable<Bag> {

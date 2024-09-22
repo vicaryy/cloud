@@ -19,6 +19,13 @@ export interface NewFileRequest {
     previewFile?: PreviewFile | null | undefined
 }
 
+export interface ChangePasswordRequest {
+    email: string;
+    verificationCode: string;
+    password: string;
+}
+
+
 export interface FilePart {
     order: number,
     fileId: string,
@@ -32,3 +39,4 @@ export interface FileResponse {
     size: string,
     create: Date,
 }
+

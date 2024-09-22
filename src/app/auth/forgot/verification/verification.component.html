@@ -1,0 +1,34 @@
+<div class="sended">
+    <p class="sended-message">Reset code has been sent to your email address. Please check your inbox!</p>
+</div>
+<div class="form-wrapper">
+    <form class="forgot-form reset" [formGroup]="resetPasswordForm">
+        <div class="input-wrapper">
+            <mat-form-field>
+                <mat-label>Reset Code</mat-label>
+                <input matNativeControl mat-input [formControl]="controls.verificationCode">
+                <mat-error>{{ getVerificationCodeErrorMessage(controls.verificationCode) }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="input-wrapper">
+            <mat-form-field>
+                <mat-label>New Password</mat-label>
+                <input matNativeControl matInput [type]="hide ? 'password' : 'text'" [formControl]="controls.password">
+                <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                <mat-error>{{ getPasswordErrorMessage(controls.password) }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="buttons-wrapper">
+            <button mat-button class="cancel" (click)="onCancel()">Back</button>
+            <button type="submit" mat-button class="continue" (click)="onReset()"
+                [disabled]="isResetButtonDisabled()">
+                @if (waitForResponse) {
+                <mat-spinner diameter="25"></mat-spinner>
+                }
+                @else {
+                Continue
+                }
+            </button>
+        </div>
+    </form>
+</div>

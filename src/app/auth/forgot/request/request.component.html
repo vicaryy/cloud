@@ -1,0 +1,23 @@
+<div class="form-wrapper">
+    <form class="forgot-form" [formGroup]="forgotPasswordForm">
+        <div class="input-wrapper">
+            <mat-form-field>
+                <mat-label>Email address</mat-label>
+                <input matNativeControl mat-input [formControl]="controls.email">
+                <mat-error>{{ getErrorMessage(controls.email) }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="buttons-wrapper">
+            <button type="button" mat-button class="cancel" (click)="onCancel()">Cancel</button>
+            <button type="submit" mat-button class="continue" (click)="onContinue()"
+                [disabled]="isContinueButtonDisabled()">
+                @if (waitForResponse) {
+                <mat-spinner diameter="25"></mat-spinner>
+                }
+                @else {
+                Continue
+                }
+            </button>
+        </div>
+    </form>
+</div>
