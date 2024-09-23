@@ -1,0 +1,90 @@
+    .sended {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .sended-message {
+            text-align: center;
+            color: var(--font-color-fifth);
+            margin-bottom: 25px;
+        }
+    }
+
+    .text {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 25px;
+        font-size: 2.4rem;
+        font-weight: 500;
+        color: var(--font-color-fifth);
+
+        .text-title {
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .description {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--font-color-sixth);
+        }
+    }
+
+
+    .form-wrapper {
+        // width: 70%;
+        .forgot-form {
+            .input-wrapper {
+                width: 400px;
+                margin: 0 8px;
+
+                mat-form-field {
+                    width: 100%;
+                }
+
+                mat-label {
+                    color: var(--font-color-fourth);
+                }
+
+                mat-icon {
+                    color: var(--font-color-fourth);
+                }
+
+                input {
+                    color: var(--font-color-fifth);
+                }
+
+            }
+
+            .buttons-wrapper {
+                display: flex;
+                margin-top: 5px;
+
+                button {
+                    flex-basis: 50%;
+                    height: 45px;
+                    margin: 0 5px;
+                    font-size: 1.3rem;
+                }
+
+                .cancel {
+                    background-color: var(--font-color-fifth);
+                    color: var(--font-color);
+                }
+
+                .continue {
+                    background-color: var(--font-color-third);
+
+                    &:disabled {
+                        background-color: var(--line-color);
+                    }
+                }
+            }
+        }
+
+        .forgot-form.reset {
+            display: flex;
+            flex-direction: column;
+        }
+    }

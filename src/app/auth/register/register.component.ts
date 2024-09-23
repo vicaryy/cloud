@@ -3,15 +3,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatError, MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FormService } from '../../shared/services/form.service';
 import { GoogleService } from '../../shared/services/google.service';
-import { AlertService } from '../../shared/services/alert.service';
 import { AuthService } from '../../shared/services/auth.service';
 import { RegisterForm } from '../../shared/interfaces/form.interfaces';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { GoogleSigninButtonModule, SocialAuthService } from '@abacritt/angularx-social-login';
+import { GoogleSigninButtonModule, SocialAuthService, SocialUser } from '@abacritt/angularx-social-login';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -36,6 +35,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authSub = this.socialAuth.authState.subscribe(user => {
             console.log(user);
 
+            if (user) {
+                this.onLoginWithGoogle(user);
+                this.socialAuth.signOut();
+            }
         });
     }
 
@@ -99,6 +102,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.authService.register({ email: this.controls.email.value, password: this.controls.password.value }).subscribe({
             next: () => this.waitForResponse = false,
             error: () => this.waitForResponse = false
-        });
+        })
+    }
+
+    onLoginWithGoogle(user: SocialUser) {
+        this.waitForResponse = true;
+        this.authService.loginWithGoogle({ jwt: user.idToken }).subscribe({
+            next: () => this.waitForResponse = false,
+            error: () => this.waitForResponse = false
+        })
     }
 }

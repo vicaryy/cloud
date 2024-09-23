@@ -25,11 +25,14 @@ export interface ChangePasswordRequest {
     password: string;
 }
 
-
 export interface FilePart {
-    order: number,
-    fileId: string,
-    size: number
+    order: number;
+    fileId: string;
+    size: number;
+}
+
+export interface LoginWithGoogleRequest {
+    jwt: string;
 }
 
 export interface FileResponse {

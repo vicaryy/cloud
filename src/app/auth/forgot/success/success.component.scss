@@ -1,0 +1,50 @@
+.sended {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .sended-message {
+        text-align: center;
+        color: var(--font-color-fifth);
+        margin-bottom: 25px;
+    }
+}
+
+.text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 2.4rem;
+    font-weight: 500;
+    color: var(--font-color-fifth);
+
+    .text-title {
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .description {
+        font-size: 1.3rem;
+        font-weight: 400;
+        color: var(--font-color-sixth);
+    }
+}
+
+.buttons-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+
+    button {
+        flex-basis: 50%;
+        height: 45px;
+        margin: 0 5px;
+        font-size: 1.3rem;
+    }
+
+    .cancel {
+        background-color: var(--font-color-fifth);
+        color: var(--font-color);
+    }
+}

@@ -2,14 +2,13 @@
     <div class="img-wrapper">
         <img src="./assets/images/forgot-password.png" alt="forgot-password">
     </div>
-    <div class="text">
-        <p class="text-title">Forgot Password?</p>
-        @if (!sended) {
-        <p class="description">Enter your Email address and we'll help you reset your password</p>
-        }
-    </div>
-    @if (sended) {
+    @if (isRequest()) {
+    <app-request [form]="forgotPasswordForm" (done)="request = true"></app-request>
     }
-    @else {
+    @else if (isVerification()) {
+    <app-verification [form]="resetPasswordForm" [email]="forgotPasswordForm.controls.email.value" (done)="verification = true"></app-verification>
+    }
+    @else if (isSuccess()) {
+    <app-success></app-success>
     }
 </div>

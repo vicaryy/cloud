@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ChangePasswordRequest, NewBagRequest, NewFileRequest } from '../interfaces/backend.interfaces';
+import { ChangePasswordRequest, LoginWithGoogleRequest, NewBagRequest, NewFileRequest } from '../interfaces/backend.interfaces';
 import { Bag, MyFile, User } from '../models/content.models';
 import { environment } from '../../../environments/environment.development';
 import { LoginCredentials, RegisterCredentials, Verification } from '../interfaces/form.interfaces';
@@ -18,6 +18,9 @@ export class BackendApiService {
     register(credentials: RegisterCredentials): Observable<User> {
         return this.http.post<User>(environment.apiUrl + "/auth/register", credentials);
     }
+    loginWithGoogle(credentials: LoginWithGoogleRequest) {
+        return this.http.post<User>(environment.apiUrl + "/auth/google", credentials);
+    }
     verificate(verification: Verification): Observable<void> {
         return this.http.post<void>(environment.apiUrl + "/auth/verify", verification);
     }
@@ -28,7 +31,7 @@ export class BackendApiService {
         return this.http.post<void>(environment.apiUrl + "/auth/forgot", { "email": email });
     }
     changePassword(request: ChangePasswordRequest): Observable<void> {
-        return this.http.patch<void>(environment.apiUrl + "auth/forgot", request);
+        return this.http.patch<void>(environment.apiUrl + "/auth/forgot", request);
     }
 
     createBag(parentId: number, name: string): Observable<Bag> {

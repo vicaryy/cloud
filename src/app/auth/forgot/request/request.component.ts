@@ -17,7 +17,7 @@ import { AuthService } from '../../../shared/services/auth.service';
     styleUrl: './request.component.scss'
 })
 export class RequestComponent {
-    @Input('form') forgotPasswordForm!: FormGroup<ForgotPasswordForm>;
+    @Input({ required: true, alias: 'form' }) forgotPasswordForm!: FormGroup<ForgotPasswordForm>;
     @Output('done') done = new EventEmitter<void>;
     waitForResponse = false;
 

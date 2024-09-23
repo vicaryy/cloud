@@ -17,7 +17,8 @@ import { AuthService } from '../../../shared/services/auth.service';
     styleUrl: './verification.component.scss'
 })
 export class VerificationComponent {
-    @Input('form') resetPasswordForm!: FormGroup<ResetPasswordForm>;
+    @Input({ required: true, alias: 'form' }) resetPasswordForm!: FormGroup<ResetPasswordForm>;
+    @Input({ required: true, alias: 'email' }) email!: string;
     @Output('done') done = new EventEmitter<void>;
     waitForResponse = false;
     hide = true;
@@ -62,10 +63,23 @@ export class VerificationComponent {
     }
 
     onReset() {
-        throw new Error('Method not implemented.');
+        this.waitForResponse = true;
+        this.authService.changePassword({
+            email: this.email,
+            password: this.controls.password.value,
+            verificationCode: this.controls.verificationCode.value
+        }).subscribe({
+            next: () => {
+                this.waitForResponse = false;
+                this.done.emit();
+            },
+            error: () => {
+                this.waitForResponse = false;
+            }
+        });
     }
 
     onCancel() {
-        throw new Error('Method not implemented.');
+        this.router.navigate(["/auth/login"]);
     }
 }

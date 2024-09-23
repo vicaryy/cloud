@@ -8,7 +8,7 @@ import { StateManagerService } from './state-manager.service';
 import { catchError, tap, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Storage } from '../security/security';
-import { ChangePasswordRequest } from '../interfaces/backend.interfaces';
+import { ChangePasswordRequest, LoginWithGoogleRequest } from '../interfaces/backend.interfaces';
 
 @Injectable({
     providedIn: 'root'
@@ -44,6 +44,20 @@ export class AuthService {
             catchError(err => {
                 const error = err as HttpErrorResponse;
                 this.alertService.displayError(error.error.result)
+                return throwError(() => err);
+            })
+        );
+    }
+
+    loginWithGoogle(request: LoginWithGoogleRequest) {
+        return this.backend.loginWithGoogle(request).pipe(
+            tap(() => {
+                localStorage.removeItem('verificationEmail');
+                this.alertService.displayInfo("Successfully logged in");
+                this.router.navigate([""]);
+            }),
+            catchError(err => {
+                this.alertService.displayError("Cannot login with Google, please try again.")
                 return throwError(() => err);
             })
         );
@@ -90,10 +104,6 @@ export class AuthService {
                 return throwError(() => err);
             })
         );
-    }
-
-    continueWithGoogle(credentials: OAuth2Response) {
-
     }
 
     logout() {
