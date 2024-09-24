@@ -43,6 +43,9 @@ html {
 @import 'vars';
 @import 'mixins';
 
+:root {
+    --mat-minimal-pseudo-checkbox-selected-checkmark-color: #e0cece!important; /* Twój kolor */
+  }
 
 
 * {

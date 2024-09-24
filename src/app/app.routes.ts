@@ -10,6 +10,7 @@ import { RegisterComponent } from './auth/register/register.component';
 import { ForgotComponent } from './auth/forgot/forgot.component';
 import { ConfirmationComponent } from './auth/confirmation/confirmation.component';
 import { authGuard, confirmationGuard, contentGuard } from './shared/guards/auth.guard';
+import { InfoComponent } from './content/settings-dialog/info/info.component';
 
 export const routes: Routes = [
     {
@@ -32,6 +33,10 @@ export const routes: Routes = [
                     {
                         path: 'security',
                         component: SecurityComponent,
+                    },
+                    {
+                        path: 'info',
+                        component: InfoComponent
                     },
                 ]
             }

@@ -4,12 +4,12 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { jwtInterceptor, loggingInterceptor } from './shared/interceptors/interceptors';
+import { jwtInterceptor, loggingInterceptor, serverAvailabilityInterceptor } from './shared/interceptors/interceptors';
 import { GoogleLoginProvider, SocialAuthServiceConfig } from '@abacritt/angularx-social-login';
 
 export const appConfig: ApplicationConfig = {
     providers: [provideRouter(routes), provideAnimationsAsync(), provideHttpClient(
-        withInterceptors([jwtInterceptor, loggingInterceptor])),
+        withInterceptors([jwtInterceptor, loggingInterceptor, serverAvailabilityInterceptor])),
     {
         provide: 'SocialAuthServiceConfig',
         useValue: {

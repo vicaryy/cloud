@@ -24,6 +24,10 @@ export class AuthService {
         }),
             catchError((err: HttpErrorResponse) => {
                 const result: string = err.error.result;
+                console.log(result);
+                console.log(err);
+
+
                 if (result.toLowerCase().startsWith('email not verified')) {
                     localStorage.setItem('verificationEmail', credentials.email);
                     this.router.navigate(['/auth/confirmation']).then(() => this.alertService.displayInfo("To continue, you have to verify your account."));

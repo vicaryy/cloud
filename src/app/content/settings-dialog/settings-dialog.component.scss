@@ -12,7 +12,7 @@
     // border: solid 1px var(--line-color);
     box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 34px 0px;
     border-radius: 15px;
-    z-index: 1001;
+    z-index: 901;
 
     .settings {
         display: flex;
@@ -122,5 +122,5 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, .5);
-    z-index: 1000;
+    z-index: 899;
 }
