@@ -1,0 +1,39 @@
+@import 'mixins';
+@import 'vars';
+
+.info {
+    section {
+        position: relative;
+        padding: 15px 0;
+
+        &::after {
+            @include line-b;
+            width: 100%;
+        }
+
+        &:last-of-type {
+            &::after {
+                display: none;
+            }
+        }
+
+        .text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--font-color-fifth);
+            margin-bottom: 2px;
+        }
+
+        .description {
+            color: var(--font-color-fourth);
+            @include text-description;
+            font-size: .9rem;
+            font-weight: 500;
+            // text-transform: none;
+
+            a {
+                font-size: .9rem;
+            }
+        }
+    }
+}

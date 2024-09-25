@@ -1,0 +1,51 @@
+<div class="settings-wrapper" (click)="onClickSettings($event)">
+    <div class="settings">
+        <div class="info">
+            <p>Profile</p>
+            <button mat-button class="exit" (click)="closeSettings()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="content">
+            <div class="profile-type">Standard Profile</div>
+
+            <div class="profile-pic-wrapper">
+                <div class="profile-pic">
+                    <div class="image-wrapper" (click)="onChangePhoto()">
+                        <img src="./assets/images/profile-pic.jpg" alt="profile-pic">
+                    </div>
+                    <div class="change-photo" (click)="onChangePhoto()">
+                        <i class="fa-solid fa-pen"></i>
+                        <p>Change photo</p>
+                    </div>
+                    <button (click)="onChangePhoto()" mat-button class="transparent-btn">Change photo</button>
+                </div>
+            </div>
+
+            <div class="data">
+                <div class="email">
+                    <i class="fa-regular fa-envelope"></i>
+                    <p>vicarycholewa&#64;gmail.com</p>
+                </div>
+                <div class="bags">
+                    <i class="fa-regular fa-folder-closed"></i>
+                    <p>3 bags</p>
+                </div>
+                <div class="files">
+                    <i class="fa-regular fa-file"></i>
+                    <p>21 files</p>
+                </div>
+                <div class="storage">
+                    <i class="fa-solid fa-database"></i>
+                    <p>35GB</p>
+                </div>
+            </div>
+        </div>
+
+        <button mat-button class="info-btn" (click)="onEditAccount()">Edit account</button>
+        <input #profilePhotoInput type="file" accept="image/png, image/jpeg" id="profile-pic-file">
+    </div>
+</div>
+
+<div class="backdrop" (click)="closeSettings()"></div>

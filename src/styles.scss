@@ -44,8 +44,9 @@ html {
 @import 'mixins';
 
 :root {
-    --mat-minimal-pseudo-checkbox-selected-checkmark-color: #e0cece!important; /* Twój kolor */
-  }
+    --mat-minimal-pseudo-checkbox-selected-checkmark-color: #e0cece !important;
+    /* Twój kolor */
+}
 
 
 * {
@@ -101,4 +102,51 @@ body {
 
 .mat-mdc-progress-spinner {
     --mdc-circular-progress-active-indicator-color: var(--alert-color-info);
+}
+
+.mat-mdc-form-field-infix {
+    padding-top: 6px!important;
+    padding-bottom: 0!important;
+}
+
+.mat-mdc-option {
+    min-height: 40px!important;
+    font-size: 1.4rem!important;
+}
+
+.mdc-button__label {
+    display: inline-block;
+    // width: 80px!important;
+}
+
+.info-btn {
+    height: 0!important;
+    padding: 16px 18px!important;
+    letter-spacing: .5px!important;
+    border-radius: 10px!important;
+    background-color: var(--alert-color-info)!important;
+    color: var(--font-color-fifth)!important;
+    font-size: 1.3rem!important;
+}
+
+.warn-btn {
+    height: 0!important;
+    padding: 16px 18px!important;
+    letter-spacing: .5px!important;
+    border-radius: 10px!important;
+    background-color: var(--alert-color-error)!important;
+    color: var(--font-color-fifth)!important;
+    font-size: 1.3rem!important;
+}
+
+.transparent-btn {
+    height: 0!important;
+    width: 150px!important;
+    padding: 16px 30px!important;
+    letter-spacing: .5px!important;
+    border-radius: 30px!important;
+    border: 1px solid var(--line-color)!important;
+    background-color: transparent!important;
+    color: var(--font-color-fifth)!important;
+    font-size: 1.3rem!important;
 }

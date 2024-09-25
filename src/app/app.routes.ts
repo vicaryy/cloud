@@ -11,6 +11,7 @@ import { ForgotComponent } from './auth/forgot/forgot.component';
 import { ConfirmationComponent } from './auth/confirmation/confirmation.component';
 import { authGuard, confirmationGuard, contentGuard } from './shared/guards/auth.guard';
 import { InfoComponent } from './content/settings-dialog/info/info.component';
+import { ProfileComponent } from './content/profile/profile.component';
 
 export const routes: Routes = [
     {
@@ -39,6 +40,10 @@ export const routes: Routes = [
                         component: InfoComponent
                     },
                 ]
+            },
+            {
+                path: 'profile',
+                component: ProfileComponent
             }
         ]
     },

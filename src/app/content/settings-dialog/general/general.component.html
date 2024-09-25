@@ -1,16 +1,32 @@
 <div class="general">
-    <div class="option">
-        <div class="text"></div>
+    <div class="option theme">
+        <div class="text">Theme</div>
         <div class="field">
-            <mat-form-field>
-                <!-- <mat-label>Select an option</mat-label> -->
+            <mat-form-field [color]="'accent'" [subscriptSizing]="'dynamic'">
                 <mat-select value="1">
-                    <mat-option value="1">Ciemny</mat-option>
-                    <mat-option value="2">Jasny</mat-option>
-                    <mat-option value="3">dx</mat-option>
-                    <mat-option value="4">xd</mat-option>
+                    <mat-option value="1">System</mat-option>
+                    <mat-option value="2">Dark</mat-option>
+                    <mat-option value="3">Light</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
+    </div>
+
+    <div class="option language">
+        <div class="text">Language</div>
+        <div class="field">
+            <mat-form-field [color]="'accent'" [subscriptSizing]="'dynamic'">
+                <mat-select value="1">
+                    <mat-option value="1">English</mat-option>
+                    <mat-option value="2">Polish</mat-option>
+                    <mat-option value="3">Auto-detect</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <div class="option delete-files">
+        <div class="text">Delete all files</div>
+        <button class="warn-btn" mat-button>Delete</button>
     </div>
 </div>

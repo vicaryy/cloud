@@ -36,6 +36,12 @@ export class OptionsBarComponent {
         this.router.navigate(['settings/general']);
     }
 
+    displayProfile($event: MouseEvent) {
+        $event.stopPropagation();
+        this.closeBarNow();
+        this.router.navigate(['profile']);
+    }
+
     onLogout() {
         this.authService.logout();
     }
