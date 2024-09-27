@@ -167,7 +167,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
                 files.push($event.dataTransfer.files[i]);
         }
 
-        await this.fileService.addFiles(files, this.bag);
+        await this.fileService.uploadFiles(files, this.bag);
         this.onSort(this.currentSort);
     }
 
@@ -184,7 +184,7 @@ export class BagComponent implements AfterViewInit, OnInit, OnDestroy {
         for (let i = 0; i < fileInput.files.length; i++)
             files.push(fileInput.files[i]);
 
-        await this.fileService.addFiles(files, this.bag);
+        await this.fileService.uploadFiles(files, this.bag);
         this.onSort(this.currentSort);
     }
 

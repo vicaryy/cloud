@@ -177,7 +177,7 @@ export class FileService {
         file.progress = 0;
     }
 
-    async addFiles(files: File[], parentBag: Bag) {
+    async uploadFiles(files: File[], parentBag: Bag) {
         const newFiles: MyFile[] = [];
         for (const f of files)
             newFiles.push(this.createNewFile(f, parentBag));
@@ -187,6 +187,10 @@ export class FileService {
 
         for (const f of newFiles)
             await this.uploadFile(f);
+    }
+
+    async uploadProfilePicture(file: File) {
+
     }
 
     private isPreviewable(ext: string) {

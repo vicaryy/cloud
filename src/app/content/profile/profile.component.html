@@ -44,7 +44,7 @@
         </div>
 
         <button mat-button class="info-btn" (click)="onEditAccount()">Edit account</button>
-        <input #profilePhotoInput type="file" accept="image/png, image/jpeg" id="profile-pic-file">
+        <input #profilePhotoInput type="file" accept="image/png, image/jpeg" id="profile-pic-file" (change)="inputOnChange($event)">
     </div>
 </div>
 
