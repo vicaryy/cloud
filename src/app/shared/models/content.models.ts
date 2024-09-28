@@ -106,3 +106,27 @@ export class MyFile {
         );
     }
 }
+
+export interface ProfilePhoto {
+    fileId?: string;
+    size?: number;
+    url?: string;
+    blob?: Blob;
+    password?: string;
+}
+
+// public id: number,
+// public name: string,
+// public extension: string,
+// public size: number,
+// public type: FileType,
+// public create: Date,
+// public url: string,
+// public progress: number,
+// public fileParts: FilePart[],
+// public parentBag: Bag,
+// public blob: Blob | null,
+// public state: State,
+// public downloadState: DownloadState,
+// public uploadState: UploadState,
+// public preview: PreviewFile | null

@@ -17,6 +17,13 @@ export class CryptoService {
         return encoder.encode(encrypted.toString()).buffer;
     }
 
+    async encryptWithCustomPassword(ab: ArrayBuffer, password: string): Promise<ArrayBuffer> {
+        const wordArray = CryptoJS.lib.WordArray.create(ab);
+        const encrypted = CryptoJS.AES.encrypt(wordArray, password);
+        const encoder = new TextEncoder();
+        return encoder.encode(encrypted.toString()).buffer;
+    }
+
     async decrypt(ab: ArrayBuffer): Promise<ArrayBuffer> {
         const textDecoder = new TextDecoder();
         const decodedArrayBuffer = textDecoder.decode(ab);

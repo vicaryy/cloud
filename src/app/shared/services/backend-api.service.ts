@@ -33,6 +33,9 @@ export class BackendApiService {
     changePassword(request: ChangePasswordRequest): Observable<void> {
         return this.http.patch<void>(environment.apiUrl + "/auth/forgot", request);
     }
+    getRandomPassword(): Observable<string> {
+        return this.http.get<string>(environment.apiUrl + "randomPassword");
+    }
 
     createBag(parentId: number, name: string): Observable<Bag> {
         const request: NewBagRequest = { id: parentId, name: name };

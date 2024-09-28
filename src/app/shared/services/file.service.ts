@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TelegramApiService } from './telegram-api.service';
-import { Bag, MyFile } from '../models/content.models';
+import { Bag, MyFile, ProfilePhoto } from '../models/content.models';
 import { BlobUtils } from '../utils/blob.utils';
 import { FileType, State } from '../enums/content.enums';
 import { BackendApiService } from './backend-api.service';
@@ -189,8 +189,12 @@ export class FileService {
             await this.uploadFile(f);
     }
 
-    async uploadProfilePicture(file: File) {
-
+    async uploadProfilePicture(photo: ProfilePhoto) {
+        const previewBlob = await this.fileReducer.compressImage(photo.blob!);
+        const encryptedBlob = new Blob([await this.crypto.encryptWithCustomPassword(await previewBlob.arrayBuffer(), photo.password!)]);
+        const response = await lastValueFrom(this.telegram.sendBlob(encryptedBlob)) as HttpResponse<TelegramResponse<Message>>;
+        photo.fileId = response.body?.result.document.file_id;
+        photo.size = encryptedBlob.size;
     }
 
     private isPreviewable(ext: string) {

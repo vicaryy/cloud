@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { Router, RouterModule } from '@angular/router';
 import { AlertService } from '../../shared/services/alert.service';
@@ -9,7 +9,8 @@ import { ProfilePhotoService } from '../../shared/services/profile-photo.service
     standalone: true,
     imports: [RouterModule, MatButton],
     templateUrl: './profile.component.html',
-    styleUrl: './profile.component.scss'
+    styleUrl: './profile.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileComponent {
     @ViewChild('profilePhotoInput') input!: ElementRef;
